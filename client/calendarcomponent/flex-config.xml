@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<flex-config>
+<compiler>
+    <source-path>
+        <path-element>src/flex</path-element>
+    </source-path>
+    <namespaces>
+        <namespace>
+            <uri>http://www.buni.org/webmail/flex/qsimport</uri>
+            <manifest>etc/layout/manifest.xml</manifest>
+        </namespace>
+    </namespaces>
+</compiler>
+<include-namespaces>
+    <uri>http://www.buni.org/webmail/flex/qsimport</uri>
+</include-namespaces>
+<include-classes>
+    <class>qs.calendar.CalendarSet</class>
+    <class>qs.calendar.iParser</class>
+    <class>qs.utils.DateRange</class>
+</include-classes>
+</flex-config>
+

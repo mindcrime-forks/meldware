@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server
+    PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
+    "http://www.jboss.org/j2ee/dtd/jboss-service_4_0.dtd">
+
+<server>
+
+   <mbean code="org.jboss.security.auth.login.DynamicLoginConfig"
+      name="meldware.mail:type=SecurityConfig,name=LoginConfig">
+      <attribute name="PolicyConfig" serialDataType="jbxb">
+         <jaas:policy
+            xsi:schemaLocation="urn:jboss:security-config:4.1 resource:security-config_4_1.xsd"
+            xmlns:jaas="urn:jboss:security-config:4.1"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            >
+            <jaas:application-policy name="meldware">
+               <jaas:authentication>
+#if($USER_EDITOR.equals("opends"))
+               <jaas:login-module code="org.jboss.security.auth.spi.LdapLoginModule"
+                    flag="optional">
+                        <jaas:module-option name="java.naming.factory.initial">com.sun.jndi.ldap.LdapCtxFactory</jaas:module-option>
+                        <jaas:module-option name="java.naming.provider.url">ldap://localhost:10389/</jaas:module-option>
+                        <jaas:module-option name="java.naming.security.principal">cn=Directory Manager</jaas:module-option>
+                        <jaas:module-option name="java.naming.security.credentials">admin</jaas:module-option>
+
+                        <jaas:module-option name="java.naming.security.authentication">simple</jaas:module-option>
+                        <jaas:module-option name="principalDNPrefix">uid=</jaas:module-option>
+                        <jaas:module-option name="principalDNSuffix">,ou=People,dc=buni,dc=org</jaas:module-option>
+                        <jaas:module-option name="rolesCtxDN">ou=Roles,dc=buni,dc=org</jaas:module-option>
+                        <jaas:module-option name="uidAttributeID">member</jaas:module-option>
+                        <jaas:module-option name="matchOnUserDN">true</jaas:module-option>
+                        <jaas:module-option name="roleAttributeID">cn</jaas:module-option>
+                        <jaas:module-option name="roleAttributeIsDN">false</jaas:module-option>
+                        <jaas:module-option name="searchTimeLimit">5000</jaas:module-option>
+                        <jaas:module-option name="searchScope">ONELEVEL_SCOPE</jaas:module-option>
+                 </jaas:login-module>
+#end
+#if($USER_EDITOR.equals("db"))
+                <jaas:login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule"
+                    flag="required">
+                        <jaas:module-option name="dsJndiName">java:/${JAAS_DATASOURCE_NAME}</jaas:module-option>
+                        <jaas:module-option name="principalsQuery">SELECT PASSWORD FROM MAIL_USERS WHERE USER_NAME=?</jaas:module-option>
+                        <jaas:module-option name="rolesQuery">SELECT ROLE_NAME, 'Roles' FROM MAIL_ROLES WHERE USER_NAME=?</jaas:module-option>
+                        <jaas:module-option name="unauthenticatedIdentity">guest</jaas:module-option> 
+                 </jaas:login-module>
+#end
+               </jaas:authentication>
+            </jaas:application-policy>
+         </jaas:policy>         
+      </attribute>
+      <depends optional-attribute-name="LoginConfigService">
+         jboss.security:service=XMLLoginConfig
+      </depends>
+      <depends optional-attribute-name="SecurityManagerService">
+         jboss.security:service=JaasSecurityManager
+      </depends>
+      <!-- prevent startup before the tables are created -->
+      <depends>meldware.mail:type=MailServices,name=UserEditor</depends>
+   </mbean>
+
+#if($USER_EDITOR.equals("db"))
+  <mbean code="org.buni.meldware.mail.usereditor.db.DBUserEditorImpl" interface="org.buni.meldware.mail.usereditor.db.UserEditor" name="meldware.mail:type=MailServices,name=UserEditor" xmbean-dd="META-INF/DBUserEditor-xmbean.xml">
+         <depends optional-attribute-name="DataSource" proxy-type="attribute">jboss.jca:service=DataSourceBinding,name=${JAAS_DATASOURCE_NAME}</depends>
+         <attribute name="CreateUserTableSQL">CREATE TABLE MAIL_USERS (USER_NAME VARCHAR(40) PRIMARY KEY, PASSWORD VARCHAR(40) NOT NULL)</attribute>
+         <attribute name="CreateRoleTableSQL">CREATE TABLE MAIL_ROLES (USER_NAME VARCHAR(40) NOT NULL, ROLE_NAME VARCHAR(40) NOT NULL)</attribute>
+         <attribute name="AddUserSQL">INSERT INTO MAIL_USERS (USER_NAME, PASSWORD) VALUES(?,?)</attribute>
+         <attribute name="AddRoleSQL">INSERT INTO MAIL_ROLES(USER_NAME,ROLE_NAME) VALUES(?,?)</attribute>
+         <attribute name="DeleteUserSQL">DELETE FROM MAIL_USERS WHERE USER_NAME = ?</attribute>
+         <attribute name="DeleteRoleSQL">DELETE FROM MAIL_ROLES WHERE USER_NAME = ? AND ROLE_NAME = ?</attribute>
+         <attribute name="UserRolesSQL">SELECT ROLE_NAME FROM MAIL_ROLES WHERE USER_NAME = ?</attribute>
+         <attribute name="UsersSQL">SELECT USER_NAME FROM MAIL_USERS WHERE USER_NAME LIKE ?</attribute>
+         <attribute name="UpdatePasswordSQL">UPDATE MAIL_USERS SET PASSWORD = ? WHERE USER_NAME = ?</attribute>
+  </mbean>
+#end
+
+  <mbean code="org.buni.meldware.common.preferences.impl.UserProfileServiceImpl"
+         interface="org.buni.meldware.common.preferences.UserProfileService"
+         name="meldware.base:type=UserProfileService,name=UserProfileService">
+         <depends optional-attribute-name="DataSource" proxy-type="attribute">jboss.jca:service=DataSourceBinding,name=${DATASOURCE_NAME}</depends>
+         <attribute name="CreateUserProfileStatement">CREATE TABLE MW_USER_PROFILE (UP_ID VARCHAR(40) PRIMARY KEY, UP_USERNAME VARCHAR(40) NOT NULL, UP_DEFAULT_ALIAS VARCHAR(40))</attribute>
+         <attribute name="CreateUserPreferencesStatement">CREATE TABLE MW_USER_PREFS (UP_ID VARCHAR(40), UPP_KEY VARCHAR(40), UPP_VAL VARCHAR(256))</attribute>
+         <attribute name="InsertUserProfileStatement">INSERT INTO MW_USER_PROFILE(UP_ID, UP_USERNAME, UP_DEFAULT_ALIAS) VALUES(?,?,?)</attribute>
+         <attribute name="RetrieveUserProfileStatement">SELECT MW_USER_PROFILE.UP_ID, MW_USER_PROFILE.UP_USERNAME, MW_USER_PROFILE.UP_DEFAULT_ALIAS, MW_USER_PREFS.UPP_KEY, MW_USER_PREFS.UPP_VAL FROM MW_USER_PROFILE LEFT JOIN MW_USER_PREFS ON MW_USER_PREFS.UP_ID=MW_USER_PROFILE.UP_ID WHERE MW_USER_PROFILE.UP_ID = ?</attribute>
+         <attribute name="DeleteUserProfileStatement">delete from MW_USER_PROFILE where UP_USERNAME = ?</attribute>
+         <attribute name="UpdateProfileStatement">update MW_USER_PROFILE set UP_USERNAME=?, UP_DEFAULT_ALIAS=? where UP_ID=?</attribute>
+         <attribute name="InsertPreferenceStatement">insert into MW_USER_PREFS (UPP_KEY, UPP_VAL, UP_ID) VALUES(?,?,?)</attribute>
+         <attribute name="DeletePreferencesStatement">delete from MW_USER_PREFS where UP_ID=?</attribute>
+         <attribute name="CreateUserAliasesStatement">CREATE TABLE A_USER_ALIASES (UP_ID VARCHAR(40), A_ALIAS VARCHAR(40))</attribute>
+         <attribute name="InsertUserAliasStatement">INSERT into A_USER_ALIASES (A_ALIAS, UP_ID) VALUES (?, ?)</attribute>
+         <attribute name="DeleteUserAliasesStatement">DELETE from A_USER_ALIASES where UP_ID = ?</attribute>
+         <attribute name="RetrieveUserAliasesStatement">SELECT A_ALIAS from A_USER_ALIASES WHERE UP_ID = ?</attribute>
+         <attribute name="FindProfileStatement">SELECT UP_ID from A_USER_ALIASES where A_ALIAS = ?</attribute>
+  </mbean>
+
+
+</server>

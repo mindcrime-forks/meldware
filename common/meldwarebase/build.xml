@@ -1,0 +1,81 @@
+<!DOCTYPE project [
+    <!ENTITY propload SYSTEM "../../ant/propload.xml">
+    <!ENTITY sarbuild SYSTEM "../../ant/jarbuild.xml">
+    <!ENTITY texenbuild SYSTEM "../../ant/texenbuild.xml">
+]>
+<project name="meldwarebase" default="build">
+    <tstamp/>
+	&propload;
+    <property name="module" value="meldwarebase"/>
+    <property name="manifest.classpath" value=""/>
+    <property name="module.ext" value="sar"/>
+    <property name="module.deploy.dir" value="${module}.${module.ext}"/>
+
+    <path id="sar.classpath">
+        <pathelement location="../meldwarebeans/dist/meldwarebeans.jar"/>
+        <fileset dir="${folder.libs}">
+            <!--<include name="${J2EE_JAR}"/>-->
+            <include name="${libs.odmg}"/>
+            <include name="${libs.commons.lang}"/>
+            <include name="${libs.commons.logging}"/>
+            <include name="${libs.commons.io}"/>
+            <include name="${libs.log4j}"/>
+            <include name="${libs.jdbc.postgres}"/>
+            <include name="${libs.ristretto}"/>
+            <include name="${libs.dnsjava}"/>
+            <include name="${libs.buni-filestore}"/>
+            <include name="${libs.buni-s3filestore}"/>
+            <include name="${libs.antlr}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.ejb3}">
+            <include name="${libs.jboss.ejb3}"/>
+            <include name="${libs.jboss.ejb3x}"/>
+            <include name="${libs.jboss.annotations-ejb3}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.default.lib}">
+            <include name="${libs.jboss.jca}"/>
+            <include name="${libs.jboss.ejb3-persistence}"/>
+            <include name="${libs.jboss.hibernate}"/>
+            <include name="${libs.jboss.hibernate.annotations}"/>
+            <include name="${libs.jboss.hibernate.entitymanager}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.lib}">
+            <include name="${libs.jboss.system}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.client}">
+            <include name="${libs.mail}"/>
+            <include name="${libs.activation}"/>
+            <include name="${libs.jbossall.client}"/>
+            <include name="${libs.concurrent}"/>
+        </fileset>
+        <path refid="aop.classpath"/>
+    </path>
+
+    &sarbuild;
+
+ 	
+<!--    jarbuild;-->
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->  
+  	
+    <target name="generate_source">
+        <echo>Code generation complete</echo>
+    </target>  
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->  
+    <target name="postCompile">
+		<mkdir dir="${module.build}/meldwarebeans.jar"/>
+		<unjar dest="${module.build}/meldwarebeans.jar" src="../meldwarebeans/dist/meldwarebeans.jar"/>
+    </target>
+	
+    &texenbuild;
+
+</project>

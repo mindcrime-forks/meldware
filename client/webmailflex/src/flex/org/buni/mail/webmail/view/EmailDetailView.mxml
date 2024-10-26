@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+    width="100%"
+    height="100%"
+    verticalGap="0"
+    label="{email.subject}"
+    implements="org.buni.mail.webmail.view.ITabView"
+    >
+
+    <mx:Script>
+    <![CDATA[
+    import mx.collections.ICollectionView;
+    import mx.events.CollectionEvent;
+
+    import flash.net.FileReference;
+    import flash.net.URLRequest;
+    import flash.net.URLRequestMethod;
+        
+    import com.adobe.cairngorm.control.CairngormEvent;
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+        
+    import org.buni.mail.webmail.controller.WebmailController;
+    import org.buni.mail.webmail.util.LabelUtil;
+    import org.buni.mail.webmail.model.EmailVO;
+    import org.buni.mail.webmail.model.AttachmentVO;
+          
+    [Bindable] public var email:EmailVO; //= new EmailVO();
+  
+    override public function get data():Object
+    {
+        return email;
+    }
+  
+    override public function set data(_data:Object):void
+    {
+        if (_data != null)
+        {
+            trace('set data not null');
+            email = _data as EmailVO;
+            var e:CairngormEvent = new CairngormEvent(WebmailController.GET_EMAIL_BODY);
+            e.data = email;
+            CairngormEventDispatcher.getInstance().dispatchEvent(e);
+        }
+        else
+        {
+            trace('set data null');
+            email = new EmailVO();
+        }
+    }
+      
+    private function attachementsHeight(email:EmailVO):Number
+    {
+        if (email.attachments.length > 0)
+        {
+            return 20;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    var fileToDownload:FileReference = new FileReference();
+
+    private function downloadFile(attachment:AttachmentVO):void
+    {
+        var request:URLRequest = new URLRequest();
+        request.url = attachment.url;
+        request.method = URLRequestMethod.GET;
+        request.data = new URLVariables();
+        request.data.op="GetAttachment";
+        request.data.id=attachment.id;
+        request.data.filename=attachment.filename;
+        fileToDownload.download(request, attachment.filename);
+    }
+
+    ]]>
+    </mx:Script>
+
+    <!-- backgroundColor="#E2E2E2" -->
+    <mx:VBox id="summary" width="100%" backgroundColor="#d6cdb2">
+        <mx:HBox>
+            <mx:VBox verticalGap="0">
+                <mx:Label text="Subject: " textAlign="right" width="100%"/>
+                <mx:Label text="From: " textAlign="right" width="100%"/>
+                <mx:Label text="To: " textAlign="right" width="100%"/>
+                <mx:Label text="CC: " textAlign="right" width="100%"/>
+                <mx:Label text="Date: " textAlign="right" width="100%"/>
+            </mx:VBox>
+            <mx:VBox verticalGap="0">
+                <mx:Label text="{email.subject}"/>
+                <mx:Label text="{org.buni.mail.webmail.util.LabelUtil.getEmail(email.sender)}" fontWeight="normal"/>
+                <mx:Label text="{org.buni.mail.webmail.util.LabelUtil.getEmail(email.toRecipients)}" fontWeight="normal"/>
+                <mx:Label text="{org.buni.mail.webmail.util.LabelUtil.getEmail(email.ccRecipients)}" fontWeight="normal"/>
+                <mx:Label text="{LabelUtil.getFormattedDate(email.date)}" fontWeight="normal"/>
+            </mx:VBox>
+        </mx:HBox>
+    </mx:VBox>
+    <mx:TextArea id="body" width="100%" height="100%" text="{email.body}" editable="false" backgroundColor="#ffffff"/>
+    <mx:HBox id="attachments" width="100%" verticalAlign="middle" height="{attachementsHeight(email)}">
+        <mx:Label text="Attachments: "/>
+        <mx:Repeater id="file" dataProvider="{email.attachments}">
+            <mx:LinkButton label="{file.currentItem.filename}" click="navigateToURL(new URLRequest(event.target.getRepeaterItem().url));"/>
+        </mx:Repeater>
+    </mx:HBox>
+</mx:VBox>

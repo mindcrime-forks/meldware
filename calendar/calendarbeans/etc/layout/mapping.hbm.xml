@@ -1,0 +1,244 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	
+	<!--class name="org.buni.meldware.calendar.data.User" table="calendaruser">
+		<meta attribute="implement-equals">true</meta>
+		<meta attribute="implement-tostring">true</meta>
+	    
+	    <id name="userName" type="string">
+	    	<meta attribute="use-in-equals"/>
+	    	<meta attribute="use-in-tostring"/>
+	    	<column name="userName" length="50" not-null="true" unique="true"/>
+	        <generator class="assigned"/>
+        </id>
+                
+        <version name="version" insert="false">
+            <meta attribute="use-in-tostring"/>
+            <column name="version" default="0"/>
+        </version>
+	                        
+        <set name="addresses" cascade="all" lazy="true">
+            <key column="userName"/>
+            <many-to-many column="recordId" class="org.buni.meldware.calendar.data.Address"/>
+        </set>
+        
+        <set name="invites" cascade="all" lazy="true">
+            <key column="userName"/>
+            <one-to-many class="org.buni.meldware.calendar.data.Invite"/>
+        </set>
+		
+	<set name="tasks" cascade="all" lazy="true">
+            <key column="userName"/>
+            <one-to-many class="org.buni.meldware.calendar.data.Task"/>
+        </set>
+                
+	<component name="preference" class="org.buni.meldware.calendar.data.UserPreference">
+        <property name="calendarNotification" type="int" not-null="true">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="calNotify" not-null="true"/>
+    	</property>
+    	<property name="freeBusyPublic" type="boolean" not-null="true">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="isFBPublic" not-null="true"/>
+    	</property>
+    	<property name="timeZone" type="string" not-null="true">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="timeZone" length="100" not-null="true"/>
+    	</property>
+    	<property name="isResource" type="boolean" not-null="true">
+            <column name="isResource"/>
+        </property> 
+    </component>
+        <property name="external" type="boolean">
+        	<column name="external" default="false"/>
+    	</property>
+        	
+    </class -->
+    
+    <class name="org.buni.meldware.calendar.data.Address" table="address">
+        
+        <id name="recordId" type="java.lang.Long">
+	    	<meta attribute="use-in-equals"/>
+	    	<meta attribute="use-in-tostring"/>
+	    	<generator class="native"/>
+        </id>
+        
+        <version name="version" insert="false">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="version" default="0"/>
+        </version>
+        
+        <property name="GUID" type="string">
+	        <meta attribute="use-in-equals"/>
+	    	<meta attribute="use-in-tostring"/>
+	        <column name="GUID" length="36"/>
+    	</property>
+    	
+        <!--many-to-one name="owner" class="org.buni.meldware.calendar.data.User" column="owner"/-->
+        
+    	<property name="createDate" type="timestamp" not-null="true">
+    	    <meta attribute="use-in-tostring"/>
+    	    <column name="createDate"/>
+        </property>            
+        <property name="isUserAddress" type="boolean" not-null="true">
+            <meta attribute="use-in-tostring"/>
+            <column name="isUserAddress"/>
+        </property>            
+        <property name="fullName" type="string" not-null="true">
+       		<meta attribute="use-in-tostring"/>
+       		<column name="fullName" length="100"/>
+    	</property>
+        <property name="nickName" type="string" not-null="true">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="nickName" length="20"/>
+    	</property>
+        <property name="webURL" type="string">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="webURL" length="200"/>
+    	</property>
+        <property name="organization" type="string" not-null="true">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="organization" length="100"/>
+    	</property>
+        <property name="homePhone" type="string">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="homePhone" length="20"/>
+    	</property>
+        <property name="mobilePhone" type="string">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="mobilePhone" length="20"/>
+    	</property>
+        <property name="officePhone" type="string">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="officePhone" length="20"/>
+    	</property>
+        <property name="fax" type="string">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="fax" length="20"/>
+    	</property>
+        <property name="emailAddress" type="string">
+        	<meta attribute="use-in-tostring"/>
+        	<column name="emailAddress" length="100"/>
+    	</property>
+	    	
+    </class>
+
+    <class name="org.buni.meldware.calendar.data.Invite" table="invite">
+
+    	<id name="inviteId" type="java.lang.Long">
+	    	<generator class="native"/>
+        </id>
+
+        <version name="version" insert="false">
+            <column name="version" default="0"/>
+        </version>
+
+	    <!--property name="nonUser" type="java.lang.String" lazy="false" column="nonUser"/-->
+
+        <property name="userName" type="java.lang.String" not-null="true"/>
+	    <!--many-to-one name="user" class="org.buni.meldware.calendar.data.User" lazy="false" column="userName" not-null="false"/-->
+	    <many-to-one name="event" class="org.buni.meldware.calendar.data.CalendarEvent" lazy="false" column="recordId"/>
+		           
+        <property name="status" type="int" not-null="true"/>
+        
+    </class>
+            
+    <class name="org.buni.meldware.calendar.data.CalendarEvent" table="calendarevent">
+        
+        <id name="recordId" type="java.lang.Long">
+	    	<meta attribute="use-in-equals"/>
+	    	<meta attribute="use-in-tostring"/>
+	    	<generator class="native"/>
+        </id>
+        
+        <version name="version" insert="false">
+            <column name="version" default="0"/>
+        </version>
+        
+        <property name="GUID" type="string">
+	        <meta attribute="use-in-equals"/>
+	    	<meta attribute="use-in-tostring"/>
+	        <column name="GUID" length="36"/>
+    	</property>
+    	<property name="createDate" type="timestamp" not-null="true"/>		
+	    <property name="title" type="string" not-null="true">
+	    	<meta attribute="use-in-tostring"/>
+	        <column name="title" length="100"/>
+    	</property>
+	    <property name="location" type="string">
+	    	<meta attribute="use-in-tostring"/>
+	        <column name="location" length="100"/>
+    	</property>
+	    <property name="seeURL" type="string">
+	    	<meta attribute="use-in-tostring"/>
+	        <column name="seeURL" length="200"/>
+    	</property>
+        <property name="startDate" type="timestamp" not-null="true"/>
+        <property name="endDate" type="timestamp" not-null="true"/>
+        <property name="lastModified" type="timestamp" not-null="true"/>
+        <property name="status" type="short" />
+        <property name="note" type="string">
+	    	<meta attribute="use-in-tostring"/>
+            <column name="note" length="2048"/>
+    	</property>
+    	<set name="invites" cascade="all" lazy="true">
+            <key column="recordId"/>
+     	    <one-to-many class="org.buni.meldware.calendar.data.Invite"/>
+    	</set> 
+
+<set name="organizer" table="event_organizers">
+    <key column="organizer_id"/>
+    <element column="organizer_name" type="string"/>
+</set>
+    	<!--property name="organizer" type="java.lang.String" not-null="true"/-->
+    	                
+    </class>
+
+    <class name="org.buni.meldware.calendar.data.Task" table="calendartask">
+
+    	<id name="taskId" type="java.lang.Long">
+            <meta attribute="use-in-equals"/>
+	    	<meta attribute="use-in-tostring"/>
+            <generator class="native"/>
+        </id>
+
+        <version name="version" insert="false">
+            <meta attribute="use-in-tostring"/>
+            <column name="version" default="0"/>
+        </version>
+        
+        <property name="GUID" type="string">
+	        <meta attribute="use-in-equals"/>
+	    	<meta attribute="use-in-tostring"/>
+	        <column name="GUID" length="36"/>
+    	</property>
+
+    	<property name="userName" type="java.lang.String" not-null="true"/>
+	           
+        <property name="title" type="string" not-null="true">
+            <meta attribute="use-in-tostring"/>
+            <column name="title" length="100" not-null="true" unique="true"/>
+        </property>
+        <property name="status" type="int" not-null="true"/>
+        <property name="priority" type="int" not-null="true"/>
+        <property name="category" type="string" not-null="true">
+            <meta attribute="use-in-tostring"/>
+            <column name="category" length="50"/>
+    	</property>
+        <property name="note" type="string" not-null="true">
+            <meta attribute="use-in-tostring"/>
+            <column name="note" length="2048"/>
+    	</property>
+    	<property name="createDate" type="timestamp" not-null="true"/>
+<!--
+    	<property name="startDate" type="timestamp" not-null="true"/>
+    	<property name="completedDate" type="timestamp" not-null="true"/>
+-->
+    	<property name="dueDate" type="timestamp" not-null="true"/>
+    </class>          
+      
+</hibernate-mapping>

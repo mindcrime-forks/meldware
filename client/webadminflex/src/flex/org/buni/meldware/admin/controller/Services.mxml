@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cairngorm:ServiceLocator xmlns:mx="http://www.adobe.com/2006/mxml"
+                          xmlns:cairngorm="com.adobe.cairngorm.business.*">
+                          
+  <mx:HTTPService id="loginService"
+    url="j_security_check"
+    result="event.token.resultHandler(event)"
+    fault="event.token.faultHandler(event)"
+    showBusyCursor="true"
+    useProxy="false"/>
+    
+  <mx:HTTPService id="RPCService"
+    url="adminRPC"
+    result="event.token.resultHandler(event)"
+    fault="event.token.faultHandler(event)"
+    showBusyCursor="true"
+    useProxy="false"
+    method="POST"/>
+    
+  <mx:HTTPService id="XMLRPCService"
+    url="adminRPC"
+    showBusyCursor="true"
+    useProxy="false"
+    contentType="application/xml"
+    method="POST"/>
+  
+</cairngorm:ServiceLocator>

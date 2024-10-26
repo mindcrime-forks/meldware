@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+         creationComplete="initApp()">
+  
+  
+  	<mx:Script>
+		<![CDATA[
+			import org.buni.meldware.admin.controller.AdminController;
+			import org.buni.meldware.admin.model.UserVO;
+			
+			import org.buni.meldware.admin.model.ModelLocator;
+            import com.adobe.cairngorm.control.CairngormEventDispatcher;
+            import com.adobe.cairngorm.control.CairngormEvent;
+            
+            import mx.collections.IViewCursor;
+            
+			[Bindable]
+			public var model:ModelLocator = ModelLocator.getInstance();
+			
+			private function initApp():void {
+			       CairngormEventDispatcher.getInstance().addEventListener(AdminController.USER_DELETED,userDeleted);
+			}
+			
+			public function userDeleted(event:Event): void {
+			       
+			          model.users.removeItemAt(userList.selectedIndex);
+			       
+			   //    model.users.remove(userList.selectedItem as UserVO);
+			}
+
+            private function getUsers(event:Event=null):void {
+                   var e:CairngormEvent = new CairngormEvent(AdminController.GET_USERS);
+                   e.data = pattern.text;
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+            
+            private function deleteUser(event:Event):void {
+                   model.selectedUser = userList.selectedItem as UserVO;
+                   var e:CairngormEvent = new CairngormEvent(AdminController.DELETE_USER);
+                   e.data = userList.selectedItem as UserVO;
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+            
+            private function editUser(event:Event):void {
+                   model.selectedUser = userList.selectedItem as UserVO;
+                   var e:CairngormEvent = new CairngormEvent(AdminController.USER_DETAIL);
+                   e.data = userList.selectedItem as UserVO;
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+
+		]]>
+	</mx:Script>
+	
+  <mx:DataGrid id="userList" width="100%" height="100%" borderStyle="none" dataProvider="{model.users}">
+    <mx:columns>
+      <mx:DataGridColumn dataField="username"/>
+      <mx:DataGridColumn dataField="roles"/>
+      <mx:DataGridColumn dataField="aliases"/>
+    </mx:columns>
+  </mx:DataGrid>
+  
+  <mx:HBox>
+    <mx:TextInput id="pattern"/>
+    <mx:Button label="Search" click="getUsers(event)"/>
+    <mx:Button label="Edit" click="editUser(event)"/>
+    <mx:Button label="Delete" click="deleteUser(event)"/>
+  </mx:HBox>
+</mx:VBox>

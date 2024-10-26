@@ -1,0 +1,19 @@
+<server>
+
+ <mbean name="buni.meldware:service=OpenDS" 
+        code="org.buni.meldware.integration.opends.OpenDSService"
+        interface="org.buni.meldware.integration.opends.OpenDS">
+        <attribute name="ConfigFile">${jboss.home.dir}/server/meldware/deploy/address.ear/opends.sar/config/config.ldif</attribute>
+        <attribute name="RootDir">${jboss.home.dir}/server/meldware/deploy/address.ear/opends.sar</attribute>
+ </mbean> 
+
+ <mbean name="meldware.mail:type=MailServices,name=OpenDSUserEditor"
+        code="org.buni.meldware.integration.opends.usereditor.OpenDSUserEditorImpl"
+        interface="org.buni.meldware.integration.opends.usereditor.OpenDSUserEditor">
+     <depends optional-attribute-name="OpenDS" proxy-type="attribute">buni.meldware:service=OpenDS</depends>
+     <attribute name="UserRoot">ou=People,dc=buni,dc=org</attribute>
+     <attribute name="RolesRoot">ou=Roles,dc=buni,dc=org</attribute>
+ </mbean>
+
+
+</server>

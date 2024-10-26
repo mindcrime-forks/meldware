@@ -1,0 +1,77 @@
+<!-- ========================================================== -->
+<!-- TARGET:build                                               -->
+<!--                                                            -->
+<!-- Build general target to build only                         -->
+<!-- Compiles the webmail Flex app                              -->
+<!-- ========================================================== -->
+<target name="build" depends="uptodateCheck" unless="uptodate">
+  <condition property="flex.exists">
+    <available file="${flex.home}/lib/mxmlc.jar" />
+  </condition>
+  <antcall target="flexExists" />
+  <antcall target="flexDoesNotExist" />
+</target>
+
+<target name="uptodateCheck">
+  <uptodate property="uptodate" targetfile="build/${module}.swf">
+    <srcfiles dir="src/flex" includes="**/**" />
+  </uptodate>
+</target>
+
+<target name="flexExists" if="flex.exists">
+  <java jar="${flex.home}/lib/mxmlc.jar" outputproperty="flex.version" fork="true">
+    <arg value="--version"/>
+  </java>
+  <condition property="flex.correctVersion">
+    <contains string="${flex.version}" substring="Version 2.0.1"/>
+  </condition>
+  <antcall target="flexCorrectVerson" />
+  <antcall target="flexIncorrectVersion" />
+</target>
+
+<target name="flexCorrectVerson" if="flex.correctVersion">
+  <java jar="${flex.home}/lib/mxmlc.jar" fork="true" failonerror="true"
+    maxmemory="128m">
+    <jvmarg value="-Dapplication.home=${flex.home}" />
+    <arg line="-debug=${debug.flex} -optimize=${optimize.flex} -file-specs src/flex/${module}.mxml ${module.libs} -output build/${module}.swf" />
+  </java>
+</target>
+
+<target name="flexDoesNotExist" unless="flex.exists">
+  <echo
+    message="In order to compile the Flex code, you need to set FLEX_HOME to the Flex SDK dir. You can get the flex framework by downloading the Flex SKD 2.0.1 from http://www.adobe.com/go/devcenter_flex_try" />
+</target>
+
+<target name="flexIncorrectVersion" unless="flex.correctVersion">
+  <fail message="You must use the Flex SDK version 2.0.1"/>
+</target>
+
+
+<!-- ========================================================== -->
+<!-- TARGET:clean                                               -->
+<!--                                                            -->
+<!-- Clean upp app generated files                              -->
+<!-- ========================================================== -->
+<target name="clean">
+  <echo>CLEANING UP ${module}</echo>
+  <delete dir="build" />
+  <delete dir="dist" />
+</target>
+
+<!-- ========================================================== -->
+<!-- TARGET:deploy                                              -->
+<!--                                                            -->
+<!-- Build, deploy general target                               -->
+<!-- ========================================================== -->
+<target name="deploy">
+  <echo>Deploy app for ${module}</echo>
+</target>
+
+<!-- ========================================================== -->
+<!-- TARGET:buildTest                                           -->
+<!--                                                            -->
+<!-- Build, deploy, test general target                         -->
+<!-- ========================================================== -->
+<target name="test">
+  <echo>Run unit test for ${module}</echo>
+</target>

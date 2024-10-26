@@ -1,0 +1,192 @@
+void start() {
+   System.err.println("************************* RUN ONCE ******************");
+   String runoncebsh = getJBossConfig() + java.io.File.separator + "deploy" + java.io.File.separator + "runonce.bsh";
+   String runoncebshto = getJBossConfig() + java.io.File.separator + "conf" + java.io.File.separator + "runonce.bsh";
+   java.io.File file = new java.io.File(runoncebsh);
+   java.io.File fileto = new java.io.File(runoncebshto);
+   if (fileto.exists()) {
+         System.err.println("not running RUN ONCE again, just delete");
+         file.delete(); 
+         return;
+   }
+   javax.management.MBeanServer server = org.jboss.mx.util.MBeanServerLocator.locateJBoss();
+       initAddressBook(server);
+       createUsers(server);
+       createRoles(server);
+       createProfiles(server);
+       //createMailboxes(server);
+/*   java.io.File cal = new File(getJBossConfig() + java.io.File.separator +
+                               "deploy" + java.io.File.separator +
+                               "calendar.ear" + java.io.File.separator + 
+                               "META-INF" + java.io.File.separator + 
+                               "application.xml");
+*/
+//   cal.setLastModified(System.currentTimeMillis());
+   System.err.println("************************* RUN ONCE MOVE *************");
+   System.err.println("moving: "+runoncebsh+" to " + runoncebshto);
+
+   
+   boolean success = file.renameTo(fileto);
+   System.err.println("moved: "+runoncebsh+" success = "+success);
+}
+
+void createProfiles(javax.management.MBeanServer server) throws Exception {
+   javax.management.ObjectName on = new javax.management.ObjectName("meldware.base:type=UserProfileService,name=UserProfileService");
+   String operation = "createUserProfile";
+   String[] signature = new String[]{String.class.getName(), String.class.getName(), java.util.Set.class.getName()};
+   String[] users = getUsers();
+
+   for (int i = 0; i < users.length; i++) {
+       java.util.Set aliases = new java.util.HashSet();
+       aliases.add(users[i]);
+       aliases.add(users[i]+"@localhost");
+       Object[] parms = new Object[] {users[i], users[i]+"@localhost", aliases};
+       server.invoke(on, operation, parms, 
+                     signature); 
+   }
+}
+
+
+void createUsers(javax.management.MBeanServer server) throws Exception {
+   javax.management.ObjectName on = new javax.management.ObjectName("meldware.mail:type=MailServices,name=UserEditor");
+   String operation = "addUser";
+   String[] signature = new String[]{String.class.getName(), String.class.getName()};
+   String[] users = getUsers();
+   String[] passwords = getPasswords();
+
+   for (int i = 0; i < users.length; i++) {
+       Object[] parms = new Object[] {users[i], passwords[i]};
+       server.invoke(on, operation, parms, 
+                     signature); 
+   }
+}
+
+void createMailboxes(javax.management.MBeanServer server) throws Exception {
+   javax.management.ObjectName on = new javax.management.ObjectName("meldware.mail:type=MailboxManager,name=MailboxManager");
+   String operation = "getMailboxIdByAlias";
+   String operation2 = "createAlias";
+   String[] signature = new String[]{String.class.getName()};
+   String[] signature2 = new String[]{long.class.getName(),String.class.getName()};
+   String[] users = getUsers();
+
+   for (int i = 0; i < users.length; i++) {
+       Object[] parms = new Object[] {users[i]};
+       Long l = (Long)server.invoke(on, operation, parms, 
+                     signature); 
+       Object[] parms2 = new Object[] {l, users[i]+"@localhost"};
+       Long l = (Long)server.invoke(on, operation2, parms2, 
+                     signature2); 
+   }
+}
+
+void createRoles(javax.management.MBeanServer server) throws Exception {
+   javax.management.ObjectName on = new javax.management.ObjectName("meldware.mail:type=MailServices,name=UserEditor");
+   String operation = "addRole";
+   String[] signature = new String[]{String.class.getName(), String.class.getName()};
+   String[] users = getUsers();
+   Object[] roles = getRoles();
+
+   for (int i = 0; i < users.length; i++) {
+       String[] userRoles = (String[])roles[i];
+       for (int j = 0; userRoles !=null && j < userRoles.length; j++) {
+           Object[] parms = new Object[] {users[i], userRoles[j]};
+           server.invoke(on, operation, parms, 
+                     signature); 
+       }
+   }
+}
+
+void initAddressBook(javax.management.MBeanServer server) throws Exception {
+   javax.management.ObjectName on = new javax.management.ObjectName("buni.meldware:service=OpenDS");
+   String operation = "importLDIF";
+   String[] signature = new String[]{String.class.getName(), String.class.getName(), String.class.getName(), String.class.getName()};
+   String user = "cn=Directory Manager";
+   String password = "${ADMIN_PASSWORD}";
+   String backend = "userRoot";
+   String jbhome = System.getProperty("jboss.home.dir");
+   String path = jbhome+"/server/${SERVER_CONFIG}/deploy/address.ear/opends.sar/config/buniStructural.ldif";
+   Object[] parms = new Object[] {user, password, backend, path};
+   server.invoke(on, operation, parms, 
+                     signature); 
+}
+
+String[] getUsers() {
+   java.util.List usersList = new java.util.ArrayList();
+
+#if($GENERATE_CALENDAR_MAILER.equals("true"))
+usersList.add("${CALENDAR_MAILER_NAME}");
+#end
+#if($ADMIN_USER.equals("") == false)
+usersList.add("${ADMIN_USER}");
+#end
+#if($USER_NAME_1.equals("") == false)
+usersList.add("${USER_NAME_1}");
+#end
+#if($USER_NAME_2.equals("") == false)
+usersList.add("${USER_NAME_2}");
+#end
+#if($USER_NAME_3.equals("") == false)
+usersList.add("${USER_NAME_3}");
+#end
+#if($USER_NAME_4.equals("") == false)
+usersList.add("${USER_NAME_4}");
+#end
+
+
+   return (String[])usersList.toArray(new String[]{});
+}
+
+String[] getPasswords() {
+java.util.List passList = new java.util.ArrayList();
+
+#if($GENERATE_CALENDAR_MAILER.equals("true"))
+passList.add("${CALENDAR_MAILER_PASSWORD}");
+#end
+#if($ADMIN_USER.equals("") == false)
+passList.add("${ADMIN_PASSWORD}");
+#end
+#if($USER_NAME_1.equals("") == false)
+passList.add("${USER_PASSWORD_1}");
+#end
+#if($USER_NAME_2.equals("") == false)
+passList.add("${USER_NAME_2}");
+#end
+#if($USER_NAME_3.equals("") == false)
+passList.add("${USER_NAME_3}");
+#end
+#if($USER_NAME_4.equals("") == false)
+passList.add("${USER_NAME_4}");
+#end
+
+return (String[]) passList.toArray(new String[]{});
+}
+
+Object[] getRoles() {
+List roles = new java.util.ArrayList();
+
+#if($GENERATE_CALENDAR_MAILER.equals("true"))
+   roles.add(new String[]{"calendaruser","calendaradmin","adminuser"});
+#end
+#if($ADMIN_USER.equals("") == false)
+   roles.add(new String[]{"adminuser","calendaradmin"});
+#end
+#if($USER_NAME_1.equals("") == false)
+   roles.add(new String[]{"calendaruser","adminuser", "mailuser"});
+#end
+#if($USER_NAME_2.equals("") == false)
+   roles.add(new String[]{"calendaruser","adminuser", "mailuser"});
+#end
+#if($USER_NAME_3.equals("") == false)
+   roles.add(new String[]{"calendaruser","adminuser", "mailuser"});
+#end
+#if($USER_NAME_4.equals("") == false)
+   roles.add(new String[]{"calendaruser","adminuser", "mailuser"});
+#end
+
+   return (Object[])roles.toArray(new Object[]{});
+}
+
+String getJBossConfig() {
+   String s = java.io.File.separator;
+   return "server" + s + "${SERVER_CONFIG}" ;
+}

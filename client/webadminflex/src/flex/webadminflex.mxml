@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+  xmlns:controller="org.buni.meldware.admin.controller.*"
+  xmlns:view="org.buni.meldware.admin.view.*"
+  creationComplete="initApp()"
+  backgroundColor="#ffffff"
+  backgroundGradientColors="[0xffffff,0xffffff]"
+  >
+  
+  <mx:Script>
+    <![CDATA[
+    import mx.events.PropertyChangeEvent;
+    import mx.core.UIComponent;
+    import mx.controls.Alert;
+    import mx.events.ItemClickEvent;
+    import mx.managers.PopUpManager;
+    import mx.core.Container;
+    
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+    import com.adobe.cairngorm.control.CairngormEvent;
+
+	import org.buni.meldware.admin.controller.AdminController;
+    import org.buni.meldware.admin.model.ModelLocator;
+    import org.buni.meldware.admin.view.*;
+
+    [Bindable]
+    public var model:ModelLocator = ModelLocator.getInstance();
+        
+    private function initApp():void {
+      trace("initApp called");
+      model.addEventListener("userChanged",checkLogin);
+
+      // try to get the user because we might already be logged in
+      var eu:CairngormEvent = new CairngormEvent(AdminController.GET_USER);
+      CairngormEventDispatcher.getInstance().dispatchEvent(eu);
+      CairngormEventDispatcher.getInstance().addEventListener(AdminController.USER_DETAIL,editUser);
+      CairngormEventDispatcher.getInstance().addEventListener(AdminController.SERVICE_DETAIL,editService);
+      CairngormEventDispatcher.getInstance().addEventListener(AdminController.THREADPOOL_DETAIL,editThreadPool);
+      CairngormEventDispatcher.getInstance().addEventListener(AdminController.PROTOCOL_DETAIL,editProtocol);
+      CairngormEventDispatcher.getInstance().addEventListener(AdminController.MAILLIST_DETAIL,mailListMembers);  
+      
+//      CairngormEventDispatcher.getInstance().dispatchEvent(e);
+    }
+
+    private function checkLogin(event:Event):void {
+      trace("checkLogin called");
+      if (model.user != null) {
+        this.currentState = "loggedIn";
+           var e:CairngormEvent = new CairngormEvent(AdminController.GET_USERREPOSITORIES);
+           var e2:CairngormEvent = new CairngormEvent(AdminController.GET_DOMAINGROUPS);
+           var data:Object = new Object();
+           data.local = true;
+           e2.data = data;
+           var e3:CairngormEvent = new CairngormEvent(AdminController.GET_SSLDOMAINS);
+           var e4:CairngormEvent = new CairngormEvent(AdminController.GET_MAILLISTENERCHAINS);
+           var e5:CairngormEvent = new CairngormEvent(AdminController.GET_MAILBOXMANAGERS);
+           var e6:CairngormEvent = new CairngormEvent(AdminController.GET_MAILBODYMANAGERS);
+           var e7:CairngormEvent = new CairngormEvent(AdminController.GET_PROTOCOLS);
+           var e8:CairngormEvent = new CairngormEvent(AdminController.GET_THREADPOOLS);
+           var e9:CairngormEvent = new CairngormEvent(AdminController.GET_SERVICES);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e2);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e3);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e4);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e5);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e6);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e7);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e8);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e9);
+      } else {
+        this.currentState = "loggedOut";
+      }
+    }
+ 
+      public function mailListMembers(event:Event):void {
+        model.lastStatus =  null;
+        showView("MailListMembersView");
+    }
+ 
+     public function listMailLists(event:Event):void {
+        model.lastStatus =  null;
+        showView("MailListView");
+    }
+    
+    public function editProtocol(event:Event):void {
+        model.lastStatus =  null;
+        showView("ProtocolEditView");
+    }
+    
+    public function editUser(event:Event):void {
+        model.lastStatus =  null;
+        showView("UserEditView");
+    }
+
+    public function editService(event:Event):void {
+        model.lastStatus =  null;
+        showView("ServiceEditView");
+    }
+    
+    public function editThreadPool(event:Event):void {
+        model.lastStatus =  null;
+        showView("ThreadPoolEditView");
+    }
+
+    private function logout(event:Event):void {
+      var e:CairngormEvent = new CairngormEvent(AdminController.LOGOUT_USER);
+            CairngormEventDispatcher.getInstance().dispatchEvent(e);
+    }
+  
+    private function treeChanged(event:Event):void {
+      showView((event.target as Tree).selectedItem.@view);
+    }
+
+    private function showView(viewName:String):void {
+
+        mainBox.removeAllChildren();
+        model.lastStatus = null;
+        
+      var newView:Container;
+      
+      if (viewName == "UserListView") {
+        newView = new UserListView();
+      } else if (viewName == "UserEditView") {
+        newView = new UserEditView();
+      } else if (viewName == "UserAddView") {
+        newView = new UserAddView(); 
+      } else if (viewName == "ServiceListView") {
+        newView = new ServiceListView();
+      } else if (viewName == "ServiceAddView") {
+        newView = new ServiceAddView();
+      } else if (viewName == "ServiceEditView") {
+        newView = new ServiceEditView();
+      } else if (viewName == "ProtocolAddView") {
+        newView = new ProtocolAddView();
+      } else if (viewName == "ProtocolListView") {
+        newView = new ProtocolListView();
+      } else if (viewName == "ThreadPoolListView") {
+        newView = new ThreadPoolListView();
+      } else if (viewName == "VirtualHostListView") {
+        newView = new VirtualHostListView();
+      } else if (viewName == "ThreadPoolListView") {
+        newView = new ThreadPoolListView();
+      } else if (viewName == "ThreadPoolAddView") {
+        newView = new ThreadPoolAddView();
+      } else if (viewName == "ThreadPoolEditView") {
+        newView = new ThreadPoolEditView();
+      } else if (viewName == "ProtocolEditView") {
+        newView = new ProtocolEditView();
+      } else if (viewName == "MailListView") {
+        newView = new MailListView();
+      } else if (viewName == "MailListAddView") {
+        newView = new MailListAddView();
+      } else if (viewName == "MailListMembersView") {
+        newView = new MailListMembersView();
+      }
+      
+      if (newView == null) {
+        newView = new AdminWelcomeView();
+      }
+      
+      newView.percentWidth = 100;
+      newView.percentHeight = 100;
+      
+      mainBox.addChild(newView);
+
+    }
+        
+    ]]>
+  </mx:Script>
+  
+  <mx:Style source="assets/style.css"/>
+
+  <controller:AdminController id="adminController"/>
+  <controller:Services id="services"/>
+
+  <mx:Canvas id="main" y="50" width="100%" height="100%">
+    <mx:Box id="login" width="100%" height="100%" visible="false" horizontalAlign="center" paddingTop="20">
+      <view:LoginView/>
+    </mx:Box>
+  </mx:Canvas>
+
+  <mx:XMLList id="commandList">
+    <node label="Basic Configuration" expanded="true">
+      <node label="Virtual Host Configuration" view="VirtualHostListView"/>
+    </node>
+    <node label="Users">
+      <node label="List Users" view="UserListView"/>
+      <node label="Add New User" view="UserAddView"/>
+    </node>    
+    <node label="MailLists">
+      <node label="List Mail Lists" view="MailListView"/>
+      <node label="Add New Mail List" view="MailListAddView"/>
+    </node>    
+    <node label="Thread Pool Configurations">
+      <node label="List Thread Pools" view="ThreadPoolListView"/>
+      <node label="Add New Thread Pool" view="ThreadPoolAddView"/>
+    </node>
+    <node label="Protocol Configurations">
+      <node label="List Protocols" view="ProtocolListView"/>
+      <node label="Add New Protocol" view="ProtocolAddView"/>
+    </node>
+    <node label="Services">
+      <node label="List Services" view="ServiceListView"/>
+      <node label="Add New Service" view="ServiceAddView"/>
+    </node>
+
+
+    <!--
+    <node label="User Respository Configurations">
+      <node label="List Thread Pools" view="UserListView"/>
+      <node label="Add New Thread Pool" view="ThreadPoolAddView"/>
+    </node>
+    -->
+  </mx:XMLList>
+
+
+  <mx:states>
+    <mx:State name="loggedOut">
+      <mx:SetProperty target="{login}" name="visible" value="true"/>
+    </mx:State>
+    <mx:State name="loggedIn">
+      <mx:SetProperty target="{login}" name="visible" value="false"/>
+      <mx:AddChild relativeTo="{main}" position="firstChild">
+          <mx:Panel width="100%" height="100%" title="Meldware Communication Suite - Admin Console" paddingTop="10">
+              <mx:HDividedBox width="100%" height="100%">
+                  <mx:Tree id="menuTree" width="200" height="100%" dataProvider="{commandList}" openItems="{commandList}" labelField="@label" change="treeChanged(event)"/>
+                  <mx:Box id="mainBox" width="100%" height="100%" borderStyle="solid">
+                      <view:AdminWelcomeView width="100%" height="100%"/>
+                  </mx:Box>
+              </mx:HDividedBox>
+          </mx:Panel>
+      </mx:AddChild>
+    </mx:State>
+  </mx:states>
+
+  
+</mx:Application>

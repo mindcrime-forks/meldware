@@ -1,0 +1,52 @@
+<!DOCTYPE project [
+    <!ENTITY propload SYSTEM "../../ant/propload.xml">
+    <!ENTITY earbuild SYSTEM "../../ant/earbuild.xml">
+    <!ENTITY texenbuild SYSTEM "../../ant/texenbuild.xml">
+]>
+<project name="mailear">
+    <tstamp/>
+	&propload;
+	<property name="module" value="mail" />
+	<property name="module.deploy.dir" value="mail.ear"/>
+	<path>
+	    <!-- All of the libraries to be included in the final ear -->
+	    <fileset id="ear.classpath" dir="${folder.libs}">
+	        <include name="${libs.dnsjava}"/>
+	        <include name="${libs.ristretto}"/>
+            <include name="${libs.fastutil}"/>
+            <include name="${libs.guice}"/>   
+            <include name="${libs.jasen}"/>   
+	        <include name="${libs.buni-filestore}"/>
+	    	<include name="${libs.buni-s3filestore}"/>
+            <include name="${libs.buni-panto}"/>
+            <include name="${libs.junit}"/>
+            <include name="${libs.jgroups}"/>   
+	    </fileset>
+	</path>
+    &earbuild;  
+    
+	<target name="addToEar">
+		<mkdir dir="build/mailapi.jar" />
+		<unjar dest="build/mailapi.jar" src="../mailapi/dist/mailapi.jar"/>
+
+		<mkdir dir="build/mailbeans.jar" />
+		<unjar dest="build/mailbeans.jar" src="../mailbeans/dist/mailbeans.jar"/>
+
+		<mkdir dir="build/mailejb.jar" />
+		<unjar dest="build/mailejb.jar" src="../mailejb/dist/mailejb.jar"/>
+
+	    <!--
+		<mkdir dir="build/mailjca.rar" />
+		<unjar dest="build/mailjca.rar" src="../mailjca/dist/mailjca.rar"/>
+		-->
+	    
+		<mkdir dir="build/mailjmx.sar" />
+		<unjar dest="build/mailjmx.sar" src="../mailjmx/dist/mailjmx.sar"/>
+	    
+		<mkdir dir="build/mailtest.sar" />
+		<unjar dest="build/mailtest.sar" src="../mailtest/dist/mailtest.sar"/>
+	</target>
+	
+    &texenbuild;
+
+</project>

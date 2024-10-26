@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<!-- Define reference to file containing common targets -->
+<project name="mail-izpack-ssl-gen" default="genssl-true" basedir="${INSTALL_PATH}" >
+
+  <target name="genssl-true">
+      <echo>Generating Keystore</echo>
+      <echo>INSTALL_PATH is ${INSTALL_PATH}</echo>
+      <echo>SERVER_CONFIG is ${SERVER_CONFIG}</echo>
+      <echo>KEYSTORE_PATH is ${KEYSTORE_PATH}</echo>
+      <echo>KEYSTORE_CN is ${KEYSTORE_CN}</echo>
+      <echo>KEYSTORE_OU is ${KEYSTORE_OU}</echo>
+      <echo>KEYSTORE_O is ${KEYSTORE_O}</echo>
+      <echo>KEYSTORE_L is ${KEYSTORE_L}</echo>
+      <echo>KEYSTORE_ST is ${KEYSTORE_ST}</echo>
+      <echo>KEYSTORE_C is ${KEYSTORE_C}</echo>
+         <genkey alias="jboss-mail" storepass="${KEYSTORE_PASS}" keystore="${INSTALL_PATH}/server/${SERVER_CONFIG}/conf/${KEYSTORE_PATH}" keyalg="rsa" verbose="true">
+             <dname>
+                 <param name="CN" value="${KEYSTORE_CN}"/>
+                 <param name="OU" value="${KEYSTORE_OU}"/>
+                 <param name="O"  value="${KEYSTORE_O}"/>                 
+                 <param name="L"  value="${KEYSTORE_L}"/>
+                 <param name="ST"  value="${KEYSTORE_ST}"/>
+                 <param name="C"  value="${KEYSTORE_C}"/>
+             </dname>
+          </genkey>
+  </target>
+
+  <target name="genssl-false">
+    <echo>Not Generating Keystore</echo>
+  </target>
+</project>
+

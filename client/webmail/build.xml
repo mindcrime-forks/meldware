@@ -1,0 +1,57 @@
+<!DOCTYPE project [
+    <!ENTITY warbuild SYSTEM "../../ant/warbuild.xml">
+<!ENTITY propload SYSTEM "../../ant/propload.xml">
+]>
+
+<project name="webmail" default="build">
+	<tstamp />
+	&propload;
+    <property name="module" value="webmail" />
+	<property name="module.deploy.dir" value="webmail.war"/>
+	
+	<path id="war.classpath">
+		<fileset id="war.webinf.lib" dir="${folder.libs}">
+			<include name="${libs.commons.logging}" />
+		</fileset>
+	</path>
+
+	<path id="war.ejbref">
+    	<pathelement location="../../common/meldwarebeans/dist/meldwarebeans.jar"/>
+    	<pathelement location="../../common/meldwarebeans/build/jar"/>
+    	<pathelement location="../../common/meldwarebase/build/sar"/>
+        <pathelement location="${basedir}/../../address/addressjmx/build/sar"/>
+               <pathelement location="${basedir}/../../common/meldwarebeans/dist/meldwarebeans.jar"/>
+		<fileset dir="../../">
+			<include name="calendar/calendarejb/dist/calendarejb_export.jar" />
+			<include name="calendar/calendarbeans/dist/calendarbeans.jar" />
+			<include name="mail/mailapi/dist/mailapi.jar" />
+			<include name="mail/mailbeans/dist/mailbeans.jar" />
+		</fileset>
+	    <!-- TODO: Refactor mail code to remove this -->
+		<pathelement location="../../mail/mailjmx/build/sar"/>
+        <fileset dir="${jboss.folder.default.lib}">
+            <include name="${libs.jboss.ejb3-persistence}"/>
+            <include name="${libs.jboss.hibernate.annotations}"/>
+        </fileset>
+	</path>
+
+    &warbuild;  
+
+    <!-- ========================================================== -->
+	<!-- TARGET:generate_source                                     -->
+	<!--                                                            -->
+	<!-- Run code generator                                         -->
+	<!-- ========================================================== -->
+	<target name="generate_source">
+		<echo>Code generation complete</echo>
+	</target>
+
+    <target name="processTemplates">
+        
+    </target>
+    
+    <target name="addToWar">
+    	<copy file="../webmailflex/build/webmail.swf" todir="build/war" failonerror="no"/>
+	</target>
+
+</project>

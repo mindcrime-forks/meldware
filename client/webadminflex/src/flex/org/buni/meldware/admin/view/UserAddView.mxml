@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"	 width="100%" height="100%"
+creationComplete="initComp()">
+  <mx:Script>
+  	<![CDATA[
+  		import org.buni.meldware.admin.model.SystemABMountVO;
+  		import mx.collections.ArrayCollection;
+  		import org.buni.meldware.admin.model.AddressBookEntryVO;
+  	import com.adobe.cairngorm.control.CairngormEvent;
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+    import org.buni.meldware.admin.controller.AdminController;
+    import org.buni.meldware.admin.model.UserVO;
+    import org.buni.meldware.admin.model.ModelLocator;
+
+    [Bindable]
+    public var model:ModelLocator = ModelLocator.getInstance();
+    private var previous:Boolean = false;
+    public function initComp(): void {
+           CairngormEventDispatcher.getInstance().addEventListener(AdminController.USER_ADDED,clear);
+           var e:CairngormEvent = new CairngormEvent(AdminController.GET_ABMOUNTS);     
+           CairngormEventDispatcher.getInstance().dispatchEvent(e);
+    }
+    
+    public function clear(event:Event): void {
+      	  username.text = "";
+      	  password.text = "";
+      	  defaultAlias.text = "";
+      	  roles.text = "";
+      	  aliases.text = "";
+    }
+  	
+  	  public function save(event:Event):void {
+          var user:UserVO = new UserVO();
+          user.defaultAlias = defaultAlias.text;
+          user.username = username.text;
+          user.password = password.text;
+          user.roles = roles.text;
+          user.aliases = aliases.text;
+          
+          var ldap:AddressBookEntryVO = new AddressBookEntryVO();
+          ldap.username = this.username.text;
+          ldap.fullName = this.fullnameText.text;
+          ldap.givenName = this.firstnameText.text;
+          ldap.surname = this.lastnameText.text;
+          ldap.mail = new ArrayCollection();
+          ldap.mail.addItem(this.defaultAlias.text);
+          ldap.postalAddress = this.addressText.text;
+          ldap.telephoneNumber = this.telephoneText.text;
+          ldap.mobile = this.mobileText.text;
+          ldap.pager = this.pagerText.text;
+          ldap.password = this.password.text;
+          //do email addresses
+          
+          var e:CairngormEvent = new CairngormEvent(AdminController.ADD_USER);
+          e.data = user;       
+          CairngormEventDispatcher.getInstance().dispatchEvent(e);
+          var e:CairngormEvent = new CairngormEvent(AdminController.ADD_LDAP);
+          e.data = new Object();
+          e.data.ldap = ldap;
+          e.data.addressBookName = (model.systemABMounts.getItemAt((this.addressBookNameCombo.selectedIndex)) as SystemABMountVO).name;
+          CairngormEventDispatcher.getInstance().dispatchEvent(e);
+      }
+      
+      public function makeAbVisible():void {
+      		if (this.addLdap.selected == true) {
+      			this.abEntryForm.visible = true;
+      		} else {
+      			this.abEntryForm.visible = false;
+      		}
+      }
+      
+      public function setFullName():void {
+      		if(!previous) {
+      			this.fullnameText.text = this.firstnameText.text + " "+ this.lastnameText;
+      		}
+      		previous = true;
+      }
+    ]]>
+  </mx:Script>
+
+
+  <mx:Form id="contactInput" width="100%" height="100%" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+    <mx:FormItem label="Name:" width="100%">
+		<mx:TextInput id="username" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Password:" width="100%">
+		<mx:TextInput id="password" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem label="Default Alias:" width="100%">
+		<mx:TextInput id="defaultAlias" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem label="Aliases" width="100%">
+		<mx:TextInput id="aliases" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Roles:" width="100%">
+		<mx:TextInput id="roles" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem>
+		<mx:CheckBox id="addLdap" label="Add To Addressbook" change="makeAbVisible()" />
+	</mx:FormItem>
+	<mx:Form visible="false" id="abEntryForm" width="100%" height="100%" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+            <mx:FormItem id="addressBookNameItem" label="AddressBook">
+            	<mx:ComboBox id="addressBookNameCombo" dataProvider="{model.systemABMounts}"/>
+            </mx:FormItem>
+
+			<mx:FormItem id="lastnameItem" label="Last Name">
+				<mx:TextInput id="lastnameText" />
+			</mx:FormItem>
+			
+			<mx:FormItem id="firstnameItem" label="First Name">
+				<mx:TextInput id="firstnameText"/>
+			</mx:FormItem>
+			
+			<mx:FormItem id="fullnameItem" label="Full Name">
+				<mx:TextInput id="fullnameText" enter="setFullName()" click="setFullName()"/>
+			</mx:FormItem>
+			
+			<mx:FormItem id="addressItem" label="Postal Address">
+				<mx:TextArea id="addressText"/>
+			</mx:FormItem>
+			
+			<mx:FormItem id="telephoneItem" label="Phone Number">
+				<mx:TextInput id="telephoneText"/>
+			</mx:FormItem>
+			
+			<mx:FormItem id="mobileItem" label="Mobile Phone">
+				<mx:TextInput id="mobileText"/>
+			</mx:FormItem>		
+			
+			<mx:FormItem id="pagerItem" label="Pager Number">
+				<mx:TextInput id="pagerText"/>
+			</mx:FormItem>	
+	</mx:Form>
+	
+	<mx:ControlBar horizontalAlign="center" width="100%" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
+    		<mx:Button label="Save" click="save(event)" />
+    		<mx:Button label="Clear" click="clear(event)" />
+    </mx:ControlBar>
+    <mx:Label text="{model.lastStatus}" color="#f10000" paddingTop="10"/>
+  </mx:Form>  
+  
+</mx:VBox>
+

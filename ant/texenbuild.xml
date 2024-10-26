@@ -1,0 +1,18 @@
+    <target name="processTemplates">
+    	<echo message="Processing templates for: ${module}"/>
+    	<taskdef name="texen" classname="org.apache.velocity.texen.ant.TexenTask">
+    		<classpath>
+    			<fileset dir="${folder.libs}">
+    				<include name="${libs.commons.collection}" />
+    				<include name="${libs.log4j}" />
+    				<include name="${libs.hibernatetools.velocity}" />
+    			</fileset>
+    		</classpath>
+    	</taskdef>
+		<texen controlTemplate="control.vm" 
+		    outputDirectory="${jboss.home}/server/meldware" 
+		    templatePath="src/vm,${basedir}/../../installer/distribution/etc/test" 
+		    outputFile="${module}-report.log">
+		</texen>
+    </target>
+    

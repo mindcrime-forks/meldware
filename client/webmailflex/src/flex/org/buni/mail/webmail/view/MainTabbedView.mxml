@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="org.buni.mail.webmail.view.*" creationComplete="initComp()">
+
+	<mx:Script>
+		<![CDATA[
+		    import mx.core.UIComponent;
+		    import mx.events.IndexChangedEvent;
+		    import mx.core.Container;
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import mx.events.CollectionEvent;
+			import mx.events.CollectionEventKind;
+			import mx.events.ItemClickEvent;
+			
+            import com.adobe.cairngorm.control.CairngormEventDispatcher;
+			import com.adobe.cairngorm.control.CairngormEvent;
+
+			//import org.buni.mail.webmail.model.ContactVO;
+			import org.buni.mail.webmail.util.LabelUtil;
+			import org.buni.mail.webmail.model.EmailVO;
+			import org.buni.mail.webmail.model.ModelLocator;
+			import org.buni.mail.webmail.controller.WebmailController;
+			import org.buni.mail.webmail.model.Const;
+			
+			[Bindable]
+			public var model:ModelLocator;
+			
+			private var previousTabIndex:int = -1;
+
+			private function initComp():void
+			{
+				model = ModelLocator.getInstance();
+				model.tabs.addEventListener(CollectionEvent.COLLECTION_CHANGE,updateTabs);			
+			
+				model.addEventListener("selectedFolderChanged",selectedFolderChanged);
+				model.addEventListener("dayChanged",selectedDayChanged);
+				//model.selectedDay.addEventListener("change",selectCalendarTab);
+                var e:CairngormEvent = new CairngormEvent(WebmailController.GET_USER_ACTION_SETS);               
+                CairngormEventDispatcher.getInstance().dispatchEvent(e);
+                
+				CairngormEventDispatcher.getInstance().addEventListener(WebmailController.SHOW_AB_ENTRY,showABEntryView);
+				CairngormEventDispatcher.getInstance().addEventListener(WebmailController.SHOW_AB_SEARCH,showABView);
+            }
+            
+            public function showABEntryView(event:CairngormEvent):void {
+            	tabNav.selectedIndex = 3;
+            }
+            
+            public function showABView(event:CairngormEvent):void {
+            	tabNav.selectedIndex = 2;
+            }
+			
+			private function updateTabs(event:CollectionEvent):void
+			{
+				if (event.kind == CollectionEventKind.ADD)
+				{
+					for (var i1:int = 0; i1 < event.items.length; i1++)
+					{
+						if (event.items[i1] is EmailVO)
+						{
+							var e:EmailVO = event.items[i1] as EmailVO;
+							if (e.status == Const.NEW_EMAIL)
+							{
+							  var date:Date = new Date();
+							  e.id = date.time.toString();
+								var ec:EmailComposeView = new EmailComposeView();
+								ec.data = e;
+								tabNav.addChild(ec);
+								tabNav.selectedIndex = tabNav.numChildren - 1;
+							}
+							//else if ((e.status == Const.READ_EMAIL) || (e.status == Const.UNREAD_EMAIL))
+							else
+							{
+								var d:EmailDetailView = new EmailDetailView();
+								d = tabNav.addChild(d) as EmailDetailView;
+								d.data = e;
+								tabNav.selectedIndex = tabNav.numChildren - 1;
+							}
+						}
+					/*	else if (event.items[i1] is ContactVO)
+						{
+                          var c:ContactVO = event.items[i1] as ContactVO;
+                          if (c.status == Const.VIEW_CONTACT)
+                          {
+                            var cd:ContactDetailView = new ContactDetailView();
+                            cd.data = c;
+                            tabNav.addChild(cd);
+                            tabNav.selectedIndex = tabNav.numChildren - 1;
+                          }
+                          else
+                          {
+                            var ce:ContactEditView = new ContactEditView();
+                            ce.data = c;
+							tabNav.addChild(ce);
+							tabNav.selectedIndex = tabNav.numChildren - 1;
+							//if new contact set the state to new
+							if(ce.data.id<0)
+							    ce.currentState = "new";
+                          }
+						}*/
+					}
+					
+				}
+				else if (event.kind == CollectionEventKind.REMOVE)
+				{
+				  for (var i2:int = 0; i2 < event.items.length; i2++)
+					{
+					  for (var j:int = 2; j < tabNav.numChildren; j++)
+					  {
+					  	var xd:Object = (tabNav.getChildAt(j) as ITabView) == null ? null : (tabNav.getChildAt(j) as ITabView).data;
+					    if (xd != null && event.items[i2] == xd)
+					    {
+					      closeTab(j);
+					    }
+					  }
+					}
+				}
+				else if (event.kind == CollectionEventKind.RESET)
+				{
+				  tabNav.selectedIndex = 0;
+				  tabNav.validateNow();
+				  var n:Number = new Number(tabNav.numChildren);
+
+  			  for (var i3:int = 2; i3 < n; i3++)
+	  		  {
+	  		    tabNav.removeChildAt(2);
+			    }
+				}
+			}
+			
+			private function closeSelectedTab():void
+			{
+			  closeTab(tabNav.selectedIndex);
+			}
+			
+			private function closeTab(index:int):void
+			{
+			  if (index > 1)
+			  {
+			    if (previousTabIndex < tabNav.numChildren)
+			    {
+			      tabNav.selectedIndex = previousTabIndex;
+			    }
+			    else
+			    {
+			      tabNav.selectedIndex = index - 1;
+			    }
+			    tabNav.validateNow();
+			    tabNav.removeChildAt(index);
+			  }
+			}
+			
+			private function isCloseButtonEnabled(index:int):Boolean
+			{
+	      return (index > 1);
+			}
+      
+      private function tabChanged(event:IndexChangedEvent):void
+      {
+        previousTabIndex = event.oldIndex;
+      }
+      
+      private function selectedDayChanged(event:Event):void
+      {
+        if (previousTabIndex != -1)
+        {
+          tabNav.selectedIndex = 1;
+        }
+      }
+      
+      private function selectedFolderChanged(event:Event):void
+      {
+        if (previousTabIndex != -1)
+        {
+          tabNav.selectedIndex = 0;
+        }
+      }
+
+		]]>
+	</mx:Script>
+
+	<mx:TabNavigator id="tabNav" width="100%" height="100%" creationPolicy="all" historyManagementEnabled="false" paddingTop="-1" change="tabChanged(event)">
+			<view:EmailView width="100%" height="100%"/>
+			<view:AnimatedCalendarView width="100%" height="100%"/>
+			<view:ABSearch width="100%" height="100%"/>
+			<view:ABEntryView width="100%" height="100%"/> 
+	</mx:TabNavigator>
+	<mx:Button label="x" top="0" right="0" width="20" height="20" toolTip="Close Selected Tab" paddingLeft="0" paddingRight="0" click="closeSelectedTab()" enabled="{isCloseButtonEnabled(tabNav.selectedIndex)}"/>
+</mx:Canvas>

@@ -1,0 +1,481 @@
+/* global style sheet */
+
+
+Application { 
+   backgroundGradientAlphas: 0, 0;
+   themeColor: #EDE3CD;
+   color: #1D1D1D;
+   font-family: Tahoma;
+   font-size : 10;
+
+  /* border-color:#76b900;*/
+}
+
+VDividedBox {
+
+   bar-color: #514c4a;/*, #514c4a, #c0bebe, #514c4a;*/
+}
+
+
+.darkBackground {
+   background-color: #D6CDB2;
+}
+.lightBackground {
+   background-color: #FAF7F0;
+}
+
+
+ApplicationControlBar {
+   cornerRadius: 0;
+   fillAlphas: 1, 1;
+   fillColors: #5f0402, #7c0003;
+}
+
+
+/* PANELS */
+
+
+Panel { 
+   cornerRadius: 6;
+   headerHeight: 26;
+   borderThickness: 1;
+   borderAlpha: 1;
+   borderThicknessLeft: 0;
+   borderThicknessRight: 0;
+   borderThicknessTop: 0;
+   highlightAlphas: 0, 0.27;
+   borderStyle: undefined;
+   headerColors: #ffffff, #ede5ce;
+   footerColors: #ede5ce, #ffffff;
+   backgroundColor: #faf7f0;
+   borderColor: #d6cdb2;
+   titleStyleName: "myTitleStyle";
+} 
+
+Form {
+   backgroundColor: #D6CDB2;
+
+}
+
+Label {
+	font-family: Tahoma;
+	font-size : 11px;
+	font-weight :bold;
+	color: #5F5753;	
+}
+
+
+FormItem {
+   font-family: Tahoma;
+	font-size : 11px;
+	font-weight :bold;
+	color: #5F5753;
+
+}
+
+
+
+DataGrid {
+   alternatingItemColors: #faf7f0, #faf7f0;
+   headerColors: #d6cdb2, #d6cdb2;
+   horizontalGridLines: true;
+   horizontalGridLineColor: #d6cdb2;
+   verticalGridLines: false;
+   verticalGridLineColor: #d6cdb2;
+   useRollOver: true;
+   rollOverColor: #f3eedf;
+   textRollOverColor: #5f5753;
+   borderColor: #faf7f0;
+   selectionColor: #ede5ce;
+   color: #5f5753;
+   header-style-name :"myDataGridTitleStyle";
+   font-size : 11px;
+   font-weight :normal;
+   text-align:left;
+}
+
+.myDataGridTitleStyle {
+	font-family: Tahoma;
+	font-size : 11px;
+	font-weight :bold;
+}
+
+Tree {
+   alternatingItemColors: #faf7f0, #faf7f0;
+   headerColors: #d6cdb2, #d6cdb2;
+   horizontalGridLines: true;
+   horizontalGridLineColor: #d6cdb2;
+   verticalGridLines: false;
+   verticalGridLineColor: #d6cdb2;
+   useRollOver: true;
+   rollOverColor: #f3eedf;
+   textRollOverColor: #5f5753;
+   borderColor: #faf7f0;
+   selectionColor: #ede5ce;
+   color: #5f5753;
+   text-align:left;	
+   font-size : 11px;
+   font-weight :normal;
+}
+List {
+   alternatingItemColors: #faf7f0, #faf7f0;
+   headerColors: #d6cdb2, #d6cdb2;
+   horizontalGridLines: true;
+   horizontalGridLineColor: #d6cdb2;
+   verticalGridLines: false;
+   verticalGridLineColor: #d6cdb2;
+   useRollOver: true;
+   rollOverColor: #f3eedf;
+   textRollOverColor: #5f5753;
+   borderColor: #faf7f0;
+   selectionColor: #ede5ce;
+   color: #5f5753;
+   text-align:left;
+   header-style-name :"myDataGridTitleStyle";
+   font-size : 11px;
+   font-weight :normal;
+}
+
+
+Button { 
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #dfdcda, #a69d98, #c0bebe, #514c4a;
+   color: #faf7f0;
+   textRollOverColor: #ede5ce;
+   borderColor: #8c7f78;
+   themeColor: #514c4a;
+   corner-radius: 4;
+     font-size : 10px;
+   font-weight :bold;    
+   font-family : Tahoma;
+}
+
+PopUpButton {
+}
+
+.applicationBarButton {
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #c0bebe, #514c4a, #c0bebe, #514c4a;
+   color: #ede5ce;
+   textRollOverColor: #faf7f0;
+   borderColor: #8c7f78;
+   themeColor: #514c4a;
+   font-size : 10px;
+   font-weight :bold;    
+   font-family : Tahoma;
+}
+
+
+ButtonBar {
+   button-height: 18;
+   horizontalGap : 0;
+   buttonStyleName:"myButtonBar";
+}
+
+.myButtonBar {
+   	
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #dfdcda, #a69d98, #c0bebe, #514c4a;
+   color: #faf7f0;
+   textRollOverColor: #ede5ce;
+   borderColor: #8c7f78;
+   themeColor: #514c4a;
+   corner-radius: 4;
+     font-size : 10px;
+   font-weight :bold;    
+   font-family : Tahoma; 
+}
+
+
+/*  TABS */
+
+TabNavigator { 
+   horizontalGap: 1;
+   horizontalAlign: left;
+   paddingLeft: 0;
+   paddingRight: 0;
+   textAlign: center;
+   textIndent: 0;
+   backgroundAlpha: 1;
+   backgroundColor: #ffffff;
+   borderColor: #EDE3CD;
+   borderThickness: 2;
+   color: #1D1D1D;
+   font-family : Tahoma;
+   font-weight :normal;
+   font-size : 10 px;
+   selected-tab-text-style-name : "mySelectedTab";  
+   tabStyleName:"myTabs";
+}
+
+.myTabs {
+  
+   cornerRadius: 7;
+   highlightAlphas: 0.71, 0;
+   fillAlphas: 1, 1;
+   fillColors: #fbfbfb, #e1dbd9;
+   backgroundColor: #ede5ce;
+   borderColor: #cbc2be;
+   color: #a69d98;
+
+   selected-tab-text-style-name : "mySelectedTab";  
+   textRollOverColor: #0b333c;
+   themeColor: #EDE3CD;
+}
+.mySelectedTab {
+	color: #7c0003;
+	textRollOverColor: #7c0003;
+	fill-colors :#ffffff, #ede5ce;
+}
+
+
+
+VScrollBar { 
+   borderColor: #8c7f78;
+   highlightAlphas: 0.17, 0.14;
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #dfdcda, #a69d98, #c0bebe, #514c4a;
+   themeColor: #514c4a;
+   trackColors: #faf7f0, #d6cdb2;
+}
+HScrollBar { 
+   borderColor: #8c7f78;
+   highlightAlphas: 0.17, 0.14;
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #dfdcda, #a69d98, #c0bebe, #514c4a;
+   themeColor: #514c4a;
+   trackColors: #faf7f0, #d6cdb2;
+}
+
+
+DateChooser { 
+   cornerRadius: 6;
+   headerColors: #ffffff, #ede5ce;
+   highlightAlphas: 0, 0.28;
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #dfdcda, #a69d98, #c0bebe, #514c4a;
+   todayColor: #7c0003;
+   rollOverColor: #f3eedf;
+   selectionColor: #ede5ce;
+   color: #5f5753;
+   borderColor: #d6cdb2;
+   backgroundColor: #faf7f0;
+}
+
+
+
+
+
+Alert { 
+   cornerRadius: 6;
+   headerHeight: 26;
+   borderThickness: 1;
+   borderAlpha: 1;
+   borderThicknessLeft: 0;
+   borderThicknessRight: 0;
+   borderThicknessTop: 0;
+   highlightAlphas: 0, 0.27;
+   borderStyle: undefined;
+   headerColors: #ffffff, #ede5ce;
+   footerColors: #ede5ce, #ffffff;
+   backgroundColor: #faf7f0;
+   borderColor: #d6cdb2;
+   color: #5f5753;
+   title-style-name: "myTitleStyle";
+} 
+
+TitleWindow { 
+   cornerRadius: 6;
+   headerHeight: 26;
+   borderThickness: 1;
+   borderAlpha: 1;
+   borderThicknessLeft: 0;
+   borderThicknessRight: 0;
+   borderThicknessTop: 0;
+   highlightAlphas: 0, 0.27;
+   borderStyle: undefined;
+   headerColors: #ffffff, #ede5ce;
+   footerColors: #ede5ce, #ffffff;
+   backgroundColor: #faf7f0;
+   borderColor: #d6cdb2;
+   color: #5f5753;
+   titleStyleName: "myTitleStyle";
+} 
+
+.myTitleStyle {
+   color: #7c0003;
+   font-family: Tahoma;
+	font-size : 11px;
+	font-weight :bold;
+   }
+
+   
+
+
+Accordion { 
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #fbfbfb, #e1dbd9, #ffffff, #e1dbd9;
+   selectedFillColors: #faf7f0, #ede5ce;
+   backgroundColor: #faf7f0;
+   borderColor: #cbc2be;
+   color: #a69d98;
+   textSelectedColor: #7c0003;
+   selected-tab-text-style-name: "myTitleStyle";
+   
+}
+
+
+
+
+/* Form Elements */
+EmailInputField { 
+   color: #1D1D1D;
+   borderStyle: solid;
+   borderColor: #EDE3CD;
+   textAlign: left;
+   textIndent: 0;
+   font-size : 11px;
+   font-weight :normal;    
+}
+
+TextInput { 
+   color: #1D1D1D;
+   borderStyle: solid;
+   borderColor: #EDE3CD;
+   textAlign: left;
+   textIndent: 0;
+   font-size : 11px;
+   font-weight :normal;    
+}
+
+NumericStepper {
+   color: #1D1D1D;
+   borderStyle: solid;
+   borderColor: #EDE3CD;
+   cornerRadius: 0;
+   highlightAlphas: 0.04, 0;
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #EDE3CD, #EDE3CD, #EDE3CD, #EDE3CD;
+   themeColor: #EDE3CD;
+     font-size : 11px;
+   font-weight :normal;    
+}
+
+
+
+ComboBox {
+   color: #1D1D1D;
+   borderColor: #EDE3CD;
+   cornerRadius: 0;
+   highlightAlphas: 0.03, 0;
+   fillAlphas: 1, 1, 1, 1;
+   fillColors: #EDE3CD, #EDE3CD, #EDE3CD, #EDE3CD;
+   selectionColor: #D6D1C1;
+   textSelectedColor: #1D1D1D;
+   useRollOver: true;
+   textRollOverColor: #1D1D1D;
+   themeColor: #EDE3CD;
+     font-size : 11px;
+   font-weight :normal;    
+}
+
+CheckBox {
+   borderColor: #EDE3CD;
+   fillAlphas: 0, 0.4, 1, 0.65;
+   color: #1D1D1D;
+   textRollOverColor: #1D1D1D;
+   textSelectedColor: #1D1D1D;
+   themeColor: #EDE3CD;
+     font-size : 11px;
+   font-weight :normal;    
+}
+
+RadioButton {
+   borderColor: #EDE3CD;
+   fillAlphas: 0, 0.4, 1, 0.65;
+   color: #1D1D1D;
+   textRollOverColor: #1D1D1D;
+   textSelectedColor: #1D1D1D;
+   themeColor: #EDE3CD;
+     font-size : 11px;
+   font-weight :normal;    
+}
+
+
+
+/* OTHERS */
+/* TODO */
+MenuBar { 
+   borderColor: #76b900;
+   highlightAlphas: 0, 0;
+   header-colors : white;
+   fillAlphas: 1, 1;
+   fillColors: #d5f07d, #76b900;
+   rollOverColor: #e9f6cb;
+   selectionColor: #d5f07d;
+   color: #454587;
+   textRollOverColor: #454587;
+   textSelectedColor: #454587;
+   disabledColor: #d5f07d;
+   themeColor: #d5f07d;
+   border-alpha : 0;
+}
+
+
+
+HRule {
+   strokeColor: #E8E8E8;
+   shadowColor: #E8E8E8;
+   strokeWidth: 1;
+}
+
+/* TODO */ 
+
+LinkButton {
+   cornerRadius: 0;
+   rollOverColor: #d5f07d;
+   selectionColor: #d5f07d;
+   color: #454587;
+   textRollOverColor: #454587;
+   textSelectedColor: #454587;
+}
+
+/* TODO */ 
+ProgressBar {
+   borderColor: #76b900;
+   barColor: #76b900;
+   trackColors: #d5f07d, #d5f07d;
+   color: #454587;
+   textIndent: 0;
+   trackHeight: 10;
+   verticalGap: 0;
+}
+
+
+
+
+TextArea { 
+   fontFamily: myriad;
+   fontSize: 11;
+   color: #1D1D1D;
+   fontWeight: normal;
+   fontStyle: normal;
+   textDecoration: none;
+   textAlign: left;
+   paddingLeft: 3;
+   paddingRight: 0;
+   leading: 0;
+   textIndent: 0;
+   borderColor: #EDE3CD;
+}
+
+.errorTip { borderColor: #7C0003;
+			theme-color: #7C0003;}
+
+.title {
+	font-family: Tahoma;
+	font-size: 11;
+   font-weight :normal;    
+/*	font-weight :bold; */
+}
+

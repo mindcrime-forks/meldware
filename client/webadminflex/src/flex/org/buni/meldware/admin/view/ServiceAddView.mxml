@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"	 width="100%" height="100%"
+creationComplete="initComp()">
+  <mx:Script>
+  	<![CDATA[
+  	import com.adobe.cairngorm.control.CairngormEvent;
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+    import org.buni.meldware.admin.controller.AdminController;
+    import org.buni.meldware.admin.model.ServiceVO;
+    import org.buni.meldware.admin.model.ModelLocator;
+
+    [Bindable]
+    public var model:ModelLocator = ModelLocator.getInstance();
+    public function initComp(): void {
+           CairngormEventDispatcher.getInstance().addEventListener(AdminController.SERVICE_ADDED,clear);
+   
+/*           var e:CairngormEvent = new CairngormEvent(AdminController.GET_PROTOCOLS);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e);
+           var e2:CairngormEvent = new CairngormEvent(AdminController.GET_THREADPOOLS);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e2);
+           var e3:CairngormEvent = new CairngormEvent(AdminController.GET_SSLDOMAINS);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e3);*/
+           
+      		sslDomainItem.visible=usesSSL.selected;
+    }
+    
+    public function clear(event:Event): void {
+      	  servicename.text = "";
+      	  address.text = "";
+      	  port.text = "";
+      	  backlog.text = "";
+      	  timeout.text = "";
+      	  life.text = "";
+      	  protocol.text = "";
+      	  sslDomain.text = "";
+      	  threadPool.text = "";
+    }
+  	
+  	  public function save(event:Event):void {
+          var service:ServiceVO = new ServiceVO();
+          service.name = servicename.text;
+          service.address = address.text;
+          service.port = new Number(port.text);
+          service.backlog = new Number(backlog.text);
+          service.timeout = new Number(timeout.text);
+          service.life = new Number(life.text);
+          service.protocol = protocol.text;
+          service.usesSSL = usesSSL.selected;
+          service.sslDomain = sslDomain.text;
+          service.threadPool = threadPool.text
+          
+          var e:CairngormEvent = new CairngormEvent(AdminController.ADD_SERVICE);
+          e.data = service;
+          CairngormEventDispatcher.getInstance().dispatchEvent(e);
+      }
+      
+      public function clickUsesSSL(event:Event): void {
+
+      		sslDomainItem.visible=usesSSL.selected;
+
+      }
+    ]]>
+  </mx:Script>
+
+
+  <mx:Form id="serviceInput" width="100%" height="100%" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+    <mx:FormItem label="Name:" width="100%">
+		<mx:TextInput id="servicename" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Address:" width="100%">
+		<mx:TextInput id="address" text="0.0.0.0" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem label="Port" width="100%">
+		<mx:TextInput id="port" text="25" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Backlog:" width="100%">
+		<mx:TextInput id="backlog" text="50" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Timeout (ms):" width="100%">
+		<mx:TextInput id="timeout" text="30000" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Life (ms):" width="100%">
+		<mx:TextInput id="life" text="120000" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Protocol:" width="100%">
+		<mx:ComboBox id="protocol" dataProvider="{model.protocols}" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem id="usesSSLItem" label="SSL Required:" width="100%">
+		<mx:CheckBox id="usesSSL" click="clickUsesSSL(event)" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="sslDomainItem" label="SSL Configuration:" width="100%">
+		<mx:ComboBox id="sslDomain" dataProvider="{model.ssldomains}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Thread Pool:" width="100%">
+		<mx:ComboBox id="threadPool" dataProvider="{model.threadpools}" width="100%"/>
+	</mx:FormItem>
+	<mx:ControlBar horizontalAlign="center" width="100%" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
+    		<mx:Button label="Save" click="save(event)" />
+    		<mx:Button label="Clear" click="clear(event)" />
+    </mx:ControlBar>
+    <mx:Label text="{model.lastStatus}" color="#f10000" paddingTop="10"/>
+  </mx:Form>  
+  
+</mx:VBox>

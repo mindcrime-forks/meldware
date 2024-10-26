@@ -1,0 +1,166 @@
+
+<!-- THIS IS NOT A BUILD FILE ONLY GENERIC TASKS TO HELP BUILD -->
+    <property environment="env"/>
+    <property name="buildconfig" value="build.properties"/>
+    <property file="${buildconfig}"/>
+    
+    <path id="emma.lib">
+        <pathelement location="lib/${libs.emma}"/>
+        <pathelement location="lib/${libs.emma_ant}"/>
+    </path>
+    
+    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+    
+    <tstamp/>
+
+    <target name="init" depends="checkvars">
+        <echo>Creating build:${buildNumber}</echo>       
+    </target>
+
+    <target name="checkvars">
+        <echo>${ant.version}</echo>
+      <condition property="jboss.exists">
+         <available file="${jboss.home}/bin/run.jar"/>
+      </condition>
+      <condition property="ecj.fail">
+          <and>
+            <isset property="build.compiler"/>
+            <not>
+               <available classname="${build.compiler}"/>
+            </not>
+          </and>
+      </condition>
+      <condition property="flex.exists">
+         <available file="${flex.home}/lib/mxmlc.jar" />
+      </condition>
+      <antcall target="ecjerror"/> 
+      <antcall target="jbosserror"/> 
+      <antcall target="flexwarning"/> 
+    </target>
+
+    <target name="ecjerror" if="ecj.sucess"> 
+         <fail message="*** CLASSPATH not set to lib/${libs.ecj}.  You MUST set the classpath to include the eclipse compiler (ecj) if you have build.compiler set in build.properties (because ant is stupid in how it loads compilers, stupid ol bug) ***"/>
+    </target>
+
+    <target name="jbosserror" unless="jboss.exists"> 
+         <fail message="*** ERROR JBOSS_HOME NOT SET - The present release of Meldware is completely dependent on JBOSS, you must set JBOSS_HOME ***"/>
+    </target>
+
+    <target name="flexwarning" unless="flex.exists"> 
+         <echo>*** WARNING FLEX_HOME NOT SET - you do not HAVE to have Adobe Flex installed, but if you do not then webmail and admin will NOT be built *** </echo>
+    </target>
+
+<!-- ============================================================== -->    
+<!-- General Build targets                                          -->    
+<!-- ============================================================== -->    
+
+    <!-- ========================================================== -->
+    <!-- TARGET:clean                                               -->
+    <!--                                                            -->
+    <!-- Clean upp app generated files                              -->
+    <!-- ========================================================== -->  
+    <target name="clean" description="clean all build products and remove ${jboss.home}/server/meldware">
+        <echo>CLEANING UP build, and generated code</echo>
+        <antcall target="driver">
+            <param name="TARGET" value="clean"/>
+        </antcall>
+    </target>
+  
+    <!-- ========================================================== -->
+    <!-- TARGET:build                                               -->
+    <!--                                                            -->
+    <!-- Build general target to build only                         -->
+    <!-- ========================================================== -->		    
+    <target name="build" depends="init" description="compile all (good for checking)">
+        <echo>Build source code</echo>
+        <antcall target="driver">
+            <param name="TARGET" value="build"/>
+        </antcall>
+    </target>
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:buildTest                                           -->
+    <!--                                                            -->
+    <!-- Build, deploy, test general target                         -->
+    <!-- ========================================================== -->		    	    
+    <target name="test-deploy" depends="build" description="The casual developer target. It builds and deploys a runnable meldware to ${jboss.home}/server/meldware">
+        <echo>using JBOSS at: ${jboss.home}</echo>
+        <!-- This will set up jboss -->
+        <available property="jboss.home.meldware.exists" file="${deploy.base}"/>
+        <ant antfile="build.xml" dir="installer/distribution" target="test-deploy"/>
+   
+        <antcall target="driver">
+            <param name="TARGET" value="deploy"/>
+        </antcall>
+        
+        <antcall target="driver">
+            <param name="TARGET" value="processTemplates"/>
+        </antcall>
+        
+        <touch file="${jboss.home}/server/meldware/deploy/mail.ear/META-INF/application.xml"/>
+    </target>
+        
+    <!-- ========================================================== -->
+    <!-- TARGET:buildTest                                           -->
+    <!--                                                            -->
+    <!-- Build, deploy, test general target                         -->
+    <!-- ========================================================== -->		    	    
+    <target name="test" depends="test-deploy" description="Run the test on test-deployed meldware">
+        <echo>Sleeping 30s to allow application to deploy</echo>
+        <sleep seconds="30"/>
+        <echo>Run all unit test</echo>
+        <mkdir dir="installer/distribution/build/metrics/testreport"/>
+        <mkdir dir="installer/distribution/build/metrics/coverage"/>
+        <antcall target="driver">
+            <param name="TARGET" value="test"/>
+        </antcall>
+        <!-- Compile testresults for all -->
+        <junitreport todir="installer/distribution/build/metrics/testreport">
+            <fileset dir=".">
+                <include name="**/build/TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="installer/distribution/build/metrics/testreport"/>
+        </junitreport>
+        <!-- Compile coverage results for all -->
+        <emma enabled="${emma.enabled}" >
+            <report>
+                <sourcepath>
+                    <dirset dir=".">
+                        <include name="**/**/src/java"/>
+                    </dirset>
+                </sourcepath>
+                <fileset dir="." >
+                    <include name="**/**/build/**.emma"/>
+                </fileset>
+                <html outfile="install/dist/metrics/coverage/coverage.html" />
+            </report>
+        </emma>
+    </target>
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:dist                                                -->
+    <!--                                                            -->
+    <!-- Build, deploy, test and document general target            -->
+    <!-- ========================================================== -->		    
+    <target name="dist" depends="test-deploy" description="The relase target. It will test-deploy test and package for release">
+        <echo>Create distribution</echo>
+        <ant antfile="build.xml" dir="installer/distribution" target="dist"/>
+    </target>
+    
+    <target name="version-name" unless="version.name">
+        <tstamp>
+            <format property="version.name" pattern="yyyyMMdd"/>
+        </tstamp>
+    </target>
+    
+    <target name="release" depends="version-name">
+        <cvs command="update -d"/>
+        <cvs command="rtag BUILD_${release.time} meldware"/>
+        <antcall target="dist"/>
+        <copy file="installer/distribution/dist/install.jar" tofile="installer/distribution/dist/buni-meldware-${release.time}.jar"/>
+ 	    <echo message="${version.name}"/>
+    </target>
+
+    <target name="test-undeploy" description="not ready">
+    	<delete dir="${jboss.home}/server/meldware/deploy/mail.ear"/>
+    </target>    

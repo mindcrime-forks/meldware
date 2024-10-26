@@ -1,0 +1,92 @@
+<!-- ============================================================== -->    
+<!-- Xdoclet targets                                                -->    
+<!-- ============================================================== -->    
+    <!-- ========================================================== -->
+    <!-- Define the Xdoclet class path                              -->
+    <!-- ========================================================== -->
+    <path id="xdoclet.classpath">
+        <fileset dir="${folder.libs}">
+            <include name="${libs.xdoclet}"/>
+            <include name="${J2EE_JAR}"/>
+            <include name="${libs.xjavadoc}"/>
+            <include name="${libs.commons.collection}"/>   
+            <include name="${libs.commons.logging}"/>           
+        </fileset>
+    </path>    
+
+    <!-- ========================================================== -->
+    <!-- TARGET:Xdoclet                                             -->
+    <!--                                                            -->
+    <!-- Invoke XDoclets targets                                    -->
+    <!-- ========================================================== -->
+
+    <target name="xdoclet">
+        <taskdef
+            name="ejbdoclet"
+            classname="xdoclet.modules.ejb.EjbDocletTask"
+            classpathref="xdoclet.classpath"
+            />
+        <echo>+---------------------------------------------------+</echo>
+        <echo>|                                                   |</echo>
+        <echo>| R U N N I N G   E J B D O C L E T                 |</echo>
+        <echo>|                                                   |</echo>
+        <echo>+---------------------------------------------------+</echo>
+
+        <tstamp>
+            <format property="TODAY" pattern="dd-MM-yy"/>
+        </tstamp>
+
+        <ejbdoclet
+            destdir="src/java_gen"
+            mergedir="parent-fake-to-debug"
+            excludedtags="@version,@author,@todo"
+            addedtags="@xdoclet-generated at ${TODAY},@author XDoclet,@version ${buildNumber}"
+            ejbspec="2.0"
+            verbose="false"
+            >
+
+            <fileset dir="src/java">
+                <include name="**/*Bean.java"/>
+                <include name="**/*MDB.java"/>
+                <include name="**/*SSB.java"/>
+                <include name="**/*Entity*.java"/>
+                <exclude name="**/Base*.java"/>
+            </fileset>
+
+            <packageSubstitution packages="entity"
+            substituteWith="interfaces"/>
+            
+            <packageSubstitution packages="session"
+            substituteWith="interfaces"/>
+
+            <remoteinterface/>
+            <localinterface/>
+            <homeinterface/>
+            <localhomeinterface/>
+            <dataobject/>
+            <valueobject/>
+            <entitypk/>
+            <entitycmp/>
+            <entitybmp/>
+            <session/>
+            <dao/>
+
+            <utilobject cacheHomes="true" includeGUID="true"/>
+
+            <deploymentdescriptor
+                destdir="build/ejb/META-INF"
+                validatexml="true"
+                mergedir="fake-to-debug">
+            </deploymentdescriptor>
+
+            <jboss
+                version="4.0"
+                unauthenticatedPrincipal="nobody"
+                securityDomain="${jboss.realm}"
+                xmlencoding="UTF-8"
+                destdir="build/ejb/META-INF"
+                validatexml="true"/>
+
+        </ejbdoclet>
+
+    </target>

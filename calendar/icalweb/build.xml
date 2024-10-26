@@ -1,0 +1,48 @@
+<!DOCTYPE project [
+    <!ENTITY warbuild SYSTEM "../../ant/warbuild.xml">
+    <!ENTITY propload SYSTEM "../../ant/propload.xml">
+]>
+
+<project name="icalweb" default="build">
+    <tstamp/>
+	&propload;
+    <property name="module" value="icalweb"/>
+
+	<path id="war.classpath">
+		<fileset id="war.webinf.lib" dir="${folder.libs}">
+			<exclude name="**/**"/>
+		</fileset>
+	</path>
+
+	<path id="war.ejbref">
+		<fileset dir="../../">
+			<include name="calendar/calendarejb/dist/calendarejb.jar" />
+			<include name="calendar/calendarejb/dist/calendarejb_export.jar" />
+			<include name="calendar/calendarbeans/dist/calendarbeans.jar" />
+			<include name="mail/mailapi/dist/mailapi.jar" />
+		</fileset>
+		<!-- these are in the ear -->
+		<fileset dir="${folder.libs}">
+			<include name="${libs.commons.logging}" />
+            <include name="${libs.ical4j}"/>
+		</fileset>
+	</path>
+
+    &warbuild;  
+
+    <!-- ========================================================== -->
+	<!-- TARGET:generate_source                                     -->
+	<!--                                                            -->
+	<!-- Run code generator                                         -->
+	<!-- ========================================================== -->
+	<target name="generate_source">
+		<echo>Code generation complete</echo>
+	</target>
+
+    <target name="processTemplates">
+        
+    </target>
+    
+    <target name="addToWar"/>
+  
+</project>

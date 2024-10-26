@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initComp()">
+
+	<mx:Script>
+		<![CDATA[
+		    import org.buni.meldware.admin.controller.AdminController;
+			import org.buni.meldware.admin.model.ModelLocator;
+			import org.buni.meldware.admin.model.ProtocolVO;
+			
+            import com.adobe.cairngorm.control.CairngormEventDispatcher;
+            import com.adobe.cairngorm.control.CairngormEvent;
+
+			[Bindable]
+			public var model:ModelLocator = ModelLocator.getInstance();
+			
+            private function initComp():void {
+                   var e:CairngormEvent = new CairngormEvent(AdminController.GET_PROTOCOLS);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+                   CairngormEventDispatcher.getInstance().addEventListener(AdminController.PROTOCOL_DELETED,getProtocols);
+            }			
+			
+            private function getProtocols(event:Event):void {
+                   var e:CairngormEvent = new CairngormEvent(AdminController.GET_PROTOCOLS);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+            
+            private function deleteProtocol(event:Event):void {
+                   model.selectedProtocol = protocolList.selectedItem as ProtocolVO;
+                   var e:CairngormEvent = new CairngormEvent(AdminController.DELETE_PROTOCOL);
+                   e.data = protocolList.selectedItem as ProtocolVO;
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+            
+            private function editProtocol(event:Event):void {
+                   model.selectedProtocol = protocolList.selectedItem as ProtocolVO;
+                   var e:CairngormEvent = new CairngormEvent(AdminController.PROTOCOL_DETAIL);
+                   e.data = protocolList.selectedItem as ProtocolVO;
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+		]]>
+	</mx:Script>
+
+        <!--mx:List id="protocolList" width="100%" height="100%" borderStyle="none" dataProvider="{model.protocols}"/-->
+  	<mx:DataGrid id="protocolList" width="100%" height="100%" borderStyle="none" dataProvider="{model.protocols}">
+    <mx:columns>  
+      <mx:DataGridColumn dataField="name" width="270"/>
+      <mx:DataGridColumn headerText="server name" dataField="serverName" width="80"/>     
+      <mx:DataGridColumn headerText="TLS" dataField="enableTls" width="40"/> 
+      <mx:DataGridColumn headerText="SSL Config" dataField="sslSecurityDomain"/> 
+    </mx:columns>
+  </mx:DataGrid>
+
+  <mx:HBox>
+    <mx:Button label="Refresh" click="getProtocols(event)"/>
+    <mx:Button label="Edit" click="editProtocol(event)"/>
+    <mx:Button label="Delete" click="deleteProtocol(event)"/>
+  </mx:HBox>
+  <!--mx:Label text="Protocol List View"/-->
+</mx:VBox>

@@ -1,0 +1,62 @@
+<!-- ============================================================== -->    
+<!-- Hibernate targets                                              -->    
+<!-- ============================================================== -->    
+
+    <path id="hibernate.classpath">
+        <fileset dir="${folder.libs}">
+            <include name="${libs.log4j}"/>
+            <include name="${libs.commons.collection}"/>
+            <include name="${libs.commons.logging}"/>
+            <include name="${jdbc.driverjar}"/>
+            <include name="j2eeapi.jar"/>
+            <include name="xercesImpl-2_4_0.jar"/>
+            <include name="xml-apis-2_4_0.jar"/>
+        </fileset>
+        <pathelement location="${jboss.folder.default.lib}/${libs.jboss.hibernate}"/>
+        <pathelement location="${jboss.folder.default.lib}/${libs.jboss.cglib}"/>
+        <pathelement path="build/jar"/>
+    </path>
+        
+    <taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask">
+        <classpath>
+            <fileset dir="${folder.libs}">
+                <include name="${libs.commons.logging}"/>
+                <include name="${libs.dom4j}"/>
+                <include name="${libs.commons.collection}"/>
+                <include name="${libs.commons.lang}"/>
+                <include name="${libs.hibernatetools}"/>
+                <include name="${libs.hibernatetools.velocity}"/>
+                <include name="${libs.hibernatetools.velocitytools}"/>
+                <include name="${libs.hibernatetools.jtidy}"/>      
+            </fileset>
+            <pathelement location="${jboss.folder.default.lib}/${libs.jboss.hibernate}"/> 
+            <pathelement location="${jboss.folder.default.lib}/${libs.jboss.cglib}"/> 
+        </classpath>
+    </taskdef> 
+  
+    <!-- ========================================================== -->
+    <!-- TARGET:Hibernate                                           -->
+    <!--                                                            -->
+    <!-- Invoke Hibernate targets                                   -->
+    <!-- ========================================================== -->
+
+    <target name="hibernate_code" depends="DDL_uptodate" unless="updateDDL">
+        <echo>Doing Hibernate class generation ${hibernate.mapping.file}</echo>
+        <hibernatetool destdir="src/java_gen">
+            <configuration>
+            	<fileset file="${hibernate.mapping.file}"/>
+            </configuration>
+            <hbm2java jdk5="false" ejb3="false"/> 
+        </hibernatetool>
+    </target>
+
+    <!-- ========================================================== -->
+    <!-- TARGET:DDL_uptodate                                        -->
+    <!--                                                            -->
+    <!-- Check if DDL was loaded                                    -->
+    <!-- ========================================================== -->
+
+    <target name="DDL_uptodate"> 
+        <uptodate property="updateDDL" srcfile="${hibernate.mapping.file}" targetfile="build/${hibernate.mapping.file}"/>
+  		<echo>DDL is uptodate:${updateDDL}</echo>
+    </target>

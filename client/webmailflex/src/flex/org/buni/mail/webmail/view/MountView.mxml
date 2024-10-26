@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" backgroundColor="#ffffff" borderStyle="solid" borderSides="left right bottom" dropShadowEnabled="true">
+
+  <mx:Metadata>
+  [Event(name="close")]
+  </mx:Metadata>
+
+  <mx:Script>
+    <![CDATA[
+    	import org.buni.mail.webmail.model.UserABMountVO;       
+    import mx.managers.PopUpManager;
+    import mx.events.ItemClickEvent;
+    import mx.core.Application;
+
+    import com.adobe.cairngorm.control.CairngormEvent;
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+
+    import org.buni.mail.webmail.controller.WebmailController;
+    import org.buni.mail.webmail.model.ModelLocator;
+    import org.buni.mail.webmail.model.Const;
+    import org.buni.mail.webmail.model.UserPreferencesVO;
+    import org.buni.mail.webmail.model.ContactVO;
+    import org.buni.mail.webmail.model.TimeZone;
+
+    [Bindable]
+    public var model:ModelLocator = ModelLocator.getInstance();
+
+    private function handleClick(event:ItemClickEvent):void
+    {
+      if (event.item == "Add")
+      { 
+          //var contact:ContactVO = new ContactVO(model.user.contact);
+        //  contact.contactName = 
+        //  contact.email = primaryEmailAddress.selectedItem.toString();
+          
+    	model.userABMounts.addItem(new UserABMountVO(mountName.selectedItem));
+
+      	  //var e2:CairngormEvent = new CairngormEvent(WebmailController.SAVE_CONTACT);
+		  //    e2.data = contact;
+		  //    CairngormEventDispatcher.getInstance().dispatchEvent(e2);
+          
+          //wipeUp.play();
+          dispatchEvent(new Event("close"));
+      }
+      else
+      {
+        //wipeUp.play();
+        dispatchEvent(new Event("close"));
+      } 
+    }
+    ]]>
+  </mx:Script>
+
+  <mx:WipeUp id="wipeUp" target="{this}" showTarget="false">
+    <mx:effectEnd>
+    dispatchEvent(new Event("close"));
+    </mx:effectEnd>
+  </mx:WipeUp>
+
+  <mx:Label text="Address Book Mounts" fontWeight="bold" horizontalCenter="0"/>
+
+  <mx:HRule width="100%"/>
+
+  <mx:Form width="100%">
+    <mx:FormItem label="Mount">
+      <mx:ComboBox id="mountName" width="100%" labelField="@description" dataProvider="{model.systemABMounts}"/>
+
+    </mx:FormItem>
+    <mx:HBox width="100%" horizontalScrollPolicy="off" horizontalAlign="center">
+      <mx:ButtonBar itemClick="handleClick(event)">
+        <mx:dataProvider>
+          <mx:Array>
+            <mx:String>Add</mx:String>
+            <mx:String>Cancel</mx:String>
+          </mx:Array>
+        </mx:dataProvider>
+      </mx:ButtonBar>
+    </mx:HBox>
+  </mx:Form>
+
+</mx:VBox>

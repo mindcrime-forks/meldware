@@ -1,0 +1,106 @@
+#*
+ 
+file: control.vm
+
+Generates the appropriate XML file
+
+*#
+#* STORE TYPE *#
+##set($STORE_TYPE="file")
+#set($FILESTORE_PATH="")
+#set($STORE_TYPE="DB")
+
+#* HSQL properties *#
+#set($DATABASE_TYPE="hsqldb")
+
+#* PostgresQL properties *#
+##set($DATABASE_TYPE="postgresql")
+
+#* MySQL properties *#
+##set($DATABASE_TYPE="mysql")
+
+#if($DATABASE_TYPE.equals("hsqldb"))
+	#set($DATASOURCE_NAME="DefaultDS")
+#else
+    #set($DB_USER="buni")
+    #set($DB_PASS="buni")
+    #set($DB_HOST="localhost")
+    #set($DB_NAME="meldware")
+    #set($DATASOURCE_NAME="MeldwareDS")
+#end
+
+#set($JAAS_DATASOURCE_NAME=$DATASOURCE_NAME)
+
+#set($USER_EDITOR="opends")
+
+#set($P6SPY_ENABLED = "true")
+#set($TEST_ENABLED = "true")
+
+#* General properties *#
+#set($DOMAIN_1="localhost")
+#set($SERVER_NAME="localhost")
+#set($INSTALL_PATH="${jboss.home.dir}")
+#set($SERVER_CONFIG="meldware")
+#set($KEYSTORE_PATH="meldware.store")
+#set($KEYSTORE_PASS="meldwarerulez")
+
+#* SMTP Properties *#
+#set($SMTP_ENABLED="true")
+#set($SMTP_AUTH_ALLOWED="true")
+#set($SMTP_TLS_ENABLED="true")
+#set($SMTP_VERIFY_IDENTITY="true")
+#set($SMTP_TLS_REQUIRED="false")
+#set($SMTP_TLS_REQUIRED_AUTH="false")
+#set($SMTP_PORT="9025")
+#set($SERVER_BIND_ADDRESS="0.0.0.0")
+#set($SMTP_SSL_ENABLED="false")
+#set($SMTP_SSL_VERIFY_IDENTITY="true")
+#set($SMTP_SSL_PORT="9465")
+#set($POSTMASTER_ADDRESS="user@localhost")
+
+#* Relay properties *#
+#set($RELAY_BY_DOMAIN_ENABLED="true")
+#set($RELAY_DOMAIN_1="foo.com")
+
+#* POP Properties *#
+#set($POP_ENABLED="true")
+#set($POP_PORT="9110")
+#set($POP_TLS_ENABLED="true")
+#set($POP_TLS_REQUIRED="false")
+#set($POP_SSL_ENABLED="false")
+#set($POP_SSL_PORT="9995")
+
+#LDAP Properties
+#set($BASE_DN="dc=buni,dc=org")
+#set($BASE_DC="buni")
+#set($LDAP_BIND_PORT="10389")
+
+#* IMAP Properties *#
+#set($IMAP_ENABLED="true")
+#set($IMAP_PORT="9143")
+
+#* Spam Properties *#
+#set($JASEN_ENABLED="true")
+
+#* Calendar properties *#
+#set($GENERATE_CALENDAR_MAILER="true")
+#set($GENERATE_CALENDAR_MAILLISTENER="true");
+#set($CALENDAR_MAILER_NAME="calendaruser")
+#set($CALENDAR_MAILER_PASSWORD="calendaruser")
+#set($CALENDAR_MAILER_ALIAS="calendaruser@localhost")
+#set($CALENDAR_MAILER_SERVERHOST="localhost")
+#set($CALENDAR_MAILER_SERVERPORT="9025")
+#set($DOMAIN_2="jbmstest.net")
+#set($TESTMODE="true")
+
+#set($ADMIN_USER="admin")
+#set($ADMIN_PASSWORD="admin")
+
+#set($USER_NAME_1="tom")
+#set($USER_PASSWORD_1="tom")
+#set($USER_NAME_2="jerry")
+#set($USER_PASSWORD_2="jerry")
+#set($USER_NAME_3="tweety")
+#set($USER_PASSWORD_3="tweety")
+#set($USER_NAME_4="test")
+#set($USER_PASSWORD_4="testpwd")

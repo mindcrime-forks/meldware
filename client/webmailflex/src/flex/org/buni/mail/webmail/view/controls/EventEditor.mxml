@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:buni="http://www.buni.org/flex/controls/qsimport" 
+     horizontalScrollPolicy="off" verticalScrollPolicy="off">
+      <mx:Script>
+        <![CDATA[
+            import org.buni.mail.webmail.model.InviteVO;
+            import org.buni.mail.webmail.view.renderer.DGItemRenderer;
+            import org.buni.mail.webmail.model.CalendarEventVO;
+            import com.adobe.cairngorm.control.CairngormEventDispatcher;
+            import com.adobe.cairngorm.control.CairngormEvent;
+              import mx.collections.ArrayCollection;
+            
+            import mx.collections.IViewCursor;
+            
+            [Bindable]
+              private var _selectedEvent:CalendarEventVO;
+              
+            //public var model:ModelLocator = ModelLocator.getInstance();
+            
+            private function initApp():void {
+            }
+            
+            private function changed():void {
+                
+            }
+            
+            private function addInvite():void {
+                var invite:InviteVO = new InviteVO();
+                invite.userName = this.invitee.text;
+                this._selectedEvent.invites.addItem(invite);
+            }
+            
+            private function removeInvite():void {
+                this._selectedEvent.invites.removeItemAt(this.invitees.selectedIndex);
+            }
+            
+            public function setSelectedEvent(event:CalendarEventVO):void {
+                this._selectedEvent = event;
+                this.invite.enabled=true;
+                this.invitees.enabled = true;
+                this.buttonBar.enabled = true;
+                this.enabled = true;
+                this.inviteCanvas.enabled = true;
+                /*
+                this.startTime.hour=event.start.hours;
+                this.startTime.minutes=event.start.minutes;
+                this.endTime.hour=event.end.hours;
+                this.endTime.minutes=event.end.minutes;*/
+            }
+            
+            public function get selectedEvent():CalendarEventVO { 
+                return this._selectedEvent;
+            }
+                
+  ]]>
+  </mx:Script>
+
+  <mx:Form width="100%" id="inviteForm" styleName="calendarsContainer">
+    <mx:FormItem label="Time">
+      <mx:HBox>
+        <buni:TimePicker id="startTime" twelveHour="false" hour="{_selectedEvent.start.hours}" minutes="{_selectedEvent.start.minutes}" onChange="changed()"/>
+        <mx:Label text="to"/>
+        <buni:TimePicker id="endTime" twelveHour="false" hour="{_selectedEvent.end.hours}" minutes="{_selectedEvent.end.minutes}" onChange="changed()"/>
+      </mx:HBox>
+    </mx:FormItem>
+    <mx:FormItem label="Title">
+      <mx:TextInput id="eventTitleInput" text="{_selectedEvent.summary}" width="100%"/>
+    </mx:FormItem>
+    <mx:FormItem label="Location">
+      <mx:TextInput id="eventLocationInput" text="{_selectedEvent.location}" width="100%"/>
+    </mx:FormItem>
+    <mx:FormItem label="Invites">
+      <mx:HBox>
+        <mx:TextInput id="invitee" text="" width="100%"/>
+        <mx:Button id="invite" label="Invite" click="addInvite()" enabled="true"/>            
+      </mx:HBox>
+    </mx:FormItem>
+
+    <mx:Canvas id="inviteCanvas" width="100%" height="100%" verticalScrollPolicy="off">
+      <mx:DataGrid id="invitees" minWidth="1300" width="100%" minHeight="150" height="100%" borderStyle="none" dataProvider="{_selectedEvent.invites}">
+        <mx:columns>
+          <mx:DataGridColumn width="100" headerText="attendee" dataField="userName"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="7:00" dataField="interval1"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="7:30" dataField="interval2"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="8:00" dataField="interval3"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="8:30" dataField="interval4"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="9:00" dataField="interval5"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="9:30" dataField="interval6"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="10:00" dataField="interval7"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="10:30" dataField="interval8"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="11:00" dataField="interval9"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="11:30" dataField="interval10"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="12:00" dataField="interval11"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="12:30" dataField="interval12"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="13:00" dataField="interval13"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="13:30" dataField="interval14"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="14:00" dataField="interval15"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="14:30" dataField="interval16"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="15:00" dataField="interval17"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="15:30" dataField="interval18"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="16:00" dataField="interval19"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="16:30" dataField="interval20"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="17:00" dataField="interval21"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="17:30" dataField="interval22"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="18:00" dataField="interval23"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="18:30" dataField="interval24"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="19:00" dataField="interval25"/>
+          <mx:DataGridColumn width="40" itemRenderer="org.buni.mail.webmail.view.renderer.DGItemRenderer" headerText="19:30" dataField="interval26"/>
+        </mx:columns>
+      </mx:DataGrid>
+    </mx:Canvas>
+      
+    <mx:TextArea id="eventNoteInput" text="{_selectedEvent.description}" width="100%" height="100%"/>
+    <mx:ButtonBar id="buttonBar" dataProvider="{['Accept','Decline','Delete','Save','Cancel']}"/>
+  </mx:Form>
+</mx:VBox>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+          "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+
+<!--
+	This is a blank Struts configuration file with an example
+	welcome action/page and other commented sample elements.
+	
+	Struts Validator is configured using the factory defaults
+	and is ready-to-use.
+	
+	NOTE: If you have a generator tool to create the corresponding Java classes
+	for you, you could include the details in the "form-bean" declarations.
+	Otherwise, you would only define the "form-bean" element itself, with the
+	corresponding "name" and "type" attributes, as shown here.
+-->
+
+
+<struts-config>
+
+
+	<!-- ================================================ Form Bean Definitions -->
+
+	<form-beans>
+		<form-bean name="loginForm"
+			type="org.buni.meldware.wcapadapter.form.LoginForm" />
+
+		<form-bean name="logoutForm"
+			type="org.buni.meldware.wcapadapter.form.WCAPForm" />
+			
+		<form-bean name="calpropsForm"
+			type="org.buni.meldware.wcapadapter.form.CalForm" />
+		
+		<form-bean name="fetchComponentsByRangeForm"
+			type="org.buni.meldware.wcapadapter.form.FetchComponentsByRangeForm" />	
+
+		<form-bean name="searchCalPropsForm"
+			type="org.buni.meldware.wcapadapter.form.SearchCalPropsForm" />	
+
+
+		<form-bean name="userPrefsForm"
+			type="org.buni.meldware.wcapadapter.form.UserPrefsForm" />	
+		
+		<form-bean name="storeEventsForm"
+			type="org.buni.meldware.wcapadapter.form.StoreEventsForm" />	
+
+		<form-bean name="deleteEventsForm"
+			type="org.buni.meldware.wcapadapter.form.DeleteEventsByIdForm" />
+						
+	</form-beans>
+
+	<!-- ========================================= Global Exception Definitions -->
+
+	<global-exceptions>
+		<!-- sample exception handler
+			<exception
+			key="expired.password"
+			type="app.ExpiredPasswordException"
+			path="/changePassword.jsp"/>
+			end sample -->
+	</global-exceptions>
+
+
+	<!-- =========================================== Global Forward Definitions -->
+
+	<global-forwards>
+		<forward name="wcaperror_text" path="/wcap/wcaperror_text.jsp"/> 
+		<forward name="wcaperror_xml" path="/wcap/wcaperror_xml.jsp"/>
+	</global-forwards>
+
+
+	<!-- =========================================== Action Mapping Definitions -->
+
+	<action-mappings>
+
+		<action path="/version"
+			type="org.buni.meldware.wcapadapter.action.Version" scope="request"
+			validate="true">
+			<forward name="success_text" path="/wcap/version_text.jsp" />
+			<forward name="success_xml" path="/wcap/version_xml.jsp" />
+		</action>
+
+		<action path="/login"
+			type="org.buni.meldware.wcapadapter.action.Login" name="loginForm"
+			scope="request" validate="true">
+		        <set-property key="userProfileService" value="meldware.base:type=UserProfileService,name=UserProfileService" />
+			<forward name="success_text" path="/wcap/login_text.jsp" />
+			<forward name="success_xml" path="/wcap/login_xml.jsp" />
+		</action>
+
+		<action path="/logout"
+			type="org.buni.meldware.wcapadapter.action.Logout" name="logoutForm"
+			scope="request" validate="true">
+		</action>
+		
+		<action path="/get_all_timezones"
+			type="org.buni.meldware.wcapadapter.action.GetAllTimezones"
+			name="calpropsForm" scope="request" validate="true">
+			<forward name="success_text"
+				path="/wcap/getalltimezones_text.jsp" />
+			<forward name="success_xml"
+				path="/wcap/getalltimezones_xml.jsp" />
+		</action>
+
+		<action path="/gettime"
+			type="org.buni.meldware.wcapadapter.action.GetTime" name="calpropsForm"
+			scope="request" validate="true">
+			<forward name="success_text" path="/wcap/gettime_text.jsp" />
+			<forward name="success_xml" path="/wcap/gettime_xml.jsp" />
+		</action>
+
+		<action path="/get_calprops"
+			type="org.buni.meldware.wcapadapter.action.GetCalProps"
+			name="calpropsForm" scope="request" validate="true">
+			<forward name="success_text"
+				path="/wcap/get_calprops_text.jsp" />
+			<forward name="success_xml"
+				path="/wcap/get_calprops_xml.jsp" />
+		</action>
+
+		<action path="/get_userprefs"
+			type="org.buni.meldware.wcapadapter.action.GetUserPrefs"
+			name="userPrefsForm" scope="request" validate="true">
+			<forward name="success_text"
+				path="/wcap/get_userprefs_text.jsp" />
+			<forward name="success_xml"
+				path="/wcap/get_userprefs_xml.jsp" />
+		</action>
+
+		<action path="/fetchcomponents_by_range"
+			type="org.buni.meldware.wcapadapter.action.FetchComponentsByRange"
+			name="fetchComponentsByRangeForm" scope="request" validate="true">
+			<forward name="success_text"
+				path="/wcap/fetchcomponents_by_range_text.jsp" />
+			<forward name="success_xml"
+				path="/wcap/fetchcomponents_by_range_xml.jsp" />
+		</action>
+
+		<action path="/fetchcomponents_by_lastmod"
+			type="org.buni.meldware.wcapadapter.action.FetchComponentsByLastmod"
+			name="fetchComponentsByRangeForm" scope="request" validate="true">
+			<forward name="success_text"
+				path="/wcap/fetchcomponents_by_lastmod_text.jsp" />
+			<forward name="success_xml"
+				path="/wcap/fetchcomponents_by_lastmod_xml.jsp" />
+		</action>
+
+		<action path="/fetch_deletedcomponents"
+			type="org.buni.meldware.wcapadapter.action.FetchDeletedComponents"
+			name="fetchComponentsByRangeForm" scope="request" validate="true">
+			<forward name="success_text"
+				path="/wcap/fetch_deletedcomponents_text.jsp" />
+			<forward name="success_xml"
+				path="/wcap/fetch_deletedcomponents_xml.jsp" />
+		</action>
+
+		<action path="/search_calprops"
+			type="org.buni.meldware.wcapadapter.action.SearchCalProps"
+			name="searchCalPropsForm" scope="request" validate="true">
+			<forward name="success_text"
+				path="/wcap/search_calprops_text.jsp" />
+			<forward name="success_xml"
+				path="/wcap/search_calprops_xml.jsp" />
+		</action>
+
+
+		<action path="/deleteevents_by_id"
+			type="org.buni.meldware.wcapadapter.action.DeleteEventsById"
+			name="deleteEventsForm" scope="request" validate="true">
+			<forward name="success_text"
+				path="/wcap/store_status_text.jsp" />
+			<forward name="success_xml"
+				path="/wcap/store_status_xml.jsp" />
+		</action>
+
+		<action path="/storeevents"
+			type="org.buni.meldware.wcapadapter.action.StoreEvents"
+			name="storeEventsForm" scope="request" validate="true">
+		        <set-property key="userProfileService" value="meldware.base:type=UserProfileService,name=UserProfileService" />
+			<forward name="success_text"
+				path="/wcap/storeevents_text.jsp" />
+			<forward name="success_xml"
+				path="/wcap/storeevents_xml.jsp" />
+			<forward name="success_reply_xml"
+				path="/wcap/store_status_xml.jsp" />	
+			<forward name="success_reply_text"
+				path="/wcap/store_status_text.jsp" />
+		</action>
+		
+		<action path="/get_freebusy"
+			type="org.buni.meldware.wcapadapter.action.GetFreeBusy"
+			name="fetchComponentsByRangeForm" scope="request" validate="true">
+		        <set-property key="userProfileService" value="meldware.base:type=UserProfileService,name=UserProfileService" />
+			<forward name="success_text"
+				path="/wcap/get_freebusy_text.jsp" />
+			<forward name="success_xml"
+				path="/wcap/get_freebusy_xml.jsp" />
+		</action>
+
+	</action-mappings>
+
+	<controller processorClass="org.buni.meldware.wcapadapter.WCAPRequestProcess"/>
+	
+	<!-- ======================================== Message Resources Definitions -->
+
+	<message-resources parameter="MessageResources" />
+
+
+	<!-- =============================================== Plug Ins Configuration -->
+
+	<!-- ======================================================= Tiles plugin -->
+	<!--
+		This plugin initialize Tiles definition factory. This later can takes some
+		parameters explained here after. The plugin first read parameters from
+		web.xml, thenoverload them with parameters defined here. All parameters
+		are optional.
+		The plugin should be declared in each struts-config file.
+		- definitions-config: (optional)
+		Specify configuration file names. There can be several comma
+		separated file names (default: ?? )
+		- moduleAware: (optional - struts1.1)
+		Specify if the Tiles definition factory is module aware. If true
+		(default), there will be one factory for each Struts module.
+		If false, there will be one common factory for all module. In this
+		later case, it is still needed to declare one plugin per module.
+		The factory will be initialized with parameters found in the first
+		initialized plugin (generally the one associated with the default
+		module).
+		true : One factory per module. (default)
+		false : one single shared factory for all modules
+		- definitions-parser-validate: (optional)
+		Specify if xml parser should validate the Tiles configuration file.
+		true : validate. DTD should be specified in file header (default)
+		false : no validation
+		
+		Paths found in Tiles definitions are relative to the main context.
+		
+		To use this plugin, download and add the Tiles jar to your WEB-INF/lib
+		directory then uncomment the plugin definition below.
+		
+		<plug-in className="org.apache.struts.tiles.TilesPlugin" >
+		
+		<set-property property="definitions-config"
+		value="/WEB-INF/tiles-defs.xml" />
+		<set-property property="moduleAware" value="true" />
+		</plug-in>
+	-->
+
+
+	<!-- =================================================== Validator plugin -->
+
+	<plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+		<set-property property="pathnames"
+			value="/org/apache/struts/validator/validator-rules.xml,
+               /WEB-INF/validation.xml" />
+	</plug-in>
+
+</struts-config>
+

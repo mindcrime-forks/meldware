@@ -1,0 +1,21 @@
+<antactions>
+  <pack name="Mail Server">
+    <antcall order="afterpacks" buildfile="${INSTALL_PATH}/scripts/ssl-gen.xml">
+       <property name="INSTALL_PATH" value="${INSTALL_PATH}"/>
+       <property name="SERVER_CONFIG" value="${SERVER_CONFIG}"/>
+       <property name="KEYSTORE_PATH" value="${KEYSTORE_PATH}"/>
+       <property name="KEYSTORE_PASS" value="${KEYSTORE_PASS}"/>
+       <property name="KEYSTORE_CN" value="${KEYSTORE_CN}"/>
+       <property name="KEYSTORE_OU" value="${KEYSTORE_OU}"/>
+       <property name="KEYSTORE_O" value="${KEYSTORE_O}"/>
+       <property name="KEYSTORE_L" value="${KEYSTORE_L}"/>
+       <property name="KEYSTORE_ST" value="${KEYSTORE_ST}"/>
+       <property name="KEYSTORE_C" value="${KEYSTORE_C}"/>
+       <target name="genssl-${GENERATE_STORE}"/>
+    </antcall>
+    <antcall order="afterpacks" buildfile="${INSTALL_PATH}/scripts/ant-chmod.xml">
+       <property name="INSTALL_PATH" value="${INSTALL_PATH}"/>
+       <target name="chmod-bin"/>
+    </antcall>
+  </pack>
+</antactions>

@@ -1,0 +1,56 @@
+<!DOCTYPE project [
+    <!ENTITY propload SYSTEM "../../ant/propload.xml">
+	<!ENTITY sarbuild SYSTEM "../../ant/jarbuild.xml">
+]>
+<project name="opends" default="build">
+    <tstamp/>
+	&propload;
+    <property name="module" value="opends"/>
+    <!--property name="module.deploy.dir" value="opends.sar"/-->
+    <property name="manifest.classpath" 
+        value=""/>
+    <property name="module.ext" value="sar"/>
+
+    <path id="sar.classpath">
+        <pathelement location="${basedir}/../../common/meldwarebeans/dist/meldwarebeans.jar"/>
+        <fileset dir="${folder.libs}">
+            <!--<include name="${J2EE_JAR}"/>-->
+            <include name="${libs.je}"/>
+            <include name="${libs.opends}"/>
+            <include name="${libs.log4j}"/>
+        </fileset>
+        <!--fileset dir="${jboss.folder.client}">
+            <include name="${libs.mail}"/>
+            <include name="${libs.activation}"/>
+        </fileset-->
+    </path>
+	
+    &sarbuild;
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->
+
+    <target name="generate_source">
+        <echo>Code generation complete</echo>
+    </target>
+
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->
+    <target name="postCompile">
+        <echo>Run postcompile</echo>
+       <!--copy file="${folder.libs}/${libs.opends}" todir="build/sar"/>
+       <copy file="${folder.libs}/${libs.je}" todir="build/sar"/-->
+       <mkdir dir="build/sar/db"/>
+       <untar src="etc/testdb.tar.bz2" dest="build/sar/db" compression="bzip2"/>
+       <untar src="etc/wordlist.tar.bz2" dest="build/sar/config" compression="bzip2"/>
+    </target>
+
+    <target name="processTemplates"/>
+
+</project>

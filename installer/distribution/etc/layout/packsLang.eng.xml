@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes" ?>
+
+<langpack>
+    <str id="pack_base" txt="Base" />
+    <str id="pack_mail_server" txt="Mail Server" />
+    <str id="pack_calendar_server" txt="Calendar Server" />
+    <str id="pack_addressbook_server" txt="AddressBook Server" />
+    <str id="pack_web_client" txt="Web Client" />
+    <str id="pack_secure_adminstrator" txt="Secure Adminstrator" />
+    <str id="pack_PostgreSQL_JDBC_Driver" txt="PostgreSQL JDBC Driver (postgresql-8.2-504.jdbc3.jar)" />
+    <str id="pack_MySQL_Connector/J" txt="MySQL Connector/J (mysql-connector-java-3.1.12-bin.jar)" />
+    <str id="pack_JBoss_Application_Server" txt="JBoss Application Server (4.0.4)" />
+    <str id="pack_wcap_adaptor" txt="WCAP Adaptor" />
+</langpack>

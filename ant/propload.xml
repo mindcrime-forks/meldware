@@ -1,0 +1,24 @@
+    <property environment="env"/>
+    <property name="folder.libs" value="../../lib"/>
+    <property name="buildconfig" value="../../build.properties"/>
+    <property file="${buildconfig}"/>
+    <property name="deploy.base" value="${jboss.home}/server/meldware/deploy"/>
+            
+    <!--<fail unless="env.FLEX_HOME" message="FLEX_HOME is not set: ${env.FLEX_HOME}"/>-->
+    <fail unless="env.JBOSS_HOME" message="JBOSS_HOME is not set: ${env.JBOSS_HOME}"/>
+    
+    <path id="aop.classpath">
+        <fileset dir="${jboss.folder.aop}">
+            <include name="${libs.jboss.aspects}"/>
+            <include name="${libs.jboss.aop}"/>
+            <include name="${libs.trove}"/>
+        </fileset>
+        <pathelement location="${jboss.folder.client}/${libs.javassist}"/>
+    </path>
+    
+    <path id="emma.lib">
+        <pathelement location="${folder.libs}/${libs.emma}"/>
+        <pathelement location="${folder.libs}/${libs.emma_ant}"/>
+    </path>
+    
+    <taskdef resource="emma_ant.properties" classpathref="emma.lib" />

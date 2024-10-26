@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server>
+
+<mbean code="org.buni.meldware.calendar.jmx.CalendarServer"
+  name="meldware.calendar:service=CalendarServer">
+#if($GENERATE_CALENDAR_MAILER.equals("true"))
+  <attribute name="CalendarNotificiationEnabled">true</attribute>
+#else
+  <attribute name="CalendarNotificiationEnabled">false</attribute>
+#end
+  <attribute name="NotificationMailAddress">${CALENDAR_MAILER_NAME}@${DOMAIN_1}</attribute>
+  <attribute name="WebCalendarStartTime">5</attribute>
+  <attribute name="WebCalendarDuration">19</attribute>
+  <attribute name="SearchLimit">20</attribute>
+  <attribute name="RDBMSDialect">installer</attribute>
+</mbean>
+
+#if($GENERATE_CALENDAR_MAILER.equals("true"))
+<!-- ==================================================================== -->
+<!-- Mail Connection Factory                                              -->
+<!-- ==================================================================== -->
+<mbean code="org.buni.meldware.calendar.jmx.SendMail"
+       name="meldware.calendar:service=CalendarMailer">
+	<attribute name="FromAddress">${CALENDAR_MAILER_ALIAS}</attribute>
+	<attribute name="Username">${CALENDAR_MAILER_NAME}</attribute>
+	<attribute name="Password">${CALENDAR_MAILER_PASSWORD}</attribute>
+	<attribute name="SmtpServer">${CALENDAR_MAILER_SERVERHOST}</attribute>
+	<attribute name="Port">${CALENDAR_MAILER_SERVERPORT}</attribute>
+	<attribute name="Verbose">true</attribute>
+</mbean>
+#end
+
+<mbean code="org.jboss.mq.server.jmx.Topic"
+	name="jboss.mq.destination:service=Topic,name=calendar">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+    <depends optional-attribute-name="SecurityManager">jboss.mq:service=SecurityManager</depends>
+</mbean>
+  
+<mbean code="org.jboss.mq.server.jmx.Topic"
+	name="jboss.mq.destination:service=Topic,name=addressbook">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+    <depends optional-attribute-name="SecurityManager">jboss.mq:service=SecurityManager</depends>
+</mbean>
+
+<!--
+ Queue for messages meant for a calendar server hosted by this server
+-->    
+<mbean code="org.jboss.mq.server.jmx.Queue"
+    name="jboss.mq.destination:service=Queue,name=calendarResponse">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+</mbean>
+
+</server>

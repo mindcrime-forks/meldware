@@ -1,0 +1,45 @@
+module.log=com.p6spy.engine.logging.P6LogFactory
+
+#if($DATABASE_TYPE.equals("oracle"))
+  #set($DB_DRIVER="oracle.jdbc.driver.OracleDriver")
+#elseif($DATABASE_TYPE.equals("mysql"))
+  #set($DB_DRIVER="com.mysql.jdbc.Driver")
+#elseif($DATABASE_TYPE.equals("postgresql"))
+  #set($DB_DRIVER="org.postgresql.Driver")
+#end
+
+realdriver=$DB_DRIVER
+
+deregisterdrivers=false
+
+executionthreshold=
+
+outagedetection=false
+outagedetectioninterval=
+
+filter=false
+
+include     = 
+exclude     =
+sqlexpression = 
+autoflush   = true
+dateformat=
+includecategories=statement
+excludecategories=result
+
+stringmatcher=
+stacktrace=false
+stacktraceclass=
+reloadproperties=false
+reloadpropertiesinterval=60
+
+useprefix=false
+appender=com.p6spy.engine.logging.appender.Log4jLogger
+append=true
+
+log4j.appender.SQLPROFILER_CLIENT=org.apache.log4j.net.SocketAppender
+log4j.appender.SQLPROFILER_CLIENT.RemoteHost=localhost
+log4j.appender.SQLPROFILER_CLIENT.Port=4445
+log4j.appender.SQLPROFILER_CLIENT.LocationInfo=true
+
+log4j.logger.p6spy=DEBUG, SQLPROFILER_CLIENT

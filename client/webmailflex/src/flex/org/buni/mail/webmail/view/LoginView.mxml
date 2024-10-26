@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:view="com.adobe.cairngorm.samples.User.view.*"
+    title="Login"
+    horizontalAlign="center"
+    backgroundColor="#008fd6"
+    borderAlpha="1"
+    initialize="initComp()"
+    >
+
+    <mx:Script>
+    <![CDATA[
+    import mx.rpc.http.HTTPService;
+      
+    import com.adobe.cairngorm.control.CairngormEvent;   
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+    import com.adobe.cairngorm.business.ServiceLocator;
+     
+    import org.buni.mail.webmail.controller.WebmailController;
+    import org.buni.mail.webmail.model.ModelLocator;      
+    import org.buni.mail.webmail.model.UserVO;
+    
+    private function initComp():void
+    {
+        this.populateRememberMeInfoView();
+    }
+      
+    public function loginUser():void
+    {
+        this.storeRememberMeInfo();
+        var user:UserVO = new UserVO();
+        user.username = username.text;
+        user.password = password.text;
+   
+        var e:CairngormEvent = new CairngormEvent(WebmailController.LOGIN);
+        e.data = user;
+        CairngormEventDispatcher.getInstance().dispatchEvent(e); 
+    }
+     
+    /*
+     * See: http://www.adobe.com/support/documentation/en/flex/1/lsos/lsos5.html
+     * Retrieves the SharedUserName from the LSO FlashCookie Store.
+     */
+    public function populateRememberMeInfoView():void
+    {
+        var rememberMeSO:SharedObject = SharedObject.getLocal("loginView.rememberMe");    
+        if(rememberMeSO.data.rememberMe == true)
+        {
+            //Try to get the remember me info out of the LSO Store.
+            var usernameValue:String = rememberMeSO.data.username;
+            var passwordValue:String = rememberMeSO.data.password;
+            this.username.text = usernameValue;
+            this.password.text = passwordValue;   
+            this.rememberMe.selected = true;
+        }
+        //There is no RememberMe info, so do nothing. 
+    }
+     
+    /*
+     * See: http://www.adobe.com/support/documentation/en/flex/1/lsos/lsos5.html
+     * Sets the username, password, and 'rememberme' CB state into the LSO FlashCookie Store.
+     */
+    public function storeRememberMeInfo():void
+    {
+        var rememberMeSO:SharedObject = SharedObject.getLocal("loginView.rememberMe");      
+        if(this.rememberMe.selected == true)
+        {
+            //Try to get the remember me info out of the LSO Store.
+            rememberMeSO.data.username = this.username.text;
+            rememberMeSO.data.password = this.password.text;
+            rememberMeSO.data.rememberMe = true;
+        }
+        else
+        {
+            delete rememberMeSO.data.username;
+            delete rememberMeSO.data.password;
+            rememberMeSO.data.rememberMe = false;
+        }
+       
+        rememberMeSO.flush();       
+    }
+      
+    [Bindable] public var model:ModelLocator = ModelLocator.getInstance();
+       
+    ]]>
+    </mx:Script>
+
+    <mx:Form id="LoginForm">
+  
+        <mx:FormItem label="Username: ">
+            <mx:TextInput id="username" text="" enter="loginUser()"/>
+        </mx:FormItem>
+
+        <mx:FormItem label="Password: ">
+            <mx:TextInput id="password" displayAsPassword="true" text="" enter="loginUser()"/>
+        </mx:FormItem>
+    
+        <mx:FormItem>
+            <mx:CheckBox id="rememberMe" label="Remember Me"/>
+        </mx:FormItem>
+      
+    </mx:Form>
+
+    <mx:ControlBar horizontalAlign="center" paddingBottom="0" paddingTop="0">
+        <mx:Button label="Login" click="loginUser()"/>
+    </mx:ControlBar>
+    
+</mx:Panel>

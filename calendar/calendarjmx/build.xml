@@ -1,0 +1,39 @@
+<!DOCTYPE project [
+    <!ENTITY jarbuild SYSTEM "../../ant/jarbuild.xml">
+]>
+
+<project name="calendarjmx" default="build">
+    <tstamp/>
+    <property file="../build.properties"/>
+    <property name="module" value="calendarjmx"/>
+    <property name="manifest.classpath" 
+        value="${libs.commons.logging}"/>
+    <path id="jar.classpath">
+        <fileset dir="../../">
+            <include name="lib/${libs.commons.logging}"/>
+            <include name="lib/${libs.ristretto}"/>
+        </fileset>
+    </path>
+    &jarbuild;  
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->  
+    <target name="generate_source">
+        <echo>Code generation complete</echo>
+    </target>  
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->  
+    <target name="postCompile">
+        <copy file="../../lib/${libs.ristretto}" todir="${module.build}"/>
+    </target>  
+
+    <target name="processTemplates"/>
+    
+</project>

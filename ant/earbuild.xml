@@ -1,0 +1,65 @@
+<!-- ============================================================== -->    
+<!-- EAR Build targets                                              -->    
+<!-- ============================================================== -->    
+
+    <!-- ========================================================== -->
+    <!-- TARGET:clean                                               -->
+    <!--                                                            -->
+    <!-- Clean upp app generated files                              -->
+    <!-- ========================================================== -->  
+    <target name="clean">
+        <echo>CLEANING UP ${module}</echo>
+        <delete dir="dist"/>
+        <delete dir="build"/>
+    </target>
+  
+    <!-- ========================================================== -->
+    <!-- TARGET:build                                               -->
+    <!--                                                            -->
+    <!-- Build general target to build only                         -->
+    <!-- ========================================================== -->		    
+    <target name="build">
+        <echo>Assemble EAR for ${module}</echo>
+        
+        <mkdir dir="dist"/>
+        <mkdir dir="dist/${module}.ear"/>
+        <mkdir dir="build"/>
+        
+        <copy todir="build"  flatten="true" overwrite="true">
+        	<fileset refid="ear.classpath"/>
+        </copy>
+
+        <copy todir="build" failonerror="false">
+    		<fileset dir="etc/layout"/>
+        </copy>
+        
+        <antcall target="addToEar" />
+        
+        <copy todir="dist/${module}.ear">
+    		<fileset dir="build"/>
+        </copy>
+    </target>
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:deploy                                              -->
+    <!--                                                            -->
+    <!-- Build, deploy general target                               -->
+    <!-- ========================================================== -->		    
+    <target name="deploy">
+        <echo>Deploy app for ${module}</echo>
+        <mkdir dir="${deploy.base}/${module.deploy.dir}"/>
+    	<copy todir="${deploy.base}/${module.deploy.dir}">
+    		<fileset dir="dist/${module}.ear">
+    			<include name="**/*"/>
+    		</fileset>
+    	</copy>
+    </target>
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:buildTest                                           -->
+    <!--                                                            -->
+    <!-- Build, deploy, test general target                         -->
+    <!-- ========================================================== -->		    	    
+    <target name="test">
+        <echo>Skip unit testing for EAR</echo>
+    </target>

@@ -1,0 +1,41 @@
+<!DOCTYPE project [
+    <!ENTITY propload SYSTEM '../../ant/propload.xml'>
+	<!ENTITY earbuild SYSTEM '../../ant/earbuild.xml'>
+	<!ENTITY texenbuild SYSTEM '../../ant/texenbuild.xml'>
+]>
+
+<project name="calendarear" default="build">
+	<tstamp />
+	&propload;
+	<property name="module" value="calendar" />
+	<property name="module.deploy.dir" value="calendar.ear"/>
+	<path>
+		<fileset id="ear.classpath" dir="${folder.libs}">
+			<include name="${libs.commons.lang}" />
+			<include name="${libs.commons.logging}" />
+			<include name="${libs.commons.beanutils}" />
+			<include name="${libs.commons.collection}" />
+			<include name="${libs.commons.digester}" />
+			<include name="${libs.freemaker}" />
+			<include name="${libs.ical4j}" />
+		</fileset>
+	</path>
+    &earbuild;   
+	
+    <target name="addToEar">
+
+    	<mkdir dir="build/calendarejb.jar" />
+		<unjar dest="build/calendarejb.jar" src="../calendarejb/dist/calendarejb.jar"/>
+    	
+		<mkdir dir="build/calendarjmx.sar" />
+		<unjar dest="build/calendarjmx.sar" src="../calendarjmx/dist/calendarjmx.jar"/>
+
+		<mkdir dir="build/icalweb.war" />
+		<unjar dest="build/icalweb.war" src="../icalweb/dist/icalweb.war"/>
+	
+    	<copy file="../calendarbeans/dist/calendarbeans.jar" todir="build"/>
+	</target>
+
+    &texenbuild;
+    
+</project>

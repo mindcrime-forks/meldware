@@ -1,0 +1,7 @@
+#parse("test-control.vm")
+$generator.parse("deploy/address.ear/META-INF/application.xml.vm", "deploy/address.ear/META-INF/application.xml")
+$generator.parse("deploy/address.ear/addressjmx.sar/META-INF/jboss-service.xml.vm", "deploy/address.ear/addressjmx.sar/META-INF/jboss-service.xml")
+$generator.parse("deploy/address.ear/opends.sar/config/config.ldif.vm", "deploy/address.ear/opends.sar/config/config.ldif")
+$generator.parse("deploy/address.ear/opends.sar/config/buniStructural.ldif.vm", "deploy/address.ear/opends.sar/config/buniStructural.ldif")
+$generator.parse("deploy/address.ear/opends.sar/META-INF/jboss-service.xml.vm", "deploy/address.ear/opends.sar/META-INF/jboss-service.xml")
+

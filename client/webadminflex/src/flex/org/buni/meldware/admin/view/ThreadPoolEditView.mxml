@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"	 width="100%" height="100%"
+creationComplete="initComp()">
+  <mx:Script>
+  	<![CDATA[
+  	import com.adobe.cairngorm.control.CairngormEvent;
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+    import org.buni.meldware.admin.controller.AdminController;
+    import org.buni.meldware.admin.model.ThreadPoolVO;
+    import org.buni.meldware.admin.model.ModelLocator;
+
+    [Bindable]
+    public var model:ModelLocator = ModelLocator.getInstance();
+    public function initComp(): void {
+           CairngormEventDispatcher.getInstance().addEventListener(AdminController.THREADPOOL_EDITED,clear);
+    }
+    
+    public function clear(event:Event): void {
+      /*	  poolName.text = "";
+      	  initial.text = "";
+      	  min.text = "";
+      	  max.text = "";
+      	  idleKeepAlive.text = "";*/
+    }
+  	
+  	  public function save(event:Event):void {
+          var threadPool:ThreadPoolVO = new ThreadPoolVO();
+          threadPool.threadPoolName = poolName.text;
+          threadPool.initial = new Number(initial.text);
+          threadPool.min = new Number(min.text);
+          threadPool.max = new Number(max.text);
+          threadPool.idleKeepAlive = new Number(idleKeepAlive.text);
+
+          
+          var e:CairngormEvent = new CairngormEvent(AdminController.EDIT_THREADPOOL);
+          e.data = threadPool;
+          CairngormEventDispatcher.getInstance().dispatchEvent(e);
+      }
+    ]]>
+  </mx:Script>
+
+
+  <mx:Form id="threadPoolInput" width="100%" height="100%" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+    <mx:FormItem label="Name:" width="100%">
+		<mx:Label id="poolName" text="{model.selectedThreadPool.threadPoolName}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Initial:" width="100%">
+		<mx:TextInput id="initial" text="{model.selectedThreadPool.initial}" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem label="Min" width="100%">
+		<mx:TextInput id="min" text="{model.selectedThreadPool.min}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Max:" width="100%">
+		<mx:TextInput id="max" text="{model.selectedThreadPool.max}" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem label="IdleKeepAlive:" width="100%">
+		<mx:TextInput id="idleKeepAlive" text="{model.selectedThreadPool.idleKeepAlive}" width="100%"/>
+	</mx:FormItem>
+	<mx:ControlBar horizontalAlign="center" width="100%" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
+    		<mx:Button label="Save" click="save(event)" />
+    		<mx:Button label="Clear" click="clear(event)" />
+    </mx:ControlBar>
+    <mx:Label text="{model.lastStatus}" color="#f10000" paddingTop="10"/>
+  </mx:Form>  
+  
+</mx:VBox>
+

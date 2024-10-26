@@ -1,0 +1,9 @@
+#if($DATABASE_TYPE.equals("hsqldb"))
+#include("deploy/jms/hsqldb-jdbc2-service.xml")
+#elseif($DATABASE_TYPE.equals("oracle"))
+#include("deploy/jms/oracle-jdbc2-service.xml")
+#elseif($DATABASE_TYPE.equals("mysql"))
+#include("deploy/jms/mysql-jdbc2-service.xml")
+#elseif($DATABASE_TYPE.equals("postgresql"))
+#include("deploy/jms/postgres-jdbc2-service.xml")
+#end

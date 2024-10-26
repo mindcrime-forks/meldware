@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="Shift_JIS" standalone="yes" ?>
+
+<!-- The Japanese langpack -->
+
+<!--
+
+ Caution for configuration manager!
+ 
+ This text file contains Japanese, many of which characters' value
+ could be in 8 bits. So if you are not using 8-bit through environment,
+ please handle this file as a binary file, otherwise, this file will
+ be broken.
+
+ - some e-mail transfer drops 8th bit
+ - standard CVS may not handle 8th bit (treat as binary file)
+
+-->
+
+<!--
+
+ The reason to choose Shift_JIS for this resource file
+
+ Ideally, Unicode encoding (like UTF-8) should be used.
+
+ As each platform uses different encodings,
+  Windows   : Shift_JIS (strictly speaking, may be Windows-31J)
+  most Unix : EUC_JIS
+  Macintosh : (I do not know)
+
+ However, some strings are given to native library and used for Windows
+ shortcut, so this should be in Windows encoding.
+
+-->
+
+<langpack>
+    <str id="input_SMTP_title" txt="SMTPサービス" />
+    <str id="input_SMTP_comment" txt="現在、Meldwareメールサーバは、POP、SMTP、IMAPサービスを提供しています。これらのサービスは、セキュアな状態（TLS/SSL）でお使いいただけま  す。サービス及びポートを選択してください。" />
+    <str id="input_SMTP_SMTP_comment" txt="SMTPは、リモートサーバからMeldwareメールへメールが送信されることを許可します。そして、認証されたローカルユーザがMeldwareメール経由でメール  送信することを許可します。" />
+    <str id="input_SMTP_ENABLED" txt="SMTPを動作させる" />
+    <str id="input_SMTP_PORT" txt="ポート" />
+    <str id="input_SMTP_TLS_comment" txt="TLSは、平文または暗号化されたパスワードよりも安全なSMTP接続を行います。TLSをサポートしないメールクライアントも存在します。TLSの要求は、ロ  ーカルでないユーザ（インターネットからの読み出しまたは、アカウントのないユーザ）からメールを受け取れないことを意味します。または、認証のみにTLSを  要求することもできます。" />
+    <str id="input_SMTP_TLS_ENABLED" txt="TLSをサポートする" />
+    <str id="input_SMTP_TLS_REQUIRED" txt="TLSを要求する" />
+    <str id="input_SMTP_TLS_REQUIRED_AUTH" txt="認証のためTLSを要求する" />
+    <str id="input_SMTP_AUTH_ALLOWED_comment" txt="認証許可" />
+    <str id="input_SMTP_AUTH_ALLOWED" txt="認証を許可する（選択しない場合は、メール送信認証ができません）" />
+    <str id="input_SMTP_VERIFY_IDENTITY_comment" txt="本人確認は、認証されたユーザはログインIDと同じIDでメール送信しなければならないことを意味します。例えば、tomとしてログインした場合、           jerry@buni.orgとしてメール送信はできません。tom@buni.orgとして送信できます。" />
+    <str id="input_SMTP_VERIFY_IDENTITY" txt="本人確認" />
+
+    <str id="input_SMTP_SSL_title" txt="SMTP/SSL サービス" />
+    <str id="input_SMTP_SSL_comment" txt="SMTP/SSLは、接続全体がSSL上で行われることを除いてSMTPと本質的に同じです。一般的に、SMTP/TLSは十分幅広くサポートされていますの  で、このサービスを実行する理由はありません。しかし、制限的なファイアウォールやネットワーク上のセキュリティ規則を持つ組織では、別のポート上でこの  サービスの実行を選択できます。SMTP/TLSはSMTP/SSLと同レベルのセキュリティを確保しますが、SMTP/SSLは外部ユーザからのメールを受信で  きません（ローカルユーザのみ）。" />
+    <str id="input_SMTP_SSL_ENABLED_comment" txt="SMTP/SSLは、認証されたローカルユーザがMeldwareメール経由でメール送信することを許可します。" />
+    <str id="input_SMTP_SSL_ENABLED" txt="SMTP/SSLを動作させる" />
+    <str id="input_SMTP_SSL_PORT" txt="ポート" />
+    <str id="input_SMTP_SSL_VERIFY_IDENTITY_comment" txt="本人確認は、認証されたユーザはログインIDと同じIDでメール送信しなければならないことを意味します。例えば、tomとしてログインした場合、           jerry@buni.orgとしてメール送信はできません。tom@buni.orgとして送信できます。" />
+    <str id="input_SMTP_SSL_VERIFY_IDENTITY" txt="本人確認" />
+
+    <str id="input_RELAY_title" txt="SMTPリレー" />
+    <str id="input_RELAY_comment" txt="Meldwareメールは、特定のドメインに対し認証されていないユーザがメールを中継することを許可します。" />
+    <str id="input_RELAY_allow" txt="ドメインごとにリレーを許可する" />
+    <str id="input_RELAY_DOMAIN_1" txt="リレードメイン #1" />
+    <str id="input_RELAY_DOMAIN_2" txt="リレードメイン #2" />
+    <str id="input_RELAY_DOMAIN_3" txt="リレードメイン #3" />
+    <str id="input_RELAY_DOMAIN_4" txt="リレードメイン #4" />
+
+    <str id="input_ROUTE_title" txt="SMTPルーティング" />
+    <str id="input_ROUTE_comment" txt="Meldwareメールは、以下で許可とホスト名の特定を行うことによってゲートウェイサーバを経由することを可能にします。以下で指定することにより、特定  のドメインリストを経由させることもできます。このインストーラではドメインは4つまでですが、後から無制限に設定ができます。複数の経路も可能です。" />
+    <str id="input_ROUTING_ENABLED" txt="SMTPルーティングを許可する" />
+    <str id="input_ROUTE_HOST" txt="ゲートウェイホスト（ドメインのみ 例えば'nowhere.com'）" />
+    <str id="input_ROUTE_DOMAIN_comment" txt="以下で選択すれば、以下で指定したドメインへのメールのみが上記のホストへ配送されます。選択しない場合は、すべてのメールが上記のホストを通過  します。" />
+    <str id="input_ROUTING_BY_DOMAIN" txt="以下のドメインのみ経由させる" />
+    <str id="input_ROUTE_DOMAIN_1" txt="ルーティングドメイン #1" />
+    <str id="input_ROUTE_DOMAIN_2" txt="ルーティングドメイン #2" />
+    <str id="input_ROUTE_DOMAIN_3" txt="ルーティングドメイン #3" />
+    <str id="input_ROUTE_DOMAIN_4" txt="ルーティングドメイン #4" />
+    
+    <str id="input_POP_title" txt="POPサービス" />
+    <str id="input_POP_comment" txt="POPはローカルユーザがメールを取得することを許可します。" />
+    <str id="input_POP_ENABLED" txt="POPを動作させる" />
+    <str id="input_POP_PORT" txt="ポート" />
+    <str id="input_ROUTE_DOMAIN_comment" txt="以下で選択すれば、以下で指定したドメインへのメールのみが上記のホストへ配送されます。選択しない場合は、すべてのメールが上記のホストを通過  します。" />
+    <str id="input_POP_TLS_comment" txt="TLSは、クリアテキストまたはハッシュパスワードより安全なPOP接続をユーザに提供します。すべてのメールクライアントがTLSをサポートしているわけではあ  りませんが、多くのメールクライアントでサポートされています。またはPOP/SSLを使用することもできます（次のページ）。" />
+    <str id="input_POP_TLS_ENABLED" txt="TLSをサポートする" />
+    <str id="input_POP_TLS_comment2" txt="TLSのサポートに加え、POP認証にTLSを要求することができます。TLS on POPのサポートは限られているので、POP認証にTLSを要求しないことをおすすめします。" />
+    <str id="input_POP_TLS_REQUIRED" txt="TLSを要求する" />
+    
+    <str id="input_POP_SSL_title" txt="POP/SSLサービス" />
+    <str id="input_POP_SSL_comment" txt="POP/SSLはローカルユーザがメールを取得することを許可します。POP+TLSとの違いは、配信全体がSSL上で行われ（STARTTLSは一度も発行されま  せん）、異なるポートで実行されるということです。POP/SSLは、TLSを要求するPOP+TLSと同等の保証を与えます。" />
+    <str id="input_POP_SSL_ENABLED_comment" txt="POP/SSLはSSL上でローカルユーザがメールを取得することを許可します。" />
+    <str id="input_POP_SSL_ENABLED" txt="POP/SSLを動作させる" />
+    <str id="input_POP_SSL_PORT" txt="ポート" />
+
+    <str id="input_IMAP_title" txt="IMAP設定" />
+    <str id="input_IMAP_comment" txt="IMAPは、メールをサーバに残して電子メールクライアントアプリケーションでメールを読むために使用されます。IMAPはPOP以上にたくさんの特徴があります  が（オンラインでの複数のフォルダ、複数のクライアントから同一のメールボックスへの同期など）、重たいです。このバージョンでのMeldware Mailは、IMAPプロトコルがMozilla Thunderbirdで完全に動作するように十分サポートされており、他のクライアントでも動作すると思われますが、他のプロトコルと同様な厳格なテストを受け  ていません。アルファまたはベータの状態です。" />
+    <str id="input_IMAP_ENABLED" txt="IMAPを動作させる" />
+    <str id="input_IMAP_PORT" txt="ポート" />
+    <str id="input_IMAP_SSL_ENABLED" txt="SSL上でIMAPを動作させる" />
+    <str id="input_IMAP_SSL_PORT" txt="ポート" />
+
+    <str id="input_DNS_title" txt="DNS設定" />
+    <str id="input_DNS_comment" txt="Domain Name System (DNS)は、メールを外部に送信する正しいホストを決定するのに使用されます。Unix系のシステムでは、以下を空白のままにしておくとデフォルトの経路が  使用されます。サーバのデフォルト（例えばキャッシュしているDNSインスタンス）を上書きすることは望ましいかもしれません。Windowsでは、少なくともひとつ  （2つ以上を推奨）DNSサーバを指定しなくてはなりません。" />
+    <str id="input_DNS_SERVER_1" txt="DNSサーバ #1" />
+    <str id="input_DNS_SERVER_2" txt="DNSサーバ #2" />
+    <str id="input_DNS_SERVER_3" txt="DNSサーバ #3" />
+    <str id="input_DNS_SERVER_4" txt="DNSサーバ #4" />
+
+    <str id="input_SERVER_NAME_title" txt="サーバ名設定" />
+    <str id="input_DOMAIN_comment" txt="既定ではドメイン（メールアドレスの@の後ろの部分）がこのサーバによってサービスされている'ローカルドメイン'のひとつであれば、メールはこのサーバによって  のみ中継されます（より詳細なオプションはこのインストーラでは設定できません）。このサーバのローカルドメインを以下に入力してください:" />
+    <str id="input_DOMAIN_1" txt="ローカルドメイン #1" />
+    <str id="input_DOMAIN_2" txt="ローカルドメイン #2" />
+    <str id="input_DOMAIN_3" txt="ローカルドメイン #3" />
+    <str id="input_DOMAIN_4" txt="ローカルドメイン #4" />
+    <str id="input_DOMAIN_5" txt="ローカルドメイン #5" />
+    <str id="input_DOMAIN_6" txt="ローカルドメイン #6" />
+    <str id="input_SERVER_NAME_comment" txt="このサーバの完全DNS名を指定してください。これは推奨であり必須ではありません。またローカルドメインも指定できます。またはIPアドレスを指定できま  す（推奨しません）。" />
+    <str id="input_SERVER_NAME" txt="サーバ名" />
+    <str id="input_SERVER_BIND_ADDRESS_comment" txt="選択したサービスに結びつけるIPアドレスを指定してください。すべてのサービスはこのアドレスに結びつけられます（より細かいオプションはインストーラの外側  で可能です）。もしこのサーバが唯一のIP/インタフェースを持っていれば、すべてのIPアドレスに結びつける既定（0.0.0.0）を指定してください。" />
+    <str id="input_SERVER_BIND_ADDRESS" txt="サーバに結びつけるアドレス" />
+    <str id="input_POSTMASTER_ADDRESS" txt="PostMasterの完全メールアドレス（例 postmaster@buni.org）" />
+
+    <str id="input_DATABASE_comment" txt="あなたはメールのデータストアを設定する必要があります。あなたがJDBCドライバ（PGSQL/MySQL）のインストールを選択しない場合は、あなた自身で  ドライバを用意してMELDWARE_HOME/SERVER/CONFIG/libディレクトリに置く必要があります。最後に、あなたは用意されたデモ用の  HyperSonicデータベースを使用できます（製品としては推奨しません）。他のデータベースを利用することは可能ですが、インストーラでは生成できません。  詳しくはMCSフォーラムへご相談ください。: http://buni.org/forums/" />
+    <str id="input_DATABASE_TYPE" txt="データベースの種類（他のデータベースもサポートしていますが、本インストーラでは設定できません）" />
+    <str id="input_DATABASE_TYPE1" txt="デモ用データベース（hypersonic）" />
+    <str id="input_DATABASE_TYPE2" txt="Postgresql" />
+    <str id="input_DATABASE_TYPE3" txt="Oracle" />
+    <str id="input_DATABASE_TYPE4" txt="MySQL" />
+    <str id="input_DATABASE_comment2" txt="次の情報はデータソースを生成する場合のみ必要です。" />
+    <str id="input_DATABASE_DB_USER" txt="接続するデータベースユーザ" />
+    <str id="input_DATABASE_DB_PASS" txt="接続するデータベースパスワード" />
+    <str id="input_DATABASE_DB_HOST" txt="接続するデータベースホスト" />
+    <str id="input_DATABASE_DB_NAME" txt="データベース名またはSID（Hypersonicでは使用しません）" />
+
+    <str id="input_JASEN_comment" txt="スパムフィルタリングが可能です。これはすべてのローカル配送メッセージをスパムかどうか判別するためにスキャンします。" />
+    <str id="input_JASEN_ENABLED" txt="スパムフィルタリングを動作させる" />
+
+    <str id="input_STORE_TYPE_comment" txt="MySQLのようなデータベースはメッセージ本文の保存と取り出しにおいて非常に非効率です。代替策としてファイルシステムに効率的なフォーマットで保存  することが可能です。あなたの選択に関わらず、ヘッダ情報と他のメタデータはデータベースへ保存されます。ファイルストレージを選択した場合は、ベース  パスを選択する必要があります。ベースパスがない場合は、メッセージは$INSTALL/server/default/dataに保存されます。" />
+    <str id="input_STORE_TYPE" txt="ストレージの種類" />
+    <str id="input_STORE_TYPE1" txt="データベース" />
+    <str id="input_STORE_TYPE2" txt="ファイル（実験的）" />
+    <str id="input_FILESTORE_PATH" txt="ファイルストアのベースディレクトリ（空白の場合はデフォルト）" />
+
+    <str id="input_KEYSTORE_comment" txt="SSLサービスを選択した場合、キーストアの場所が必要です。キーストアがない場合は生成が可能です。生成しない場合は、キーストアを    JBOSS_HOME/server/CONFIG/confディレクトリへコピーする必要があります。" />
+    <str id="input_KEYSTORE_PATH" txt="server/CONFIG/conf内のキーストア名" />
+    <str id="input_KEYSTORE_PASS" txt="キーストアのパスワード（6文字以上）" />
+    <str id="input_GENERATE_STORE" txt="キーストアを生成する" />
+    <str id="input_KEYSTORE_comment2" txt="キーストアを生成する場合のみ入力してください。" />
+    <str id="input_KEYSTORE_CN" txt="ホスト名（CN）" />
+    <str id="input_KEYSTORE_OU" txt="会社/組織（OU）" />
+    <str id="input_KEYSTORE_O" txt="部門/組織（O）" />
+    <str id="input_KEYSTORE_L" txt="市/地域（L）" />
+    <str id="input_KEYSTORE_ST" txt="都道府県（ST）" />
+    <str id="input_KEYSTORE_C" txt="国名（C） 2文字" />
+
+    <str id="input_Account_title" txt="アカウント" />
+    <str id="input_Account_comment" txt="この入力は必須です: 管理者のユーザ名とパスワードを入力してください。サーバのスタート後、HOSTNAME:8080/webadmin/webadminflex.swfを表示させて管理コンソール  へログインし、追加ユーザを設定できます。" />
+    <str id="input_ADMIN_USER" txt="管理者ユーザ名" />
+    <str id="input_ADMIN_PASSWORD" txt="管理者パスワード" />
+
+    <str id="input_CALENDAR_MAILER_title" txt="カレンダ" />
+    <str id="input_CALENDAR_MAILER_comment" txt="カレンダサーバは、案内が作成されるとユーザへ通知を送ることができます。この機能を動作させるためには、カレンダサーバ通知アカウントを設定します。こ  の画面でアカウントを設定することを推奨します。" />
+    <str id="input_GENERATE_CALENDAR_MAILER" txt="カレンダ通知アカウントを作成します" />
+    <str id="input_CALENDAR_MAILER_ALIAS" txt="カレンダメーラーエイリアス" />
+    <str id="input_CALENDAR_MAILER_NAME" txt="カレンダメーラーユーザ名" />
+    <str id="input_CALENDAR_MAILER_PASSWORD" txt="カレンダメーラーパスワード" />
+    <str id="input_CALENDAR_MAILER_SERVERHOST" txt="カレンダメーラーSMTPホスト" />
+    <str id="input_CALENDAR_MAILER_SERVERPORT" txt="カレンダメーラーポート" />
+
+    <str id="input_ADDRESSBOOK_title" txt="アドレス帳" />
+    <str id="input_ADDRESSBOOK_comment" txt="アドレス帳サーバは、グローバルなアドレス帳を検索する統合されたldapインスタンスです。現在のところ、組み込みのグローバルアドレス帳が1つのみ提供  されています。近いうちに、個人用アドレス帳および外部ldapとの統合を行う見込みです。現在のところ、このアドレス帳は他のツールで入力する必要が  あります。" />
+    <str id="input_LDAP_BIND_PORT" txt="LDAPポート" />
+    <str id="input_BASE_DN" txt="BASE DN （例 dc=com,dc=myco）" />
+    <str id="input_BASE_DC" txt="BASE DC （例 DN=dc=com,dc=mycoの場合BASE DCはmyco）" />
+
+    <str id="input_Congrats_title" txt="おめでとうございます!" />
+    <str id="input_Congrats_comment" txt="インストールしたディレクトリに移動して、windowsの場合は'cd bin'(ENTER) 'run-meldware.bat'、UNIXの場合は                                           'sudo bin/run-meldware.sh'と入力しましょう。" />
+    <str id="input_Congrats_comment2" txt="詳しくはhttp://www.buni.org/mediawiki/index.php/Meldware_Installation_Guide_v_1.0M8を参照してください。" />
+</langpack>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml"
+  dragEnter="doDragEnter(event)" dragDrop="doDragDrop(event)"
+  creationComplete="init()">
+  
+  <mx:Script>
+    <![CDATA[
+    import mx.collections.ICollectionView;
+    import mx.events.CollectionEvent;
+    import mx.collections.ArrayCollection;
+    import mx.events.DragEvent;
+    import mx.managers.DragManager;
+    import mx.core.IUIComponent;
+    
+    import org.buni.mail.webmail.model.EmailAddressVO;
+    import org.buni.mail.webmail.model.ContactVO;
+    
+    
+    private var _dataProvider:ArrayCollection;
+    
+    private function init():void
+    {
+      if (dataProvider == null)
+      {
+        dataProvider = new ArrayCollection();
+      }
+    }
+    
+    public function set dataProvider(_dataProvider:ArrayCollection):void
+    {
+      this._dataProvider = _dataProvider;
+      this._dataProvider.addEventListener("collectionChanged",updateTextInput);
+      updateTextInput();
+    }
+    
+    public function get dataProvider():ArrayCollection
+    {
+      return _dataProvider;
+    }
+    
+    private function doDragEnter(event:DragEvent):void
+    {
+      if (event.dragSource.hasFormat("items"))
+      {
+        DragManager.acceptDragDrop(event.target as IUIComponent);
+        event.preventDefault();
+      }
+    }
+
+    private function doDragDrop(event:DragEvent):void
+    {
+      var items:Array = (event.dragSource.dataForFormat("items") as Array);
+      for (var i:int = 0; i < items.length; i++)
+      {
+        dataProvider.addItem((items[i] as ContactVO).emailAddress);
+      }
+      event.preventDefault();
+      updateTextInput();
+    }
+    
+    private function updateDataProvider():void
+    {
+      var a:ArrayCollection = new ArrayCollection();
+      
+      if (ti.text.indexOf(",") >= 0)
+      {
+        // iterate throught the list of addresses and update the array collection
+        var e:Array = ti.text.split(",");
+        for (var i:int = 0; i < e.length; i++)
+        {
+          if ((e[i] != " ") && (e[i] != ""))
+          {
+            a.addItem(new EmailAddressVO(e[i]));
+          }
+        }
+      }
+      else if (ti.text.length > 0)
+      {
+        a.addItem(new EmailAddressVO(ti.text));
+      }
+      
+      dataProvider = a;
+    }
+    
+    private function updateTextInput(event:CollectionEvent=null):void
+    {
+      ti.text = getEmailString();
+    }
+    
+    private function getEmailString():String
+    {
+      var t:String = "";
+      for (var i:int = 0; i < dataProvider.length; i++)
+      {
+        t += (dataProvider[i] as EmailAddressVO).getFormattedEmailAddress();
+        if (i < (dataProvider.length - 1))
+        {
+          t += ", ";
+        }
+      }
+      return t;
+    }
+    ]]>
+  </mx:Script>
+
+  <mx:TextInput id="ti" width="100%" focusOut="updateDataProvider()"/>
+</mx:Box>

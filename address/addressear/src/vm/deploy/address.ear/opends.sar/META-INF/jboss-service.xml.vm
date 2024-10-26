@@ -1,0 +1,20 @@
+<server>
+
+ <mbean name="buni.meldware:service=OpenDS" 
+        code="org.buni.meldware.integration.opends.OpenDSService"
+        interface="org.buni.meldware.integration.opends.OpenDS">
+        <attribute name="ConfigFile">${jboss.home.dir}/server/meldware/deploy/address.ear/opends.sar/config/config.ldif</attribute>
+        <attribute name="RootDir">${jboss.home.dir}/server/meldware/deploy/address.ear/opends.sar</attribute>
+ </mbean> 
+
+#if($USER_EDITOR.equals("opends"))
+ <mbean name="meldware.mail:type=MailServices,name=UserEditor"
+        code="org.buni.meldware.integration.opends.usereditor.OpenDSUserEditorImpl"
+        interface="org.buni.meldware.integration.opends.usereditor.OpenDSUserEditor">
+     <depends optional-attribute-name="OpenDS" proxy-type="attribute">buni.meldware:service=OpenDS</depends>
+     <attribute name="UserRoot">ou=People,${BASE_DN}</attribute>
+     <attribute name="RolesRoot">ou=Roles,${BASE_DN}</attribute>
+ </mbean>
+#end
+
+</server>

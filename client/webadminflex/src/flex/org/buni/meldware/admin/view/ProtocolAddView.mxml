@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"	 width="100%" height="100%"
+creationComplete="initComp()">
+  <mx:Script>
+  	<![CDATA[
+  	import mx.utils.ObjectUtil;
+  	import com.adobe.cairngorm.control.CairngormEvent;
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+    import org.buni.meldware.admin.controller.AdminController;
+    import org.buni.meldware.admin.model.ProtocolVO;
+    import org.buni.meldware.admin.model.ModelLocator;
+
+    [Bindable]
+    public var model:ModelLocator = ModelLocator.getInstance();
+    [Bindable]
+    public var protocolList: Array = [ {label:"SMTP", data:1}, 
+                {label:"POP", data:2}, {label:"IMAP", data:3} ];
+          
+    public var allFields: Array = null; 
+    public var smtpEnabled: Array = null;
+    public var popEnabled: Array = null;
+    public var imapEnabled: Array = null;
+     
+    public function initComp(): void {
+           CairngormEventDispatcher.getInstance().addEventListener(AdminController.PROTOCOL_ADDED,clear);
+/*           var e:CairngormEvent = new CairngormEvent(AdminController.GET_USERREPOSITORIES);
+           var e2:CairngormEvent = new CairngormEvent(AdminController.GET_DOMAINGROUPS);
+           var data:Object = new Object();
+           data.local = true;
+           e2.data = data;
+           var e3:CairngormEvent = new CairngormEvent(AdminController.GET_SSLDOMAINS);
+           var e4:CairngormEvent = new CairngormEvent(AdminController.GET_MAILLISTENERCHAINS);
+           var e5:CairngormEvent = new CairngormEvent(AdminController.GET_MAILBOXMANAGERS);
+           var e6:CairngormEvent = new CairngormEvent(AdminController.GET_MAILBODYMANAGERS);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e2);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e3);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e4);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e5);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e6);*/
+      
+    allFields = new Array (
+		protocolnameItem,                     
+		domainGroupItem,
+		listenerChainItem,
+		userRepositoryItem,
+		mailboxManagerItem,
+	    mailbodyManagerItem,
+		APOPUserRepositoryItem,
+		APOPEnabledItem,
+		sslSecurityDomainItem,
+		serverNameItem,
+		authRequiredItem,
+		authAllowedItem,
+		verifyIdentityItem,
+		maxMessageSizeItem,
+		blockSizeItem,
+		enableTlsItem,
+		requireTlsItem,
+		requireTlsForAuthItem,
+		requireClientCertItem,
+		postMasterAddressItem,
+		maxReceivedHeadersItem,
+		receivedHeadersThresholdItem,
+		maxOwnReceivedHeadersItem	
+    );      
+              
+    smtpEnabled = new Array (
+		protocolnameItem,                     
+		domainGroupItem,
+		listenerChainItem,
+		userRepositoryItem,
+	    mailbodyManagerItem,
+		sslSecurityDomainItem,
+		serverNameItem,
+		authRequiredItem,
+		authAllowedItem,
+		verifyIdentityItem,
+		maxMessageSizeItem,
+		blockSizeItem,
+		enableTlsItem,
+		requireTlsItem,
+		requireTlsForAuthItem,
+		requireClientCertItem,
+		postMasterAddressItem,
+		maxReceivedHeadersItem,
+		receivedHeadersThresholdItem,
+		maxOwnReceivedHeadersItem
+    );
+    
+    popEnabled = new Array (
+		protocolnameItem,
+		userRepositoryItem,
+		mailboxManagerItem,
+		APOPEnabledItem,
+		APOPUserRepositoryItem,
+		sslSecurityDomainItem,
+		serverNameItem,
+		enableTlsItem,
+		requireTlsItem,
+		requireClientCertItem
+    );
+    
+    imapEnabled = new Array (
+		protocolnameItem,
+		userRepositoryItem,
+		mailboxManagerItem,
+		sslSecurityDomainItem,
+		serverNameItem,
+		enableTlsItem,
+		requireTlsItem,
+		requireClientCertItem
+    );    
+		enableTls.selected = true;
+		authRequired.selected = true;
+		authAllowed.selected = true;
+		verifyIdentity.selected = true;
+		disableFields();
+		enableFields();
+
+    }
+    
+    public function disableFields():void {
+        trace("disableFields");
+        trace(ObjectUtil.toString(protocolType.selectedItem));
+        var i = 0;
+		for(i=0; i < allFields.length; i++) {
+		trace(popEnabled[i]);
+			allFields[i].visible = false;
+		}
+    }
+    
+    public function enableFields():void {
+        trace("enableFields");
+        var i = 0;
+    	if(protocolType.selectedItem.data == 1) {
+            trace("SMTP");
+	        for (i = 0; i < smtpEnabled.length; i++) {
+	        			smtpEnabled[i].visible = true;
+	        }
+    	} else if (protocolType.selectedItem.data == 2) {
+	        for (i = 0; i < popEnabled.length; i++) {
+	                     trace(popEnabled[i]);
+	        			 popEnabled[i].visible = true;
+	        }    		
+    	} else if (protocolType.selectedItem.data == 3) {
+	        for (i = 0; i < imapEnabled.length; i++) {
+	        			 imapEnabled[i].visible = true;
+	        }    		
+    	}
+    }
+    
+    public function typeChange(event:Event):void {
+    	disableFields();
+    	enableFields();
+    }
+    
+    public function apopEnabledChange(event:Event):void {
+    	APOPUserRepository.visible=APOPEnabled.selected;
+    }
+    
+    public function clear(event:Event): void {
+    /*
+      	  protocolname.text = "";
+      	  address.text = "";
+      	  port.text = "";
+      	  backlog.text = "";
+      	  timeout.text = "";
+      	  life.text = "";
+      	  protocol.text = "";
+      	  securityDomain.text = "";
+      	  threadPool.text = "";
+      	  */
+    }
+    
+    public function clickEnableTls(event:Event):void {
+    	sslSecurityDomain.visible = sslSecurityDomainItem.visible && enableTls.selected;
+    }
+  	
+  	  public function save(event:Event):void {
+          var protocol:ProtocolVO = new ProtocolVO();
+          protocol.name = protocolname.text; 
+          protocol.type = protocolType.selectedItem.label;      
+          protocol.serverName = serverName.text;              
+          protocol.domainGroup = domainGroup.text;
+          protocol.listenerChain = listenerChain.text;
+          protocol.userRepository = userRepository.text;
+          protocol.mailbodyManager = mailbodyManager.text;
+          protocol.mailboxManager = mailboxManager.text;
+          protocol.APOPEnabled = APOPEnabled.selected;
+          protocol.APOPUserRepository = APOPUserRepository.text;
+          protocol.sslSecurityDomain = sslSecurityDomain.text;
+          protocol.authRequired = authRequired.selected;
+          protocol.authAllowed = authAllowed.selected;
+          protocol.verifyIdentity = verifyIdentity.selected;
+          protocol.maxMessageSize = new Number(maxMessageSize.text);
+          protocol.blockSize = new Number(blockSize.text);
+          protocol.enableTls = enableTls.selected;
+          protocol.requireTls = requireTls.selected;
+          protocol.requireTlsForAuth = requireTlsForAuth.selected;
+          protocol.requireClientCert = requireClientCert.selected;
+          protocol.postMasterAddress = postMasterAddress.text;
+          protocol.maxReceivedHeaders = new Number(maxReceivedHeaders.text);
+          protocol.receivedHeadersThreshold = new Number(receivedHeadersThreshold.text);
+          protocol.maxOwnReceivedHeaders = new Number(maxOwnReceivedHeaders.text);
+          
+          var e:CairngormEvent = new CairngormEvent(AdminController.ADD_PROTOCOL);
+          e.data = protocol;
+          CairngormEventDispatcher.getInstance().dispatchEvent(e);
+      }
+    ]]>
+  </mx:Script>
+
+
+  <mx:Form id="protocolInput" width="100%" height="100%" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+    <mx:FormItem label="Type:" width="100%">
+        <mx:ComboBox id="protocolType" dataProvider="{protocolList}" change="typeChange(event)"/>
+    </mx:FormItem>
+    <mx:FormItem id="protocolnameItem" label="Name:" width="100%">
+		<mx:TextInput id="protocolname" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="serverNameItem" label="Server Name:" width="100%">
+		<mx:TextInput id="serverName" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="domainGroupItem" label="Domain Group:" width="100%">
+		<mx:ComboBox id="domainGroup" dataProvider="{model.localDomainGroups}" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem id="listenerChainItem" label="Listener Chain" width="100%">
+		<mx:ComboBox id="listenerChain" dataProvider="{model.mailListenerChains}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="userRepositoryItem" label="User Repository:" width="100%">
+		<mx:ComboBox id="userRepository" dataProvider="{model.userRepositories}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="mailbodyManagerItem" label="Mailbody Manager:" width="100%">
+		<mx:ComboBox id="mailbodyManager" dataProvider="{model.mailbodyManagers}" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem id="mailboxManagerItem" label="Mailbox Manager:" width="100%">
+		<mx:ComboBox id="mailboxManager" dataProvider="{model.mailboxManagers}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="APOPEnabledItem" label="APOP Enabled:" width="100%">
+		<mx:CheckBox id="APOPEnabled" click="apopEnabledChange(event)" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem id="APOPUserRepositoryItem" label="APOP User Repository:" width="100%">
+		<mx:ComboBox id="APOPUserRepository" dataProvider="{model.userRepositories}" visible="false" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="authRequiredItem" label="Auth Required:" width="100%">
+		<mx:CheckBox id="authRequired" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="authAllowedItem" label="Auth Allowed:" width="100%">
+		<mx:CheckBox id="authAllowed" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="verifyIdentityItem" label="Verify Identity:" width="100%">
+		<mx:CheckBox id="verifyIdentity" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="maxMessageSizeItem" label="Max Message Size (bytes):" width="100%">
+		<mx:TextInput id="maxMessageSize" text="10000000" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem id="blockSizeItem" label="Block Size (bytes):" width="100%">
+		<mx:TextInput id="blockSize" text="8192" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem id="enableTlsItem" label="Enable TLS:" width="100%">
+		<mx:CheckBox id="enableTls" click="clickEnableTls(event)" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="requireTlsItem" label="Require TLS:" width="100%">
+		<mx:CheckBox id="requireTls" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem id="requireTlsForAuthItem" label="Require TLS for Authorization:" width="100%">
+		<mx:CheckBox id="requireTlsForAuth" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="requireClientCertItem" label="Require Client Certificate:" width="100%">
+		<mx:CheckBox id="requireClientCert" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="sslSecurityDomainItem" label="SSL Configuration:" width="100%">
+		<mx:ComboBox id="sslSecurityDomain" dataProvider="{model.ssldomains}" visible="false" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="postMasterAddressItem" label="PostMaster Address:" width="100%">
+		<mx:TextInput id="postMasterAddress" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="maxReceivedHeadersItem" label="Max Received Headers:" width="100%">
+		<mx:TextInput id="maxReceivedHeaders" text="100" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="receivedHeadersThresholdItem" label="Received Headers Threshold:" width="100%">
+		<mx:TextInput id="receivedHeadersThreshold" text="20" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="maxOwnReceivedHeadersItem" label="Max Own Received Headers:" width="100%">
+		<mx:TextInput id="maxOwnReceivedHeaders" text="5" width="100%"/>
+	</mx:FormItem>
+	<mx:ControlBar horizontalAlign="center" width="100%" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
+    		<mx:Button label="Save" click="save(event)" />
+    		<mx:Button label="Clear" click="clear(event)" />
+    </mx:ControlBar>
+    <mx:Label text="{model.lastStatus}" color="#f10000" paddingTop="10"/>
+  </mx:Form>  
+</mx:VBox>

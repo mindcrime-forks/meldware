@@ -1,0 +1,62 @@
+<!DOCTYPE project [
+    <!ENTITY propload SYSTEM "../../ant/propload.xml">
+	<!ENTITY sarbuild SYSTEM "../../ant/jarbuild.xml">
+]>
+<project name="addressjmx" default="build">
+    <tstamp/>
+	&propload;
+    <property name="module" value="addressjmx"/>
+    <!--property name="module.deploy.dir" value="address.sar"/-->
+    <property name="manifest.classpath" 
+        value=""/>
+    <property name="module.ext" value="sar"/>
+
+    <path id="sar.classpath">
+        <pathelement location="${basedir}/../../common/meldwarebeans/dist/meldwarebeans.jar"/>
+        <pathelement location="${basedir}/../../integration/opends/build/sar"/>
+        <fileset dir="${folder.libs}">
+            <!--<include name="${J2EE_JAR}"/>-->
+            <include name="${libs.log4j}"/>
+            <include name="${libs.opends}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.default.lib}">
+            <include name="${libs.jboss.jca}"/>
+            <include name="${libs.jboss.ejb3-persistence}"/>
+            <include name="${libs.jboss.hibernate}"/>
+            <include name="${libs.jboss.hibernate.annotations}"/>
+            <include name="${libs.jboss.hibernate.entitymanager}"/>
+            <include name="${libs.jboss.jbosssx}"/>
+            <include name="${libs.jboss.transaction}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.lib}">
+            <include name="${libs.jboss.system}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.client}">
+            <include name="${libs.mail}"/>
+            <include name="${libs.activation}"/>
+            <include name="${libs.jbossall.client}"/>
+            <include name="${libs.concurrent}"/>
+        </fileset>
+        <path refid="aop.classpath"/>
+    </path>
+	
+    &sarbuild;
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->
+
+    <target name="generate_source"/>
+
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->
+    <target name="postCompile"/>
+
+    <target name="processTemplates"/>
+
+</project>

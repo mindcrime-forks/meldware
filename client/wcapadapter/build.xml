@@ -1,0 +1,57 @@
+<!DOCTYPE project [
+<!ENTITY warbuild SYSTEM "../../ant/warbuild.xml">
+<!ENTITY propload SYSTEM "../../ant/propload.xml">
+]>
+
+<project name="wcapadapter" default="build">
+	<tstamp />
+	&propload;
+    <property name="module" value="wcapadapter" />
+	<property name="module.deploy.dir" value="wcapadapter.war"/>
+	
+	<path id="war.classpath">
+		<fileset id="war.webinf.lib" dir="${folder.libs}">
+			<include name="${libs.commons.logging}"/>
+			<include name="${libs.commons.beanutils}"/>
+			<include name="${libs.commons.validator}"/>
+			<include name="${libs.commons.chain}"/>
+			<include name="${libs.antlr}"/>
+			<include name="${libs.struts-core}"/>
+			<include name="${libs.struts-taglib}"/>
+		</fileset>
+	</path>
+
+	<path id="war.ejbref">
+        <pathelement location="${basedir}/../../common/meldwarebase/build/sar/"/>
+        <pathelement location="${basedir}/../../common/meldwarebeans/dist/meldwarebeans.jar"/>
+		<fileset dir="../../">
+			<include name="calendar/calendarejb/dist/calendarejb_export.jar" />
+			<include name="calendar/calendarbeans/dist/calendarbeans.jar" />
+			<include name="mail/mailapi/dist/mailapi.jar" />
+			<include name="mail/mailbeans/dist/mailbeans.jar" />
+		</fileset>
+		<fileset dir="${jboss.folder.default.lib}">
+			<include name="${libs.jboss.jbosssx}"/>
+		</fileset>
+	    <!-- TODO: Refactor mail code to remove this -->
+		<pathelement location="${basedir}/../../mail/mailjmx/build/sar"/>
+	</path>
+
+    &warbuild;  
+
+    <!-- ========================================================== -->
+	<!-- TARGET:generate_source                                     -->
+	<!--                                                            -->
+	<!-- Run code generator                                         -->
+	<!-- ========================================================== -->
+	<target name="generate_source">
+		<echo>Code generation complete</echo>
+	</target>
+
+    <target name="processTemplates">
+        
+    </target>
+    
+    <target name="addToWar"/>
+
+</project>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+         creationComplete="initApp()" width="100%" styleName="Form">
+  
+  
+  	<mx:Script>
+		<![CDATA[
+			import org.buni.mail.webmail.model.UserABMountVO;
+			import mx.events.ItemClickEvent;
+            import mx.managers.PopUpManager;
+			import org.buni.mail.webmail.controller.WebmailController;
+			
+			import org.buni.mail.webmail.model.ModelLocator;
+			
+            import com.adobe.cairngorm.control.CairngormEventDispatcher;
+            import com.adobe.cairngorm.control.CairngormEvent;
+            import mx.collections.ArrayCollection;
+           
+            
+			[Bindable]
+			public var model:ModelLocator = ModelLocator.getInstance();
+			public var handle:Object = this;
+			private function initApp():void {
+			}
+			
+		  public function abClick(event:ItemClickEvent):void {
+		  	//'Accept','Decline','Delete','Save','Cancel'
+		  	var label:String = event.label;
+		  	if (label == "Unmount") {
+		  		this.doUnmount();
+		  	} else if (label == "Mount") {
+		  		this.doMount();
+		  	} else if (label == "Toggle") {
+		  		this.doToggle();
+		  	} else if (label == "Apply") {
+		  		this.doApply();
+		  	} else if (label == "Cancel") {
+		  		this.doCancel();
+		  	} 
+		  }
+		  
+		  public function doUnmount():void {
+		  	
+		  }
+		  
+		  public function doMount():void {
+               this.setStyle('modalTransparency',0);
+               var sav:MountView = MountView(PopUpManager.createPopUp(this, MountView, true));
+               sav.y = 38;
+               sav.x = (this.width);
+               sav.width = 500;
+               sav.addEventListener("close",
+                       function ():void {
+                           handle.setStyle('modalTransparency',0.5); 
+                           
+                           PopUpManager.removePopUp(sav);
+                           
+                           });           
+		  }
+		  
+		  public function doSearch():void {
+     	   	   var e:CairngormEvent = new CairngormEvent(WebmailController.SHOW_AB_SEARCH);   
+     		   CairngormEventDispatcher.getInstance().dispatchEvent(e);	  	
+		  }
+		  
+		  public function doToggle():void {
+		  	  (mounts.selectedItem as UserABMountVO).enabled = true;
+		  }
+		  
+		  public function doApply():void {
+		  	
+     	   	   var e:CairngormEvent = new CairngormEvent(WebmailController.SAVE_USER_AB_MOUNTS);   
+     		   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		  }		  
+		  
+		  public function doCancel():void {
+     	   	   var e:CairngormEvent = new CairngormEvent(WebmailController.GET_USER_AB_MOUNTS);   
+     		   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+		  }
+		]]>
+	</mx:Script>
+	<mx:VBox width="100%" styleName="Form">
+	  <mx:HBox width="100%" styleName="Form">  	
+	     <mx:Image source="@Embed('/assets/addressbook_sm.png')"/>
+	     <mx:Label width="100%" text="Addressbooks"/>
+	     <mx:Button label="Search" click="doSearch()"/>
+	  </mx:HBox>
+    </mx:VBox>
+    <mx:HBox width="100%" height="100%" styleName="Form">
+		<mx:List id="mounts" width="100%" height="100%" dataProvider="{model.userABMounts}" labelField="@description"/>
+		<mx:VBox>
+			<mx:Button icon="@Embed('/assets/uparrow.png')"/>
+			<mx:Button icon="@Embed('/assets/downarrow.png')"/>
+		</mx:VBox>		
+	</mx:HBox>
+    <mx:ButtonBar width="100%" itemClick="abClick(event)">
+       <mx:dataProvider>
+         <mx:Array>
+           <mx:String>Unmount</mx:String>
+           <mx:String>Mount</mx:String>
+           <mx:String>Toggle</mx:String>
+           <mx:String>Apply</mx:String>
+           <mx:String>Cancel</mx:String>
+         </mx:Array>
+       </mx:dataProvider>
+    </mx:ButtonBar>
+</mx:VBox>

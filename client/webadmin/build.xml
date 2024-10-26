@@ -1,0 +1,59 @@
+<!DOCTYPE project [
+    <!ENTITY warbuild SYSTEM "../../ant/warbuild.xml">
+<!ENTITY propload SYSTEM "../../ant/propload.xml">
+]>
+
+<project name="webadmin" default="build">
+	<tstamp />
+	&propload;
+    <property name="module" value="webadmin" />
+	<property name="module.deploy.dir" value="webadmin.war"/>
+	
+	<path id="war.classpath">
+                <pathelement location="${basedir}/../../common/meldwarebase/build/sar/"/>
+                <pathelement location="${basedir}/../../calendar/calendarejb/build/ejb/"/>
+                <pathelement location="${basedir}/../../address/addressjmx/build/sar"/>
+                <pathelement location="${basedir}/../../common/meldwarebeans/dist/meldwarebeans.jar"/>
+		<fileset id="war.webinf.lib" dir="${folder.libs}">
+			<include name="${libs.commons.logging}" />
+		</fileset>
+	    <!-- TODO: Refactor mail code to remove this -->
+		<pathelement location="../../mail/mailjmx/build/sar"/>
+                <fileset dir="${jboss.folder.lib}">
+                        <include name="${libs.jboss.system}"/>
+                </fileset>
+                <fileset dir="${jboss.folder.default.lib}">
+                        <include name="${libs.jboss.jbosssx}"/>
+                </fileset>
+                <fileset dir="${jboss.folder.client}">
+                        <include name="${libs.jbossall.client}"/>
+                </fileset>
+	</path>
+
+	<path id="war.ejbref">
+		<fileset dir="../../">
+			<include name="mail/mailapi/dist/mailapi.jar" />
+			<include name="mail/mailbeans/dist/mailbeans.jar" />
+		</fileset>
+	</path>
+
+    &warbuild;  
+
+    <!-- ========================================================== -->
+	<!-- TARGET:generate_source                                     -->
+	<!--                                                            -->
+	<!-- Run code generator                                         -->
+	<!-- ========================================================== -->
+	<target name="generate_source">
+		<echo>Code generation complete</echo>
+	</target>
+
+    <target name="processTemplates">
+        
+    </target>
+    
+    <target name="addToWar">
+    	<copy file="../webadminflex/build/webadminflex.swf" todir="build/war" failonerror="no"/>
+	</target>
+
+</project>

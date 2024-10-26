@@ -1,0 +1,31 @@
+<persistence>
+  <persistence-unit name="mail">
+#if($DATABASE_TYPE.equals("hsqldb")==false)
+  <jta-data-source>java:/${DATASOURCE_NAME}</jta-data-source>
+#else 
+  <jta-data-source>java:/DefaultDS</jta-data-source>
+#end
+  <properties>
+    <property name="jboss.entity.manager.jndi.name"
+              value="java:/EntityManagers/mail"/>
+#if($DATABASE_TYPE.equals("hsqldb"))
+   <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+#end
+#if($DATABASE_TYPE.equals("postgresql"))
+    <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+#end
+#if($DATABASE_TYPE.equals("mysql"))
+    <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect"/>
+#end
+#if($DATABASE_TYPE.equals("oracle"))
+    <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle9Dialect"/>
+#end
+    <property name="hibernate.hbm2ddl.auto"
+              value="update"/>
+    <!--
+    <property name="hibernate.show_sql"
+              value="true"/>
+    -->
+  </properties>
+  </persistence-unit>
+</persistence>

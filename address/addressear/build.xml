@@ -1,0 +1,35 @@
+<!DOCTYPE project [
+    <!ENTITY propload SYSTEM "../../ant/propload.xml">
+    <!ENTITY earbuild SYSTEM "../../ant/earbuild.xml">
+    <!ENTITY texenbuild SYSTEM "../../ant/texenbuild.xml">
+]>
+<project name="addressear">
+    <tstamp/>
+	&propload;
+	<property name="module" value="address" />
+	<property name="module.deploy.dir" value="address.ear"/>
+	<path>
+	    <!-- All of the libraries to be included in the final ear -->
+	    <fileset id="ear.classpath" dir="${folder.libs}">
+            <include name="${libs.opends}"/>
+            <include name="${libs.je}"/>   
+            <include name="${libs.junit}"/>
+	    </fileset>
+	</path>
+    &earbuild;  
+    
+	<target name="addToEar">
+		<mkdir dir="build/opends.sar" />
+		<unjar dest="build/opends.sar" src="../../integration/opends/dist/opends.sar"/>
+
+		<mkdir dir="build/addressjmx.sar" />
+		<unjar dest="build/addressjmx.sar" src="../addressjmx/dist/addressjmx.sar"/>
+		<mkdir dir="build/opends-test.jar" />
+		<unjar dest="build/opends-test.jar" src="../../integration/opends-test/dist/opends-test.jar"/>
+		<mkdir dir="build/address-test.jar" />
+		<unjar dest="build/address-test.jar" src="../address-test/dist/address-test.jar"/>
+	</target>
+	
+    &texenbuild;
+
+</project>

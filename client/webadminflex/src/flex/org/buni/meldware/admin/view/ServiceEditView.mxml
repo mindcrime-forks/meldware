@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"	 width="100%" height="100%"
+creationComplete="initComp()">
+  <mx:Script>
+  	<![CDATA[
+  	import com.adobe.cairngorm.control.CairngormEvent;
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+    import org.buni.meldware.admin.controller.AdminController;
+    import org.buni.meldware.admin.model.ServiceVO;
+    import org.buni.meldware.admin.model.ThreadPoolVO;
+    import org.buni.meldware.admin.model.ModelLocator;
+
+    [Bindable]
+    public var model:ModelLocator = ModelLocator.getInstance();
+    public function initComp(): void {
+           CairngormEventDispatcher.getInstance().addEventListener(AdminController.SERVICE_EDITED,clear);
+           
+ /*          CairngormEventDispatcher.getInstance().addEventListener(AdminController.GOT_THREADPOOLS,selectThreadPool);
+           
+           CairngormEventDispatcher.getInstance().addEventListener(AdminController.GOT_PROTOCOLS,selectProtocol);
+                      
+           var e:CairngormEvent = new CairngormEvent(AdminController.GET_PROTOCOLS);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e);
+           var e2:CairngormEvent = new CairngormEvent(AdminController.GET_THREADPOOLS);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e2);
+           var e3:CairngormEvent = new CairngormEvent(AdminController.GET_SSLDOMAINS);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e3);*/
+           
+           usesSSL.selected = model.selectedService.usesSSL;
+      	   sslDomainItem.visible=usesSSL.selected;
+      	   
+      	/*   for (var i:Number = 0; i < model.threadpools.length; i++) {
+      	       if (model.threadpools.getItemAt(i).toString() == model.selectedService.threadPool.toString()) {
+      	       		threadPool.selectedIndex = i;
+      	       }
+      	   }*/
+    }
+    
+    public function selectThreadPool(event:Event): void {
+      	   threadPool.selectedItem = model.selectedService.threadPool;
+    }
+    
+    public function selectProtocol(event:Event): void {
+      	   protocol.selectedItem = model.selectedService.protocol;
+    }
+    
+    public function clear(event:Event): void {
+           var e:CairngormEvent = new CairngormEvent(AdminController.GET_SERVICES);
+           CairngormEventDispatcher.getInstance().dispatchEvent(e);
+      	  //username.text = "";
+      	  //password.text = "";
+      	  //roles.text = "";
+      	  //aliases.text = "";
+    }
+  	
+  	  public function save(event:Event):void {
+          var service:ServiceVO = new ServiceVO();
+          service.name = servicename.text;
+          service.address = address.text;
+          service.port = new Number(port.text);
+          service.backlog = new Number(backlog.text);
+          service.timeout = new Number(timeout.text);
+          service.life = new Number(life.text);
+          service.protocol = protocol.text;
+          service.usesSSL = usesSSL.selected;
+          service.sslDomain = sslDomain.text;
+          service.threadPool = threadPool.text
+          
+          var e:CairngormEvent = new CairngormEvent(AdminController.EDIT_SERVICE);
+          e.data = service;
+          CairngormEventDispatcher.getInstance().dispatchEvent(e);
+      }
+      
+      public function clickUsesSSL(event:Event): void {
+
+      		sslDomainItem.visible=usesSSL.selected;
+      }
+    ]]>
+  </mx:Script>
+
+
+  <mx:Form id="serviceInput" width="100%" height="100%" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+    <mx:FormItem label="Name:" width="100%">
+		<mx:Label id="servicename" text="{model.selectedService.name}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Address:" width="100%">
+		<mx:TextInput id="address" text="{model.selectedService.address}" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem label="Port" width="100%">
+		<mx:TextInput id="port" text="{model.selectedService.port}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Backlog:" width="100%">
+		<mx:TextInput id="backlog" text="{model.selectedService.backlog}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Timeout:" width="100%">
+		<mx:TextInput id="timeout" text="{model.selectedService.timeout}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Life:" width="100%">
+		<mx:TextInput id="life" text="{model.selectedService.life}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Protocol:" width="100%">
+		<mx:ComboBox id="protocol" dataProvider="{model.protocols}" selectedItem="{model.selectedService.protocol}" width="100%"/>
+	</mx:FormItem>
+    <mx:FormItem id="usesSSLItem" label="SSL Required:" width="100%">
+		<mx:CheckBox id="usesSSL" click="clickUsesSSL(event)" selected="{model.selectedService.usesSSL}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem id="sslDomainItem" label="SSL Configuration:" width="100%">
+		<mx:ComboBox id="sslDomain" dataProvider="{model.ssldomains}" selectedItem="{model.selectedService.sslDomain}" width="100%"/>
+	</mx:FormItem>
+	<mx:FormItem label="Thread Pool:" width="100%">
+		<mx:ComboBox id="threadPool" dataProvider="{model.threadpools}" selectedItem="{model.selectedService.threadPool}" width="100%"/>
+	</mx:FormItem>
+	<mx:ControlBar horizontalAlign="center" width="100%" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
+    		<mx:Button label="Save" click="save(event)" />
+    		<mx:Button label="Clear" click="clear(event)" />
+    </mx:ControlBar>
+    <mx:Label text="{model.lastStatus}" color="#f10000" paddingTop="10"/>
+  </mx:Form>  
+  
+</mx:VBox>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<mx:HDividedBox xmlns:mx="http://www.adobe.com/2006/mxml"
+  xmlns:c="org.buni.mail.webmail.view.controls.*"
+  xmlns:qs="http://www.buni.org/webmail/flex/qsimport"
+  width="100%" height="100%" creationComplete="initComp()">
+  
+  <mx:Script>
+  <![CDATA[
+  import qs.controls.calendarDisplayClasses.CalendarDisplayEvent;
+  import mx.controls.Alert;
+  import org.buni.mail.webmail.model.ModelLocator;
+  import org.buni.mail.webmail.model.CalendarInviteVO;
+  import qs.utils.DateRange;
+  import qs.calendar.Calendar;
+  import qs.calendar.CalendarEvent;
+  import org.buni.mail.webmail.model.ModelLocator;
+  import org.buni.mail.webmail.model.CalendarEventVO;
+   
+  [Bindable]
+  public var model:ModelLocator = ModelLocator.getInstance();
+  
+  protected static const displayOptions:Array = ['month','week','day'];
+   
+  private function initComp():void
+  {
+    // set data source
+    caldisplay.dataProvider = model.calSet.events;
+    goToToday();
+    // initalize range chooser
+    rangeChangeHandler();
+  }
+  
+  protected function headerClickHandler(d:Date):void
+  {
+    caldisplay.displayMode = "auto";
+    caldisplay.range = new DateRange(d,d);            
+  }
+  
+  protected function dayClickHandler(d:Date):void
+  {
+    caldisplay.displayMode = "auto";
+    caldisplay.range = new DateRange(d,d);            
+  }
+  
+  protected function itemClickHandler(event:CalendarEvent):void
+  {
+    eventDetails.setSelectedEvent(event as CalendarEventVO);          
+  }
+  
+  /*protected function itemDragStartHandler(event:CalendarDisplayEvent):void {
+    var c:CalendarEventVO = event.event as CalendarEventVO;
+    trace(c.summary + " editable:" + c.editable);
+    if(!c.editable)
+      event.preventDefault();
+  }*/
+  
+  protected function formatLabel():void
+  {
+    switch(displayMode.selectedIndex)
+    {
+      case "day":
+      case 2:
+        this.label = dayLabelDateFormatter.format(caldisplay.range.start);
+        break;
+      case 1:
+          this.label = weekLabelDateFormatter.format(caldisplay.range.start);
+        break;
+      case 0:
+        this.label = monthLabelDateFormatter.format(caldisplay.range.start);
+        break;          
+      default:
+        this.label = "";
+    }
+  }
+  
+  protected function addEventToCalendar(d:Date):void
+  {
+    // this is a lock only one new event at the time
+    if((eventDetails.selectedEvent != null)&&(eventDetails.selectedEvent.uid == "new"))
+    {
+      Alert.show("You can not add another event before Saving or Canceling the current one","New Event Disabled!");
+      return;
+    }
+    var event:CalendarEventVO = new CalendarEventVO();
+    // slap on a new semi-random id until save will give one to it
+    event.start = d;
+    event.uid = "new_" + event.start.time; 
+    event.end = new Date(d);
+    event.end.hours++;
+    event.summary = "";// + d.hours;
+    event.location = "";// + d.hours;
+    event.description = "";// + d.hours; 
+    var invite:CalendarInviteVO = new CalendarInviteVO();
+    invite.isMine = true;
+    invite.userName = model.user.username;
+    event.invites.addItem(invite);
+    model.calSet.addEvent(event,model.calSet.calendars[0]);    
+    eventDetails.setSelectedEvent(event);        
+  }
+    
+  protected function displayModeHandler():void
+  {
+    switch(caldisplay.displayMode)
+    {
+      case "day":
+      case "days":
+        displayMode.selectedIndex = 2;
+        break;
+      case "week":
+      case "weeks":
+        displayMode.selectedIndex = 1;
+        break;
+      case "month":
+      default:
+        displayMode.selectedIndex = 0;
+        break;          
+    }
+    formatLabel();
+  }
+  
+  protected function rangeChangeHandler():void
+  {
+    chooser.selectedRanges = [ {rangeStart: caldisplay.range.start, rangeEnd: caldisplay.range.end} ];
+    chooser.displayedYear = caldisplay.range.start.fullYear;
+    chooser.displayedMonth = caldisplay.range.start.month;
+    formatLabel();
+  }
+  
+  protected function updateRange():void
+  {
+    caldisplay.displayMode = "auto";
+    if(chooser.selectedRanges.length == 0)
+      return;
+    var selRange:Object = chooser.selectedRanges[0];
+    caldisplay.range = new DateRange(selRange.rangeStart,selRange.rangeEnd);      
+  }
+  
+  protected function displayModeItemClickHandler():void
+  {
+    caldisplay.displayMode=displayOptions[displayMode.selectedIndex];
+  }
+  
+  protected function goToToday():void
+  {
+    var start:Date = new Date();
+    start.hours = 0;
+    start.seconds = 0;
+    start.milliseconds = 0;
+    var end:Date = new Date(start);
+    end.hours = 24;
+    caldisplay.range = new DateRange(start,end);
+  }
+  
+  protected function cancelAdd():void
+  {
+    var event:CalendarEvent = eventDetails.selectedEvent;
+    model.calSet.removeEvent(event);
+    eventDetails.setSelectedEvent(null);
+  }
+  
+  protected function cancelUpdate():void
+  {
+    eventDetails.setSelectedEvent(null);
+  }
+  ]]>
+  </mx:Script>  
+
+  <mx:DateFormatter id="dayLabelDateFormatter" formatString="EEEE MM/DD/YYYY"/>
+  <mx:DateFormatter id="weekLabelDateFormatter" formatString="Week: MM/DD/YYYY"/>
+  <mx:DateFormatter id="monthLabelDateFormatter" formatString="MMMM YYYY"/>
+  
+  <qs:CalendarDisplay id="caldisplay" width="100%" height="100%" minWidth="250"
+    headerClick="headerClickHandler(event.dateTime)" 
+    dayClick="dayClickHandler(event.dateTime)"
+    itemClick="itemClickHandler(event.event)"
+    displayModeChange="displayModeHandler()"
+    hourClick="addEventToCalendar(event.dateTime)"
+    animated="true"
+    dataProvider="{model.calSet.events}"
+    change="rangeChangeHandler()" />
+
+  <mx:VBox width="350" minWidth="350" height="100%" horizontalScrollPolicy="off">
+    <mx:VBox width="300" height="250" horizontalAlign="center" styleName="calendarsContainer" >      
+      <mx:HBox>
+        <mx:Button label="&lt;&lt;" click="caldisplay.previous();" />
+        <mx:Button label="today" click="goToToday();" />
+        <mx:Button label="&gt;&gt;" click="caldisplay.next();" />
+      </mx:HBox>    
+      <mx:ToggleButtonBar dataProvider="{displayOptions}" selectedIndex="0"  id="displayMode" itemClick="displayModeItemClickHandler()"/>                        
+      <mx:DateChooser id="chooser" change="updateRange()" allowDisjointSelection="false" allowMultipleSelection="true" width="100%"/>
+    </mx:VBox>
+    <!--c:EventEditor id="eventDetails" width="100%" height="100%" minWidth="350"/-->
+    <c:AnimatedInviteEditBox id="eventDetails" minWidth="250" height="100%" width="100%" cancelAdd="cancelAdd()" cancelUpdate="cancelUpdate()"/>
+  </mx:VBox>
+</mx:HDividedBox>

@@ -1,0 +1,7 @@
+expect "^220 .*$"
+send   "EHLO localhost"
+expect "^250-.*$"
+expect "^250-STARTTLS$"
+expect "^250 AUTH LOGIN PLAIN$"
+send   "QUIT"
+expect "^221 .*$"

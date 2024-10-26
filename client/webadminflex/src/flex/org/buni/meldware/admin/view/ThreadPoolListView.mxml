@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"  creationComplete="initComp()">
+
+	<mx:Script>
+		<![CDATA[
+		    import org.buni.meldware.admin.controller.AdminController;
+			import org.buni.meldware.admin.model.ModelLocator;
+			import org.buni.meldware.admin.model.ThreadPoolVO;
+			
+            import com.adobe.cairngorm.control.CairngormEventDispatcher;
+            import com.adobe.cairngorm.control.CairngormEvent;
+
+			[Bindable]
+			public var model:ModelLocator = ModelLocator.getInstance();
+			
+			private function initComp():void {
+                   var e:CairngormEvent = new CairngormEvent(AdminController.GET_THREADPOOLS);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+                   CairngormEventDispatcher.getInstance().addEventListener(AdminController.THREADPOOL_DELETED,getThreadPools);
+            }
+			
+            private function getThreadPools(event:Event):void {
+                   var e:CairngormEvent = new CairngormEvent(AdminController.GET_THREADPOOLS);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+            
+            private function deleteThreadPool(event:Event):void {
+                   model.selectedThreadPool = threadpoolList.selectedItem as ThreadPoolVO;
+                   var e:CairngormEvent = new CairngormEvent(AdminController.DELETE_THREADPOOL);
+                   e.data = threadpoolList.selectedItem as ThreadPoolVO;
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+            
+            private function editThreadPool(event:Event):void {
+                   model.selectedThreadPool = threadpoolList.selectedItem as ThreadPoolVO;
+                   var e:CairngormEvent = new CairngormEvent(AdminController.THREADPOOL_DETAIL);
+                   e.data = threadpoolList.selectedItem as ThreadPoolVO;
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+		]]>
+	</mx:Script>
+
+	<mx:DataGrid id="threadpoolList" width="100%" height="100%" borderStyle="none" dataProvider="{model.threadpools}">
+    <mx:columns>  
+      <mx:DataGridColumn headerText="name" dataField="threadPoolName" width="400"/>
+      <mx:DataGridColumn headerText="pool size" dataField="poolSize"/>
+      <mx:DataGridColumn headerText="active threads" dataField="activePoolSize"/>  
+    </mx:columns>
+  </mx:DataGrid>
+
+  <!--mx:List id="threadpoolList" width="100%" height="100%" borderStyle="none" dataProvider="{model.threadpools}"/ -->
+
+  <mx:HBox>
+    <mx:Button label="Refresh" click="getThreadPools(event)"/>
+    <mx:Button label="Edit" click="editThreadPool(event)"/>
+    <mx:Button label="Delete" click="deleteThreadPool(event)"/>
+  </mx:HBox>
+  <!--mx:Label text="ThreadPool List View"/-->
+</mx:VBox>

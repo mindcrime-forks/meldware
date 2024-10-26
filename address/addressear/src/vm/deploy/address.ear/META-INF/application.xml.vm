@@ -1,0 +1,28 @@
+<?xml version='1.0'  encoding='UTF-8'?>
+<!DOCTYPE application PUBLIC
+        "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN"
+        "http://java.sun.com/dtd/application_1_3.dtd">
+
+<application>
+	<display-name>MeldwareAddressBook</display-name>
+	<module>
+		<java>OpenDS.jar</java>
+	</module>
+	<module>
+		<java>je.jar</java>
+	</module>
+	<module>
+		<java>addressjmx.sar</java>
+	</module>
+	<module>
+		<java>opends.sar</java>
+	</module>
+#if ($TEST_ENABLED.equals("true"))
+    <module>
+        <java>opends-test.jar</java>
+    </module>
+    <module>
+        <java>address-test.jar</java>
+    </module>
+#end
+</application>

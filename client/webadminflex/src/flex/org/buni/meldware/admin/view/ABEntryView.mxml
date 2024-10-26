@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
+
+  	<mx:Script> 
+		<![CDATA[
+			import org.buni.meldware.admin.model.ModelLocator;
+			                 
+			[Bindable]
+			public var model:ModelLocator = ModelLocator.getInstance();
+			
+		]]>
+	</mx:Script>
+	<mx:VBox width="100%" styleName="Form">
+		<mx:Form>
+			<mx:FormItem id="uidItem" label="UID">
+				<mx:TextInput id="uidText" text="{model.selectedABEntry.uid}"/>
+			</mx:FormItem>
+			
+			<mx:FormItem id="lastnameItem" label="Last Name">
+				<mx:TextInput id="lastnameText" text="{model.selectedABEntry.sn}"/>
+			</mx:FormItem>
+			
+			<mx:FormItem id="firstnameItem" label="First Name">
+				<mx:TextInput id="firstnameText" text="{model.selectedABEntry.givenName}"/>
+			</mx:FormItem>
+			
+			<mx:FormItem id="emailItem" label="Email Address(es)">
+				<mx:List id="emailText" dataProvider="{model.selectedABEntry.mail}"/>
+			</mx:FormItem>
+			
+			<mx:FormItem id="addressItem" label="Postal Address">
+				<mx:TextArea id="addressText" text="{model.selectedABEntry.postalAddress}"/>
+			</mx:FormItem>
+			
+			<mx:FormItem id="telephoneItem" label="Phone Number">
+				<mx:TextInput id="telephoneText" text="{model.selectedABEntry.telephoneNumber}"/>
+			</mx:FormItem>
+			
+			<mx:FormItem id="mobileItem" label="Mobile Phone">
+				<mx:TextInput id="mobileText" text="{model.selectedABEntry.mobile}"/>
+			</mx:FormItem>		
+			
+			<mx:FormItem id="pagerItem" label="Pager Number">
+				<mx:TextInput id="pagerText" text="{model.selectedABEntry.pager}"/>
+			</mx:FormItem>				
+		</mx:Form>
+	</mx:VBox>
+	
+</mx:VBox>

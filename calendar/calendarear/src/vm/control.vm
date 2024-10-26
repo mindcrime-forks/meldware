@@ -1,0 +1,3 @@
+#parse("test-control.vm")
+$generator.parse("deploy/calendar.ear/calendarejb.jar/calenderServer.installer.cfg.xml.vm", "deploy/calendar.ear/calendarejb.jar/calenderServer.installer.cfg.xml")
+$generator.parse("deploy/calendar.ear/calendarjmx.sar/META-INF/jboss-service.xml.vm", "deploy/calendar.ear/calendarjmx.sar/META-INF/jboss-service.xml")

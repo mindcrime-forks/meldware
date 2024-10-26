@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:view="com.adobe.cairngorm.samples.User.view.*"
+    title="Login"
+    horizontalAlign="center"
+    backgroundColor="#008fd6"
+    borderAlpha="1"
+    >
+
+    <mx:Script>
+    <![CDATA[
+    import mx.rpc.http.HTTPService;
+      
+    import com.adobe.cairngorm.control.CairngormEvent;   
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+    import com.adobe.cairngorm.business.ServiceLocator;
+     
+    import org.buni.meldware.admin.controller.AdminController;
+    import org.buni.meldware.admin.model.ModelLocator;      
+    import org.buni.meldware.admin.model.UserVO;
+    
+    public function loginUser():void
+    {
+        var user:UserVO = new UserVO();
+        user.username = username.text;
+        user.password = password.text;
+   
+        var e:CairngormEvent = new CairngormEvent(AdminController.LOGIN);
+        e.data = user;
+        CairngormEventDispatcher.getInstance().dispatchEvent(e); 
+    }
+     
+    [Bindable] public var model:ModelLocator = ModelLocator.getInstance();
+       
+    ]]>
+    </mx:Script>
+
+    <mx:Form id="LoginForm">
+  
+        <mx:FormItem label="Username: ">
+            <mx:TextInput id="username" text="" enter="loginUser()"/>
+        </mx:FormItem>
+
+        <mx:FormItem label="Password: ">
+            <mx:TextInput id="password" displayAsPassword="true" text="" enter="loginUser()"/>
+        </mx:FormItem>
+    
+    </mx:Form>
+
+    <mx:ControlBar horizontalAlign="center" paddingBottom="0" paddingTop="0">
+        <mx:Button label="Login" click="loginUser()"/>
+    </mx:ControlBar>
+    
+</mx:Panel>

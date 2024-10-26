@@ -1,0 +1,11 @@
+<server>
+
+ <mbean      name="buni.meldware:service=AddressBook" 
+             code="org.buni.meldware.address.AddressBookService"
+        interface="org.buni.meldware.address.AddressBook">
+        <depends optional-attribute-name="OpenDS"
+                 proxy-type="attribute">buni.meldware:service=OpenDS</depends>
+        <attribute name="DirectoryRoot">ou=People,${BASE_DN}</attribute>
+ </mbean> 
+
+</server>

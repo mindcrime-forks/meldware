@@ -1,0 +1,109 @@
+<!-- ============================================================== -->    
+<!-- Jar Build targets                                              -->    
+<!-- ============================================================== -->    
+
+	<property name="module.ext" value="jar"/>
+	<property name="module.classpath" value="${module.ext}.classpath"/>
+	<property name="module.build" value="build/${module.ext}"/>
+
+	
+    <!-- ========================================================== -->
+    <!-- TARGET:clean                                               -->
+    <!--                                                            -->
+    <!-- Clean upp app generated files                              -->
+    <!-- ========================================================== -->  
+    <target name="clean">
+        <echo>CLEANING UP ${module}</echo>
+        <delete dir="build" failonerror="false"/>
+        <delete dir="dist" failonerror="false"/>
+        <delete dir="src/java_gen" failonerror="false"/>
+    </target>
+  
+    <!-- ========================================================== -->
+    <!-- TARGET:build                                               -->
+    <!--                                                            -->
+    <!-- Build general target to build only                         -->
+    <!-- ========================================================== -->		    
+    <target name="build" depends="generate_source">
+        <echo>Build source code for ${module}</echo>
+        
+        <mkdir dir="dist"/>
+        <mkdir dir="build"/>
+        <mkdir dir="${module.build}"/>
+        <mkdir dir="build/test"/>
+        <mkdir dir="build/test/classes"/>
+        <mkdir dir="src/java_gen"/>
+        
+        <copy todir="${module.build}">
+    		<fileset dir="etc/layout">
+      		    <include name="**/**"/>
+            </fileset>
+        </copy>
+       
+        <javac srcdir="src/java:src/java_gen"
+            destdir="${module.build}"
+            target="1.5"
+            source="1.5"
+            debug="on"
+            deprecation="on"
+            nowarn="on">
+            <classpath>
+            	<path refid="${module.classpath}"/>
+            </classpath>
+        </javac>
+
+        <emma enabled="${emma.enabled}" >
+             <instr instrpath="build/${module.ext}"
+                 mode='overwrite'
+                 metadatafile="build/${module}.emma"/>
+        </emma>
+    
+        <!-- HOOK for postcompile event -->
+        <antcall target="postCompile"/>
+  
+        <jar jarfile="dist/${module}.${module.ext}" basedir="${module.build}">
+            <manifest>
+                <attribute name="Class-Path" value="${manifest.classpath}"/>
+                <attribute name="TagName" value="${build.tag}"/>
+            </manifest>
+        </jar>
+        
+        <!-- 
+       	<javac srcdir="src/java_test"
+            destdir="build/test/classes"
+            debug="on"
+            target="1.5"
+            source="1.5"
+            deprecation="on">
+            <classpath>
+                <fileset refid="${module.classpath}"/>
+                <fileset dir="dist"> 
+	            <include name="${module}.${module.ext}"/>
+                </fileset>
+                <fileset dir="${folder.libs}">
+	            <include name="${libs.junit}"/>
+                </fileset>
+            </classpath>
+        </javac>
+        -->  
+    </target>
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:deploy                                              -->
+    <!--                                                            -->
+    <!-- Build, deploy general target                               -->
+    <!-- ========================================================== -->		        
+    <target name="deploy" if="module.deploy.dir">
+        <echo>Deploy app for ${module}</echo>
+        <mkdir dir="${deploy.base}/${module.deploy.dir}"/>
+		<unjar dest="${deploy.base}/${module.deploy.dir}" src="dist/${module}.${module.ext}"/>
+    </target>
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:buildTest                                           -->
+    <!--                                                            -->
+    <!-- Build, deploy, test general target                         -->
+    <!-- ========================================================== -->		    	    
+    <target name="test">
+        <echo>Run unit test for ${module}</echo>
+    </target>

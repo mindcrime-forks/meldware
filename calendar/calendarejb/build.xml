@@ -1,0 +1,51 @@
+<!DOCTYPE project [
+    <!ENTITY propload SYSTEM "../../ant/propload.xml">
+    <!ENTITY ejbbuild SYSTEM "../../ant/ejbbuild.xml">
+    <!ENTITY xdoclet SYSTEM "../../ant/xdoclet.xml">
+]>
+
+<project name="calendarejb" default="build">
+    <tstamp/>
+	&propload;
+    <property name="module" value="calendarejb"/>
+    <property name="datasource" value="CalendarDataSource"/>
+    <property name="manifest.classpath" 
+        value="${libs.commons.logging} ${libs.commons.lang} calendarbeans.jar ${libs.freemaker} ${libs.ical4j}"/>
+    <property name="jboss.realm" value="java:/jaas/meldware"/>
+    <path id="ejb.classpath">
+    	<pathelement location="../../calendar/calendarjmx/build/jar"/>
+    	<pathelement location="../../common/meldwarebeans/dist/meldwarebeans.jar"/>
+    	<pathelement location="../../common/meldwarebeans/build/jar"/>
+    	<pathelement location="../../common/meldwarebase/build/sar"/>
+		<fileset id="ejb.exportpath" dir="../calendarejb/build/ejb">
+        	<include name="org/buni/meldware/calendar/data/**"/> 
+        	<include name="org/buni/meldware/calendar/interfaces/**"/> 
+        	<include name="org/buni/meldware/calendar/session/exception/**"/> 
+		    <include name="org/buni/meldware/calendar/eventbus/**"/> 
+		</fileset>
+        <fileset dir="../../">
+            <include name="calendar/calendarbeans/dist/calendarbeans.jar"/>
+            <include name="lib/${libs.freemaker}"/>
+            <include name="lib/${libs.commons.logging}"/>
+            <include name="lib/${libs.commons.lang}"/>
+            <include name="lib/${libs.commons.digester}"/>
+            <include name="lib/${libs.ical4j}"/>
+        	<include name="lib/${libs.ristretto}"/>
+        </fileset>
+    	<pathelement location="${jboss.folder.default.lib}/${libs.jboss.hibernate}"/>
+    </path>
+    &ejbbuild;  
+    &xdoclet; 
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->  
+    <target name="generate_source" depends="xdoclet">
+        <echo>Code generation complete</echo>
+    </target>
+    
+    <target name="processTemplates"/>
+    
+</project>

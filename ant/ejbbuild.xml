@@ -1,0 +1,135 @@
+<!-- ============================================================== -->    
+<!-- Ejb Build targets                                              -->    
+<!-- ============================================================== -->    
+
+    <!-- ========================================================== -->
+    <!-- TARGET:clean                                               -->
+    <!--                                                            -->
+    <!-- Clean upp app generated files                              -->
+    <!-- ========================================================== -->  
+    <target name="clean">
+        <echo>CLEANING UP ${module}</echo>
+        <delete dir="build"/>
+        <delete dir="dist"/>
+        <delete dir="src/java_gen"/>
+    </target>
+  
+    <!-- ========================================================== -->
+    <!-- TARGET:build                                               -->
+    <!--                                                            -->
+    <!-- Build general target to build only                         -->
+    <!-- ========================================================== -->		    
+    <target name="build" depends="generate_source">
+        <echo>Build source code for ${module}</echo>
+        <echo>Use J2EE JAR ${J2EE_JAR}</echo>
+        
+        <mkdir dir="dist"/>
+        <mkdir dir="build"/>
+        <mkdir dir="build/ejb"/>
+        <mkdir dir="build/test"/>
+        <mkdir dir="build/test/classes"/>
+        <mkdir dir="src/java_gen"/>        
+        
+        <copy todir="build/ejb">
+    		<fileset dir="etc/layout">
+      		    <include name="**/**"/>
+            </fileset>
+        </copy>
+        
+        <javac srcdir="src/java:src/java_gen"
+            destdir="build/ejb"
+            debug="on"
+            source="1.5"
+            target="1.5"
+            deprecation="on">
+            <classpath>
+                <path refid="ejb.classpath"/>
+                <fileset dir="${folder.libs}"> 
+                    <include name="${J2EE_JAR}"/>
+                </fileset>
+            </classpath>
+            <!--  one day I fix the warnings but today it is anoying
+            <compilerarg value="-Xlint" compiler="javac1.5" />
+             -->
+        </javac>
+        
+        <emma enabled="${emma.enabled}" >
+             <instr instrpath="build/ejb"
+                 mode='overwrite'
+                 metadatafile="build/${module}.emma"/>
+        </emma>
+
+        <jar jarfile="dist/${module}.jar" basedir="build/ejb">
+            <manifest>
+                <attribute name="Class-Path" value="${manifest.classpath}"/>
+                <attribute name="TagName" value="${build.tag}"/>
+            </manifest>
+        </jar>
+
+        <jar jarfile="dist/${module}_export.jar">
+            <fileset refid="ejb.exportpath"/>
+            <manifest>
+                <attribute name="TagName" value="${build.tag}"/>
+            </manifest>
+        </jar>
+        
+        <!-- 
+       	<javac srcdir="src/java_test"
+            destdir="build/test/classes"
+            debug="on"
+            source="1.5"
+            target="1.5"
+            deprecation="on">
+            <classpath>
+                <path refid="ejb.classpath"/>
+                <fileset dir="dist"> 
+	                <include name="${module}.jar"/>
+                </fileset>
+                <fileset dir="${folder.libs}"> 
+                    <include name="${J2EE_JAR}"/>
+                    <include name="${libs.junit}"/>
+                </fileset>
+            </classpath>
+        </javac>
+        -->  
+    </target>
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:deploy                                              -->
+    <!--                                                            -->
+    <!-- Build, deploy general target                               -->
+    <!-- ========================================================== -->		    
+    <target name="deploy"/>
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:buildTest                                           -->
+    <!--                                                            -->
+    <!-- Build, deploy, test general target                         -->
+    <!-- ========================================================== -->		    	    
+    <target name="test">
+        <echo>Run unit test for ${module}</echo>
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath>
+                <path refid="ejb.classpath"/>
+                <fileset dir="dist"> 
+	            <include name="${module}.jar"/>
+                </fileset>
+                <fileset dir="${folder.libs}"> 
+	            <include name="${J2EE_JAR}"/>
+	            <include name="${libs.junit}"/>
+	            <include name="${libs.emma}"/>
+                </fileset>
+                <pathelement location="build/test/classes"/>
+                <pathelement location="etc/test"/>
+                <pathelement location="${jboss.folder.client}/${libs.jbossall.client}"/>
+            </classpath>
+
+            <formatter type="xml"/>
+
+            <batchtest fork="yes" todir="./build">
+                <fileset dir="build/test/classes">
+                    <include name="**/*Suite.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>

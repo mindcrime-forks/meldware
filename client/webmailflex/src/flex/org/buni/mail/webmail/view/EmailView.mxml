@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VDividedBox xmlns:mx="http://www.adobe.com/2006/mxml" 
+    xmlns:view="org.buni.mail.webmail.view.*" 
+    initialize="initComp()" 
+    creationComplete="compComp()" 
+    backgroundColor="#d6cdb2">
+
+    <mx:Script>
+    <![CDATA[
+    import mx.collections.ArrayCollection;
+    import mx.collections.Sort;
+    import mx.collections.SortField;
+    import mx.controls.dataGridClasses.DataGridColumn;
+    import mx.core.IDataRenderer;
+    import mx.core.UIComponent;
+    import mx.core.Container;
+    import mx.events.CollectionEvent;
+    import mx.events.CollectionEventKind;
+    import mx.events.ItemClickEvent;
+    import mx.events.ListEvent;
+    import mx.events.IndexChangedEvent;
+    import mx.utils.ObjectUtil;
+    
+    import com.adobe.cairngorm.control.CairngormEvent;
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+
+    import org.buni.mail.webmail.model.ContactVO;
+    import org.buni.mail.webmail.util.LabelUtil;
+    import org.buni.mail.webmail.model.EmailVO;
+    import org.buni.mail.webmail.model.ModelLocator;
+    import org.buni.mail.webmail.controller.WebmailController;
+            
+    [Bindable] public var model:ModelLocator;
+    
+    private function initComp():void
+    {
+        model = ModelLocator.getInstance();
+        model.addEventListener("emailsChanged",modelEmailsChanged);
+        model.addEventListener("selectedEmailsChanged",modelSelectedEmailsChanged);
+        model.addEventListener("selectedFolderChanged",doSelectFolder);
+    }
+   
+    private function compComp():void
+    {
+        var gridMenu:ContextMenu = new ContextMenu();
+        gridMenu.hideBuiltInItems();
+
+        var replyCM:ContextMenuItem = new ContextMenuItem("Reply");
+        replyCM.addEventListener("menuItemSelect", doReply);
+        gridMenu.customItems.push(replyCM);
+        
+        var replyAllCM:ContextMenuItem = new ContextMenuItem("Reply All");
+        replyAllCM.addEventListener("menuItemSelect", doReplyAll);
+        gridMenu.customItems.push(replyAllCM);
+        
+        var forwardCM:ContextMenuItem = new ContextMenuItem("Forward Email");
+        forwardCM.addEventListener("menuItemSelect", doForward);
+        gridMenu.customItems.push(forwardCM);
+        
+        var deleteCM:ContextMenuItem = new ContextMenuItem("Delete Email");
+        deleteCM.addEventListener("menuItemSelect", doDelete);
+        gridMenu.customItems.push(deleteCM);
+
+        emailDataGrid.contextMenu = gridMenu;
+    }
+
+    private function modelEmailsChanged(event:Event):void
+    {
+        emailDataGrid.dataProvider = model.selectedFolder.emails;
+        var sort:Sort = new Sort();
+        sort.fields = [new SortField("date",false,true)];
+        emailDataGrid.dataProvider.sort = sort;
+        emailDataGrid.dataProvider.refresh();
+        
+    }
+  
+    private function modelSelectedEmailsChanged(event:Event):void
+    {
+      var selectedItems:Array = new Array();
+      for (var i:int = 0; i < model.selectedFolder.selectedEmailIds.length; i++)
+      {
+          selectedItems.push(model.selectedFolder.getEmailById(model.selectedFolder.selectedEmailIds[i]));
+      }
+      emailDataGrid.selectedItems = selectedItems;
+      
+      displaySelected();
+    }
+
+    private function updateSelectedEmail(event:Event=null):void
+    {
+        model.selectedFolder.selectedEmailIds.removeAll();
+        for (var i1:int = 0; i1 < emailDataGrid.selectedItems.length; i1++)
+        {
+            model.selectedFolder.selectedEmailIds.addItem(emailDataGrid.selectedItems[i1].id);
+        }
+
+        displaySelected();
+    }
+    
+    private function doSelectFolder(event:Event):void
+    {
+        this.label = model.selectedFolder.name + "(" + model.selectedFolder.numUnreadEmails + ")";
+    }
+          
+    private function displaySelected():void
+    {
+        selectedEmailView.removeAllChildren();
+        if (model.selectedFolder.selectedEmailIds.length < 6)
+        {
+            for (var i:int = 0; i < model.selectedFolder.selectedEmailIds.length; i++)
+            {
+                var edv:EmailDetailView = new EmailDetailView();
+                edv = selectedEmailView.addChild(edv) as EmailDetailView;
+                edv.data = model.selectedFolder.getEmailById(model.selectedFolder.selectedEmailIds[i]);
+                trace('setting edv.data');
+                trace(ObjectUtil.toString(edv.data));
+            }
+        }
+    }
+            
+    private function emailLabel(item:Object, column:DataGridColumn):String
+    {
+        return LabelUtil.getEmail(item[column.dataField]);
+    }
+
+    private function dateLabel(item:Object, column:DataGridColumn):String
+    {
+        return LabelUtil.getFormattedDate(item[column.dataField] as Date);
+    }
+
+    private function dateSort(email1:Object, email2:Object):int
+    {
+      if (email1.date.getTime() > email2.date.getTime())
+      {
+        return 1;
+      }
+      else if (email1.date.getTime() < email2.date.getTime())
+      {
+        return -1;
+      }
+      
+      return 0;
+    }
+            
+    private function emailButtonBarClick(event:ItemClickEvent):void
+    {
+        if (event.item == "New Email")
+        {
+            var e:CairngormEvent = new CairngormEvent(WebmailController.NEW_MESSAGE);
+            CairngormEventDispatcher.getInstance().dispatchEvent(e);
+        }
+        else if (event.item == "Reply")
+        {
+            doReply();
+        }
+        else if (event.item == "Reply All")
+        {
+            doReplyAll();
+        }
+        else if (event.item == "Forward")
+        {
+            doForward();
+        }
+        else if (event.item == "Delete")
+        {
+            doDelete();
+        }
+        else if (event.item == "Previous")
+        {
+            if (emailDataGrid.selectedIndex > 0)
+            {
+                emailDataGrid.selectedIndex--;
+                updateSelectedEmail();
+            }
+        }
+        else if (event.item == "Next")
+        {
+            if (emailDataGrid.selectedIndex < (emailDataGrid.dataProvider.length - 1))
+            {
+                emailDataGrid.selectedIndex++;
+                updateSelectedEmail();
+            }
+        }
+    }
+            
+    private function doReply(event:ContextMenuEvent=null):void
+    {
+        selectedEmailAction(WebmailController.REPLY_MESSAGE, event);
+    }
+            
+    private function doReplyAll(event:ContextMenuEvent=null):void
+    {
+        selectedEmailAction(WebmailController.REPLY_ALL_MESSAGE, event);
+    }
+            
+    private function doForward(event:ContextMenuEvent=null):void
+    {
+        selectedEmailAction(WebmailController.FORWARD_MESSAGE, event);
+    }
+            
+    private function doDelete(event:ContextMenuEvent=null):void
+    {
+        selectedEmailAction(WebmailController.DELETE_MESSAGE, event);
+    }
+
+    private function selectedEmailAction(action:String,event:ContextMenuEvent=null):void
+    {
+        if ((event != null) && ((event.mouseTarget as Object).data is EmailVO))
+        {
+            dispatchEmailEvent(action,(event.mouseTarget as Object).data as EmailVO);
+            return;
+        }
+        else
+        {
+            for (var i:int = 0; i < model.selectedFolder.selectedEmailIds.length; i++)
+            {
+
+                dispatchEmailEvent(action,model.selectedFolder.getEmailById(model.selectedFolder.selectedEmailIds[i]));
+            }
+        }
+    }
+
+    private function dispatchEmailEvent(action:String,email:EmailVO):void
+    {
+        var e:CairngormEvent = new CairngormEvent(action);
+        e.data = email;
+        CairngormEventDispatcher.getInstance().dispatchEvent(e);
+    }
+            
+    private function openEmailInNewTab(event:ListEvent):void
+    {
+        model.tabs.addItem(emailDataGrid.selectedItem);
+    }
+            
+    ]]>
+    </mx:Script>
+
+    <mx:VBox width="100%" height="200" top="0" bottom="0" verticalGap="0">
+        <mx:HBox width="100%" horizontalGap="0" paddingTop="4" paddingBottom="4" paddingLeft="5" paddingRight="5" verticalAlign="middle">
+            <mx:ButtonBar itemClick="emailButtonBarClick(event)">
+                <mx:dataProvider>
+                    <mx:Array>
+                      <mx:String>New Email</mx:String>
+                        <mx:String>Reply</mx:String>
+                        <mx:String>Reply All</mx:String>
+                        <mx:String>Forward</mx:String>
+                        <mx:String>Delete</mx:String>
+                        <mx:String>Previous</mx:String>
+                        <mx:String>Next</mx:String>
+                    </mx:Array>
+                </mx:dataProvider>
+            </mx:ButtonBar>
+            <mx:Spacer width="100%"/>
+            <mx:TextInput id="search"/>
+            <mx:Button label="Search" cornerRadius="0"/>
+        </mx:HBox>
+        <mx:DataGrid id="emailDataGrid" width="100%" height="100%" 
+            change="updateSelectedEmail(event)" 
+            itemDoubleClick="openEmailInNewTab(event)" doubleClickEnabled="true"
+            dragEnabled="true" dragMoveEnabled="false" 
+            allowMultipleSelection="true"
+            borderSides="top">
+            <!--
+            dataProvider="{sort(model.selectedFolder.emails)}"
+            -->
+            <mx:columns>
+                <mx:DataGridColumn headerRenderer="org.buni.mail.webmail.view.renderer.Attachment" itemRenderer="org.buni.mail.webmail.view.renderer.ItemAttachment" dataField="attachments" width="30" sortable="false" resizable="false"/>
+                <mx:DataGridColumn headerText="From" dataField="sender" labelFunction="emailLabel"/>
+                <mx:DataGridColumn headerText="Subject" dataField="subject"/>
+                <mx:DataGridColumn headerText="Date" dataField="date" labelFunction="dateLabel" sortCompareFunction="dateSort" width="120"/>
+            </mx:columns>
+        </mx:DataGrid>
+        </mx:VBox>
+        <mx:VBox id="selectedEmailView" width="100%" height="100%" verticalGap="0"/>
+        
+</mx:VDividedBox>

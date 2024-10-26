@@ -1,0 +1,114 @@
+<!DOCTYPE project [
+<!ENTITY propload SYSTEM "../../ant/propload.xml">
+]>
+
+<project name="meldware-installer" default="build">
+    &propload;
+    <taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask">
+		<classpath>
+			<fileset dir="${folder.libs}">
+				<include name="${libs.izpack.compiler}" />
+				<include name="${libs.izpack.events}" />
+			</fileset>
+		</classpath>
+	</taskdef>
+	<taskdef name="texen" classname="org.apache.velocity.texen.ant.TexenTask">
+		<classpath>
+			<fileset dir="${folder.libs}">
+				<include name="${libs.commons.collection}" />
+				<include name="${libs.log4j}" />
+				<include name="${libs.hibernatetools.velocity}" />
+			</fileset>
+		</classpath>
+	</taskdef>
+
+	<!-- ========================================================== -->
+	<!-- TARGET:build                                               -->
+	<!--                                                            -->
+	<!-- build installer                                            -->
+	<!-- ========================================================== -->
+	<target name="build">
+		<mkdir dir="build" />
+		<mkdir dir="build/installer" />
+		<copy todir="build/installer">
+			<fileset dir="etc/layout" />
+		</copy>
+		<replace file="build/installer/install.xml">
+			<replacefilter token="@JBOSS_HOME@" value="${jboss.home}"/>
+		</replace>
+		<mkdir dir="dist" />
+	</target>
+
+	<!-- ========================================================== -->
+	<!-- TARGET:deploy                                              -->
+	<!--                                                            -->
+	<!-- Build, deploy general target                               -->
+	<!-- ========================================================== -->
+	<target name="test-deploy" unless="jboss.home.meldware.exists">
+		<echo>using JBoss at: ${jboss.home}</echo>
+		<mkdir dir="${jboss.home}/server/meldware" />
+		<copy todir="${jboss.home}/server/meldware">
+			<fileset dir="${jboss.home}/server/default">
+			    <exclude name="data/**"/>
+			    <exclude name="tmp/**"/>
+			    <exclude name="work/**"/>
+			    <exclude name="log/**"/>
+                <exclude name="deploy/jms/hsqldb-jdbc2-service.xml"/>         
+				<exclude name="deploy/jbossweb-tomcat55.sar/ROOT.war"/>
+			</fileset>
+		</copy>
+		<available file="${jboss.home}/server/meldware/conf/meldware.store" property="keygenerated"/>
+		<antcall target="ssl-gen"/>
+	</target>
+
+	<!-- ========================================================== -->
+	<!-- TARGET:deploy                                              -->
+	<!--                                                            -->
+	<!-- Build, deploy general target                               -->
+	<!-- ========================================================== -->
+	<target name="deploy">
+		<echo>using Jboss at: ${jboss.home}</echo>
+	</target>
+
+	<!-- ========================================================== -->
+	<!-- TARGET:test                                                -->
+	<!--                                                            -->
+	<!-- test general target                                        -->
+	<!-- ========================================================== -->
+	<target name="test">
+		<echo>No test for distro</echo>
+	</target>
+
+	<!-- ========================================================== -->
+	<!-- TARGET:dist                                                -->
+	<!--                                                            -->
+	<!-- dist                                                       -->
+	<!-- ========================================================== -->
+	<target name="dist" depends="test">
+		<echo>will figure it out</echo>
+		<echo>DISTRO Complete</echo>
+		<!-- Allows us to use the IzPack Ant task -->
+		<izpack input="${basedir}/build/installer/install.xml" output="${basedir}/dist/install.jar" installerType="standard" basedir="${basedir}/build/installer" izpackdir="${basedir}" />
+	</target>
+
+	<!-- ========================================================== -->
+	<!-- TARGET:clean                                               -->
+	<!--                                                            -->
+	<!-- Clean upp app generated files                              -->
+	<!-- ========================================================== -->
+	<target name="clean">
+		<echo>clean dist</echo>
+		<delete dir="dist" />
+		<delete dir="build" />
+		<delete dir="${jboss.home}/server/meldware" />
+	</target>
+
+    <target name="processTemplates"/>
+
+	<target name="ssl-gen" unless="keygenerated">
+		<ant antfile="build/installer/ssl-gen.xml" target="genssl-true">
+			<property file="etc/test/ssl-keygen.properties"/>
+		</ant>
+	</target>
+	
+</project>

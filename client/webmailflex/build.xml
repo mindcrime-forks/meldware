@@ -1,0 +1,14 @@
+<!DOCTYPE project [
+    <!ENTITY propload SYSTEM "../../ant/propload.xml">
+    <!ENTITY flexbuild SYSTEM "../../ant/flexbuild.xml">
+]>
+<project name="mailflex" default="build">
+    <tstamp/>
+	&propload;
+    <property name="module" value="webmail"/>
+	<property name="module.libs" value="-library-path+=../../lib/Cairngorm.2.2.1.swc -library-path+=../calendarcomponent/build/calendarcomponent.swc -library-path+=../../lib/timepicker.swc" />
+    &flexbuild; 
+    <target name="processTemplates">
+    </target>
+    
+</project>

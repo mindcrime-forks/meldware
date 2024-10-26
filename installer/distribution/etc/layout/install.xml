@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+	<info>
+		<appname>Buni Meldware Communication Suite</appname>
+		<appversion>1.0 M8</appversion>
+		<authors>
+		    <!-- Alphabetic order -->
+			<author name="Andrew C. Oliver" email="acoliver@buni.org" />
+			<author name="Aron Sogor" email="asogor@buni.org" />
+            <author name="Michael Barker" email="mbarker@buni.org"/>
+			<author name="James Ward" email="jward@buni.org"/>
+			<author name="Eric Daugherty" email="eric@ericdaugherty.com"/>
+			<author name="Heiko Rupp" email="hwr@pilhuhn.de"/>
+			<author name="HOSHI Seigo" email="shoshi@buni.org"/>
+            <author name="Michael Krause" email=""/>
+            <author name="Mike Andrews" email=""/>
+            <author name="Thorsten Kunz" email=""/>
+		</authors>
+	</info>
+
+	<!-- 
+		The locale section.
+		Asks here to include the English langpacks.
+	-->
+	<locale>
+		<langpack iso3="eng" />
+		<langpack iso3="jpn" />
+	</locale>
+
+    <variables>
+        <variable name="SERVER_CONFIG" value="meldware"/>
+        <!--  disable experimental features -->
+        <variable name="GENERATE_CALENDAR_MAILLISTENER" value="false"/>
+    </variables>
+    
+    <!--
+        The gui preferences indication.
+        Sets the installer window to 640x480. It will not be able to change the size.
+    -->
+    <guiprefs width="1024" height="768" resizable="no">
+        <modifier key="useFlags" value="no" />
+        <modifier key="langDisplayType" value="native" />
+    </guiprefs>
+    
+	<resources>
+		<res id="LicencePanel.licence" src="Licence.txt" />
+		<res id="InfoPanel.info" src="README.txt" />
+		<res id="InfoPanel.info_jpn" src="README.jpn.txt" />
+		<res id="packsLang.xml_eng" src="packsLang.eng.xml" />
+		<res id="packsLang.xml_jpn" src="packsLang.jpn.xml" />
+		<res id="userInputSpec.xml" src="userInputSpec.xml" />
+		<res id="userInputLang.xml_jpn" src="userInputLang.jpn.xml" />
+		<res id="AntActionsSpec.xml" src="AntActionsSpec.xml" />
+		<res id="ssl-gen.xml" src="ssl-gen.xml" />
+		<res id="TargetPanel.dir.macosx" src="target-panel-macosx.txt" />
+		<res id="TargetPanel.dir.windows" src="target-panel-windows.txt" />
+		<res id="TargetPanel.dir.linux" src="target-panel-linux.txt" />
+		<res id="TargetPanel.dir.unix" src="target-panel-unix.txt" />
+		<res id="Installer.image" src="buni1small.png" />
+		<res id="installer.langsel.img" src="langsel.png" />
+        <res id="CustomLangpack.xml_jpn" src="CustomLangpack.jpn.xml"/>
+	</resources>
+
+	<!-- 
+		The panels section.
+		We indicate here which panels we want to use. The order will be respected.
+	-->
+	<panels>
+		<panel classname="HelloPanel" />
+		<panel classname="InfoPanel" />
+		<panel classname="LicencePanel" />
+		<panel classname="TargetPanel" />
+		<panel classname="PacksPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="InstallPanel" />
+		<panel classname="UserInputPanel" />
+		<panel classname="FinishPanel" />
+	</panels>
+
+	<!-- 
+		The packs section.
+		We specify here our packs.
+	-->
+	<packs>
+	   <pack name="Base" id="pack_base" required="yes">
+            <description>The base files for meldware</description>
+            <file src="README.txt" targetdir="$INSTALL_PATH" />
+			<file src="Licence.txt" targetdir="$INSTALL_PATH" />
+			<fileset dir="../../../../common/meldwarebase/build/sar"
+				targetdir="$INSTALL_PATH/server/$SERVER_CONFIG/deploy/meldwarebase.sar">
+				<include name="**/**" />
+			</fileset>
+			<fileset dir="../../../../common/meldwarebase/src/bin-vm" targetdir="$INSTALL_PATH/bin">
+				<include name="**/**" />
+				<additionaldata key="template" value="$INSTALL_PATH/bin" />
+			</fileset>
+			<fileset dir="../../../../common/meldwarebase/src/vm" targetdir="$INSTALL_PATH/server/$SERVER_CONFIG" excludes="control.vm">
+				<include name="**/**" />
+				<additionaldata key="template" value="$INSTALL_PATH/server/$SERVER_CONFIG" />
+				<additionaldata key="templatefilter">
+					<![CDATA[targetfile.name.equals("meldware-ds.xml.vm")&&config{"DATABASE_TYPE"}.equals("hsqldb")]]>
+				</additionaldata>
+                                <additionaldata key="templatepattern" value="*.vm"/>
+			</fileset>
+        </pack>
+		<pack name="Mail Server" id="pack_mail_server" required="no" preselected="yes">
+			<description>The mail server</description>
+			<fileset dir="../../../../mail/mailear/dist"
+				targetdir="$INSTALL_PATH/server/$SERVER_CONFIG/deploy">
+				<include name="**/**" />
+				<exclude name="mail.ear/mailtest.sar/**" />
+			</fileset>
+			<!-- templates -->
+			<fileset dir="../../../../mail/mailear/src/vm" targetdir="$INSTALL_PATH/server/$SERVER_CONFIG" excludes="control.vm">
+				<include name="**/**" />
+				<additionaldata key="template" value="$INSTALL_PATH/server/$SERVER_CONFIG" />
+			</fileset>
+			<fileset dir="." targetdir="$INSTALL_PATH/scripts">
+            	<include name="ssl-gen.xml"/>
+	            <include name="touchup.xml"/>
+            </fileset>
+		</pack>
+		<pack name="Calendar Server" id="pack_calendar_server" required="no" preselected="yes">
+			<description>The calendar server</description>
+			<fileset dir="../../../../calendar/calendarear/dist"
+				targetdir="$INSTALL_PATH/server/$SERVER_CONFIG/deploy">
+				<include name="**/**" />
+			</fileset>
+			<!-- templates -->
+			<fileset dir="../../../../calendar/calendarear/src/vm" targetdir="$INSTALL_PATH/server/$SERVER_CONFIG" excludes="control.vm">
+				<include name="**/**" />
+				<additionaldata key="template" value="$INSTALL_PATH/server/$SERVER_CONFIG" />
+			</fileset>
+		</pack>
+		<pack name="AddressBook Server" id="pack_addressbook_server" required="no" preselected="yes">
+			<description>The address book server</description>
+			<fileset dir="../../../../address/addressear/dist"
+				targetdir="$INSTALL_PATH/server/$SERVER_CONFIG/deploy">
+				<include name="**/**" />
+			</fileset>
+			<!-- templates -->
+			<fileset dir="../../../../address/addressear/src/vm" targetdir="$INSTALL_PATH/server/$SERVER_CONFIG" excludes="control.vm">
+				<include name="**/**" />
+				<additionaldata key="template" value="$INSTALL_PATH/server/$SERVER_CONFIG" />
+			</fileset>
+		</pack>
+		<pack name="WCAP Calendar Adaptor" id="pack_wcap_adaptor" required="no" preselected="yes" depends="pack_calendar_server">
+			<description>Add support for WCAP calendar protocol for scheduling</description>
+			<fileset dir="../../../../client/wcapadapter/dist"
+				targetdir="$INSTALL_PATH/server/$SERVER_CONFIG/deploy">
+				<include name="**/**" />
+			</fileset>
+		</pack>
+		<pack name="Web Client" id="pack_web_client" required="no" preselected="yes" depends="pack_wcap_adaptor">
+			<description>The web client</description>
+			<fileset dir="../../../../client/webmail/dist"
+				targetdir="$INSTALL_PATH/server/$SERVER_CONFIG/deploy">
+				<include name="**/**" />
+			</fileset>
+		</pack>
+		<pack name="Secure Adminstrator" id="pack_secure_adminstrator" required="no" preselected="yes">
+			<description>The web-based administration tool</description>
+			<fileset dir="../../../../client/webadmin/dist"
+				targetdir="$INSTALL_PATH/server/$SERVER_CONFIG/deploy">
+				<include name="**/**" />
+			</fileset>
+		</pack>
+		<pack name="PostgreSQL JDBC Driver (postgresql-8.2-504.jdbc3.jar)"
+		      id="pack_PostgreSQL_JDBC_Driver"
+              required="no" preselected="no">
+			<description>
+				The PostgreSQL JDBC Driver version 8.2 build 504. Select
+				this if you plan to use PostgreSQL and do not wish to
+				manually install your driver
+			</description>
+			<file src="../../../../lib/postgresql-8.2-504.jdbc3.jar"
+				targetdir="$INSTALL_PATH/server/$SERVER_CONFIG/lib" />
+		</pack>
+		<pack
+			name="MySQL Connector/J (mysql-connector-java-3.1.12-bin.jar)"
+			id="pack_MySQL_Connector/J"
+			required="no" preselected="no">
+			<description>
+				The MySQL Connector/J JDBC driver. Select this if you
+				plan to use MySQL and do not wish to manually install
+				your driver
+			</description>
+			<file src="../../../../lib/mysql-connector-java-3.1.12-bin.jar"
+				targetdir="$INSTALL_PATH/server/$SERVER_CONFIG/lib" /> 
+			<file src="license/EXCEPTIONS-CONNECTOR-J"
+				targetdir="$INSTALL_PATH/license" />
+			<file src="license/mysql-connector-j.license"
+				targetdir="$INSTALL_PATH/license" />
+		</pack>
+		<pack name="JBoss Application Server (4.0.4)" id="pack_JBoss_Application_Server" required="no">
+            <description>Install this if you do not have JBoss Application Server 4.0.4  or above installed, otherwise choose JBOSS_HOME as your installation directory.</description>
+            <fileset dir="@JBOSS_HOME@" targetdir="$INSTALL_PATH" excludes="server server/**/*"/>
+            <fileset dir="@JBOSS_HOME@/server/default" targetdir="$INSTALL_PATH/server/$SERVER_CONFIG" excludes="log log/**/* tmp tmp/**/* work work/**/*"/>
+        </pack>
+	</packs>
+
+	<listeners>
+		<listener compiler="org.buni.izpack.CompileListener"
+		          installer="org.buni.izpack.InstallerListener"
+				  jar="../izpack/dist/izpack-listeners.jar" />	
+		<listener installer="AntActionInstallerListener" 
+                  uninstaller="AntActionUninstallerListener" />	
+	</listeners>
+	
+	<jar src="../../../../lib/izevent.jar" />
+	<jar src="../../../../lib/velocity-1.4.jar" />
+	<jar src="../../../../lib/commons-collections-3.1.jar" />
+	<jar src="../../../../lib/log4j-1.2.11.jar" />
+	<jar src="../../../../lib/bsh-core-2.0b4.jar" />
+    <jar src="../../../../lib/izpack-ant.jar" stage="both" />
+    <jar src="../../../../lib/izpack-ant-launcher.jar" stage="both" />
+   
+</installation>

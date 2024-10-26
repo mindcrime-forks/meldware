@@ -1,0 +1,1 @@
+./run.sh -c $SERVER_CONFIG

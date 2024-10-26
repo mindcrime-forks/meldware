@@ -1,0 +1,44 @@
+<!DOCTYPE project [
+    <!ENTITY generic SYSTEM "./ant/main.xml">
+]>
+
+<project name="MeldWare" basedir="." default="build">
+    &generic;
+    <!-- ========================================================== -->
+    <!-- TARGET:driver                                              -->
+    <!--                                                            -->
+    <!-- Main project driver for targets                            -->
+    <!-- ========================================================== -->			
+    <target name="driver">
+    	<ant antfile="build.xml" dir="common/meldwarebeans" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="common/meldwarebase" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="mail/mailapi" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="build-framework/test" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="integration/opends" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="integration/opends-test" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="address/addressjmx" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="address/address-test" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="address/addressear" target="${TARGET}"/>
+        <ant antfile="build.xml" dir="calendar/calendarbeans" target="${TARGET}"/>
+        <ant antfile="build.xml" dir="calendar/calendarjmx" target="${TARGET}"/>
+        <ant antfile="build.xml" dir="calendar/calendarejb" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="calendar/icalweb" target="${TARGET}"/>
+        <ant antfile="build.xml" dir="calendar/calendarear" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="mail/mailbeans" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="mail/mailejb" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="mail/mailjmx" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="mail/mailtest" target="${TARGET}"/>
+        <!--
+    	<ant antfile="build.xml" dir="mail/mailjca" target="${TARGET}"/>
+    	-->
+    	<ant antfile="build.xml" dir="mail/mailear" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="client/calendarcomponent" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="client/webmailflex" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="client/webmail" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="client/webadminflex" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="client/webadmin" target="${TARGET}"/>
+    	<ant antfile="build.xml" dir="client/wcapadapter" target="${TARGET}"/>
+        <ant antfile="build.xml" dir="installer/izpack" target="${TARGET}"/>
+        <ant antfile="build.xml" dir="installer/distribution" target="${TARGET}"/>
+    </target>    
+</project>

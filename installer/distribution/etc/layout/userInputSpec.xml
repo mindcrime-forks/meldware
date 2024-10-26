@@ -1,0 +1,422 @@
+<userInput>
+   <!-- Server configuration name panel -->
+   <panel order="0">
+      <field type="title" align="right"
+         txt="SMTP Service" bold="true" size="2"
+         id="input_SMTP_title"
+         icon="/images/search.png"
+         />
+      <field type="staticText" align="left" id="input_SMTP_comment"
+         txt="Presently, Meldware Mail Server supplies POP, SMTP and IMAP services.  Each of these are available under various secure (TLS/SSL) configurations.  Please select which services you want to run.  And the ports that you wish to run them on."/>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_SMTP_SMTP_comment"
+         txt="SMTP allows mail to be sent from remote servers to Meldware Mail and allows authenticated local users to sent mail via MM"/>
+      <field type="check" variable="SMTP_ENABLED">
+         <spec txt="Enable SMTP" id="input_SMTP_ENABLED" size="32" set="true" true="true" false="false"/>
+      </field>
+      <field type="text" variable="SMTP_PORT">
+         <spec txt="Port" id="input_SMTP_PORT" size="32" set="25"/>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_SMTP_TLS_comment"
+         txt="TLS allows users a secure connection to SMTP rather than passing clear text or hashed passwords.  Not all mail clients support TLS.  Requiring TLS means that users will not be able to receive emails from non-local users (read from the internet or anyone with no account).  Alternatively, you can require it only for authenticaiton."/>
+      <field type="check" variable="SMTP_TLS_ENABLED">
+         <spec txt="TLS support" id="input_SMTP_TLS_ENABLED" size="32" set="true" true="true" false="false"/>
+      </field>
+      <field type="check" variable="SMTP_TLS_REQUIRED">
+         <spec txt="TLS required" id="input_SMTP_TLS_REQUIRED" size="32" set="false" true="true" false="false"/>
+      </field>
+      <field type="check" variable="SMTP_TLS_REQUIRED_AUTH">
+         <spec txt="TLS required for authentication" id="input_SMTP_TLS_REQUIRED_AUTH" size="32" set="false" true="true" false="false"/>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_SMTP_AUTH_ALLOWED_comment"
+         txt="Authentication Allowed"/>
+      <field type="check" variable="SMTP_AUTH_ALLOWED">
+         <spec txt="Authentication Allowed (if it is unchecked then you cannot authenticate to send mail out)." id="input_SMTP_AUTH_ALLOWED" size="32" set="true" true="true" false="false"/>
+      </field>
+      <field type="staticText" align="left" id="input_SMTP_VERIFY_IDENTITY_comment"
+         txt="Verify Identity means that authenticated users must send mail 'from' the same ID that they logged in as.  Meaning if I authenticate as tom/password, I cannot send mail from jerry@buni.org, but can as tom@buni.org."/>
+      <field type="check" variable="SMTP_VERIFY_IDENTITY">
+         <spec txt="Verify Identity" id="input_SMTP_VERIFY_IDENTITY" size="32" set="true" true="true" false="false"/>
+      </field>
+   </panel>
+   <panel order="1">
+      <field type="title" align="right"
+         txt="SMTP/SSL Service" bold="true" size="2"
+         id="input_SMTP_SSL_title"
+         icon="/images/search.png"
+         />
+      <field type="staticText" align="left" id="input_SMTP_SSL_comment"
+         txt="SMTP/SSL is essentially the same as SMTP except that the entire connection is over SSL.  Generally there is no reason to run this service as SMTP/TLS is supported widely enough; however, organizations with restrictive firewally rules or newtwork security rules may choose to run this service on another port.  SMTP with TLS supplies the same level of security as SMTP/SSL but SMTP/SSL cannot be used to receive mails from outside users (only local users)."/>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_SMTP_SSL_ENABLED_comment"
+         txt="SMTP/SSL allows authenticated local users to sent mail via MM"/>
+      <field type="check" variable="SMTP_SSL_ENABLED">
+         <spec txt="Enable SMTP/SSL" id="input_SMTP_SSL_ENABLED" size="32" set="false" true="true" false="false"/>
+      </field>
+      <field type="text" variable="SMTP_SSL_PORT">
+         <spec txt="Port" id="input_SMTP_SSL_PORT" size="32" set="465"/>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_SMTP_SSL_VERIFY_IDENTITY_comment"
+         txt="Verify Identity means that authenticated users must send mail 'from' the same ID that they logged in as.  Meaning if I authenticate as tom/password, I cannot send mail from jerry@buni.org, but can as tom@buni.org."/>
+      <field type="check" variable="SMTP_SSL_VERIFY_IDENTITY">
+         <spec txt="Verify Identity" id="input_SMTP_SSL_VERIFY_IDENTITY" size="32" set="true" true="true" false="false"/>
+      </field>
+   </panel>
+   <panel order="2">
+      <field type="title" align="right"
+         txt=" SMTP Relaying" bold="true" size="2"
+         id="input_RELAY_title"
+         icon="/images/search.png"
+         />
+      <field type="staticText" align="left" id="input_RELAY_comment"
+             txt="Meldware Mail allows for unauthenticated users to relay emails, but only to specified domains"/>
+      <field type="check" variable="RELAY_BY_DOMAIN_ENABLED">
+         <spec txt="Allow relaying by domain" id="input_RELAY_allow" size="32" set="false" true="true" false="false"/>
+      </field>
+      <field type="text" variable="RELAY_DOMAIN_1">
+         <spec txt="Relay Domain #1" id="input_RELAY_DOMAIN_1" size="32"/>
+      </field>
+      <field type="text" variable="RELAY_DOMAIN_2">
+         <spec txt="Relay Domain #2" id="input_RELAY_DOMAIN_2" size="32"/>
+      </field>
+      <field type="text" variable="RELAY_DOMAIN_3">
+         <spec txt="Relay Domain #3" id="input_RELAY_DOMAIN_3" size="32"/>
+      </field>
+      <field type="text" variable="RELAY_DOMAIN_4">
+         <spec txt="Relay Domain #4" id="input_RELAY_DOMAIN_4" size="32"/>
+      </field>
+   </panel>
+   <panel order="3">
+      <field type="title" align="right"
+         txt=" SMTP Route" bold="true" size="2"
+         id="input_ROUTE_title"
+         icon="/images/search.png"
+         />
+         <field type="staticText" align="left" id="input_ROUTE_comment"
+                txt="MM can route through a gateway server if you enable it and specify the hostname below.  You can also allow MM to route a specific list of domains if you specify them below.  The installer limits you to four domains but you can have as many as you like through configuration.  It is also possible to have multiple routes through configuration."/>
+         <field type="check" variable="ROUTING_ENABLED">
+             <spec txt="Enable SMTP Routing" id="input_ROUTING_ENABLED" size="32" set="false" true="true" false="false"/>
+         </field>
+         <field type="text" variable="ROUTE_HOST">
+            <spec txt="Gateway Host (domain only i.e. 'nowhere.com')" id="input_ROUTE_HOST" size="32"/>
+         </field>
+         <field type="divider" align="center"/>
+         <field type="staticText" align="left" id="input_ROUTE_DOMAIN_comment"
+                txt="If you select the option below then only mails with to domains listed below will go to the above host.  If you do not select it but enable routing then ALL mails will go through the above host."/>
+         <field type="check" variable="ROUTING_BY_DOMAIN">
+             <spec txt="Route only the below domains" id="input_ROUTING_BY_DOMAIN" size="32" set="false" true="true" false="false"/>
+         <field type="divider" align="center"/>
+         </field>
+         <field type="text" variable="ROUTE_DOMAIN_1">
+            <spec txt="Route Domain #1" id="input_ROUTE_DOMAIN_1" size="32"/>
+         </field>
+         <field type="text" variable="ROUTE_DOMAIN_2">
+            <spec txt="Route Domain #2" id="input_ROUTE_DOMAIN_2" size="32"/>
+         </field>
+         <field type="text" variable="ROUTE_DOMAIN_3">
+            <spec txt="Route Domain #3" id="input_ROUTE_DOMAIN_3" size="32"/>
+         </field>
+         <field type="text" variable="ROUTE_DOMAIN_4">
+            <spec txt="Route Domain #4" id="input_ROUTE_DOMAIN_4" size="32"/>
+         </field>
+   </panel>
+   <panel order="4">
+      <field type="title" align="right"
+         txt="POP Service" bold="true" size="2"
+         id="input_POP_title"
+         icon="/images/search.png"
+         />
+      <field type="staticText" align="left" id="input_POP_comment"
+             txt="POP allows local users to retrieve their mail."/>
+      <field type="check" variable="POP_ENABLED">
+         <spec txt="Enable POP" id="input_POP_ENABLED" size="32" set="true" true="true" false="false"/>
+      </field>
+      <field type="text" variable="POP_PORT">
+         <spec txt="Port" id="input_POP_PORT" size="32" set="110"/>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_POP_TLS_comment"
+         txt="TLS allows users a secure connection to POP rather than passing clear text or hashed passwords.  Not all mail clients support TLS; however many do.  Alternatively you can use POP/SSL (next)."/>
+      <field type="check" variable="POP_TLS_ENABLED">
+         <spec txt="TLS support" id="input_POP_TLS_ENABLED" size="32" set="true" true="true" false="false"/>
+      </field>
+      <field type="staticText" align="left" id="input_POP_TLS_comment2"
+         txt="In addition to supporting TLS, you can require TLS for authenticating to POP.  Since support for TLS on POP is limited we suggest you do not require TLS for POP."/>
+      <field type="check" variable="POP_TLS_REQUIRED">
+         <spec txt="TLS required" id="input_POP_TLS_REQUIRED" size="32" set="false" true="true" false="false"/>
+      </field>
+   </panel>
+   <panel order="5">
+      <field type="title" align="right"
+         txt="POP/SSL Service" bold="true" size="2"
+         id="input_POP_SSL_title"
+         icon="/images/search.png"
+         />
+      <field type="staticText" align="left" id="input_POP_SSL_comment"
+             txt="POP/SSL allows local users to retrieve their mail.  It is different from POP+TLS in that the entire stream is over SSL (not just once STARTTLS is issued) and it runs on a different port.  It provides the same guarantee as POP+TLS with require TLS."/>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_POP_SSL_ENABLED_comment"
+         　　txt="POP/SSL allows local users to retrieve their mail over SSL."/>
+      <field type="check" variable="POP_SSL_ENABLED">
+         <spec txt="Enable POP/SSL" id="input_POP_SSL_ENABLED" size="32" set="false" true="true" false="false"/>
+      </field>
+      <field type="text" variable="POP_SSL_PORT">
+         <spec txt="Port" id="input_POP_SSL_PORT" size="32" set="995"/>
+      </field>
+   </panel>
+   <panel order="6">
+      <field type="title" align="right"
+             txt=" IMAP Configuration" bold="true" size="2"
+             id="input_IMAP_title"
+             icon="/images/search.png"
+      />
+      <field type="staticText" align="left" id="input_IMAP_comment"
+             txt="IMAP is used to read mail from a email client application while leaving the mail on the server.  It is more full featured than POP (multiple folders online, syncronization from multiple clients to the same mailbox, etc), but also heavier.  This version of Meldware Mail supports enough of the IMAP protocol to work fully with Mozilla Thunderbird and may work with other clients but has not undergone the same rigorous testing at the other protocols.  Translation: Beta quality."/>
+      <field type="divider" align="center"/>
+      <field type="check" variable="IMAP_ENABLED">
+         <spec txt="Enable IMAP" id="input_IMAP_ENABLED" size="32" set="true" true="true" false="false"/>
+      </field>
+      <field type="text" variable="IMAP_PORT">
+         <spec txt="Port" id="input_IMAP_PORT" size="32" set="143"/>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="check" variable="IMAP_SSL_ENABLED">
+         <spec txt="Enable IMAP over SSL" id="input_IMAP_SSL_ENABLED" size="32" set="false" true="true" false="false"/>
+      </field>
+      <field type="text" variable="IMAP_SSL_PORT">
+         <spec txt="Port" id="input_IMAP_SSL_PORT" size="32" set="993"/>
+      </field>
+   </panel>
+   <panel order="7">
+      <field type="title" align="right"
+             txt=" DNS Configuration" bold="true" size="2"
+             id="input_DNS_title"
+             icon="/images/search.png"
+         />
+      <field type="staticText" align="left" id="input_DNS_comment"
+             txt="The Domain Name System (DNS) is used to determine the correct host to send outgoing mail to.  For Unix-like systems leaving the below blank should result in the 'default route' being used.  It may be desireable to override this behavior with a default set of servers (for instance a caching DNS instance).  For Windows systems you must specify at least one (at least two are suggested) DNS server."/>
+      <field type="divider" align="center"/>
+      <field type="text" variable="DNS_SERVER_1">
+         <spec txt="DNS Server #1" id="input_DNS_SERVER_1" size="32"/>
+      </field>
+      <field type="text" variable="DNS_SERVER_2">
+         <spec txt="DNS Server #2" id="input_DNS_SERVER_2" size="32"/>
+      </field>
+      <field type="text" variable="DNS_SERVER_3">
+         <spec txt="DNS Server #3" id="input_DNS_SERVER_3" size="32"/>
+      </field>
+      <field type="text" variable="DNS_SERVER_4">
+         <spec txt="DNS Server #4" id="input_DNS_SERVER_4" size="32"/>
+      </field>
+   </panel>
+   <panel order="8">
+      <field type="title" align="right"
+         txt=" Server Name Configuration" bold="true" size="2"
+         id="input_SERVER_NAME_title"
+         icon="/images/search.png"
+         />
+      <field type="staticText" align="left" id="input_DOMAIN_comment"
+             txt="By default mail is only relayed by this server (more advanced options are not available via this installer) if the domain (the part after the @ in the email address) is one of the 'local domains' serviced by this server.  List the local domains for this server below:"/>
+      <field type="divider" align="center"/>
+      <field type="text" variable="DOMAIN_1">
+         <spec txt="Local Domain #1" id="input_DOMAIN_1" size="32"/>
+      </field>
+      <field type="text" variable="DOMAIN_2">
+         <spec txt="Local Domain #2" id="input_DOMAIN_2" size="32"/>
+      </field>
+      <field type="text" variable="DOMAIN_3">
+         <spec txt="Local Domain #3" id="input_DOMAIN_3" size="32"/>
+      </field>
+      <field type="text" variable="DOMAIN_4">
+         <spec txt="Local Domain #4" id="input_DOMAIN_4" size="32"/>
+      </field>
+      <field type="text" variable="DOMAIN_5">
+         <spec txt="Local Domain #5" id="input_DOMAIN_5" size="32"/>
+      </field>
+      <field type="text" variable="DOMAIN_6">
+         <spec txt="Local Domain #6" id="input_DOMAIN_6" size="32"/>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_SERVER_NAME_comment"
+         txt="Please also specify the full DNS name of this server, it is suggested, but not required, that it also be a local domain.  Alternatively, you can specify an IP address (not recommended)"/>
+      <field type="text" variable="SERVER_NAME">
+         <spec txt="Server Name" id="input_SERVER_NAME" size="32"/>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_SERVER_BIND_ADDRESS_comment"
+         txt="Select the IP address you wish the selected services to bind to.  All services will bind to this address (more fine grained options are possible outside of the installer).  If this server has only one IP/interface then select the default (0.0.0.0) which will bind to all IP addresses."/>
+      <field type="text" variable="SERVER_BIND_ADDRESS">
+         <spec txt="Server Bind Address" id="input_SERVER_BIND_ADDRESS" size="32" set="0.0.0.0"/>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="text" variable="POSTMASTER_ADDRESS">
+         <spec txt="Full email address of PostMaster (i.e. postmaster@buni.org)" id="input_POSTMASTER_ADDRESS" size="32" set="postmaster@somedomain.org"/>
+      </field>
+   </panel>
+   <panel order="9">
+      <field type="staticText" align="left" id="input_DATABASE_comment"
+             txt="You will need to configure a mail datastore.  You will need to supply your own JDBC driver and place it in the MELDWARE_HOME/SERVER/CONFIG/lib directory unless you selected to install driver (PGSQL/MySQL).  Lastly, you can use the pre-existing HyperSonic 'demo' database (not recommended for production) by just selecting it.  It is possible to use other databases, but the installer doesn't know what to generate for them.  Consult the MCS forums for more information: http://buni.org/forums/"/>
+      <field type="divider" align="center"/>
+      <!--<field type="check" variable="GENERATE_DATASOURCE">
+         <spec txt="Generate DataSource" id="text.label" size="32" set="true" true="true" false="false"/>
+      </field>
+      <field type="text" variable="DATASOURCE_NAME">
+         <spec txt="DataSource Name (do not choose DefaultDS for generated)" id="text.label" size="32" set="MeldwareDS"/>
+      </field>-->
+      <field type="radio" variable="DATABASE_TYPE">
+         <description align="left" txt="Database Type (others are supported, but not by installer)"
+                      id="input_DATABASE_TYPE"/>
+         <spec>
+           <choice txt="Demo Database (hypersonic)" id="input_DATABASE_TYPE1" value="hsqldb" set="true"/>
+           <choice txt="Postgresql" id="input_DATABASE_TYPE2" value="postgresql"/>
+           <choice txt="Oracle" id="input_DATABASE_TYPE3" value="oracle" />
+           <choice txt="MySQL" id="input_DATABASE_TYPE4" value="mysql" />
+         </spec>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_DATABASE_comment2"
+             txt="The following information is only required if we are generating the datasource."/>
+      <field type="text" variable="DB_USER">
+         <spec txt="Database user to connect as" id="input_DATABASE_DB_USER" size="32" set="mmuser"/>
+      </field>
+      <field type="text" variable="DB_PASS">
+         <spec txt="Database password to connect with" id="input_DATABASE_DB_PASS" size="32" set="changemeplease"/>
+      </field>
+      <field type="text" variable="DB_HOST">
+         <spec txt="Database host to connect to" id="input_DATABASE_DB_HOST" size="32" set="127.0.0.1"/>
+      </field>
+      <field type="text" variable="DB_NAME">
+         <spec txt="Database name or SID (not used for Hypersonic)" id="input_DATABASE_DB_NAME" size="32" set="MMDB"/>
+      </field>
+   </panel>
+   <panel order="10">
+      <field type="staticText" align="left" id="input_JASEN_comment"
+             txt="Enable SPAM Filtering.  This will scan all locally delivered messages to determine if they are SPAM"/>
+      <field type="check" variable="JASEN_ENABLED">
+         <spec txt="Enable SPAM Filtering" id="input_JASEN_ENABLED" size="32" set="true" true="true" false="false"/>
+      </field>   
+   </panel>
+   <panel order="11">
+      <field type="staticText" align="left" id="input_STORE_TYPE_comment"
+             txt="Databases such as MySQL are extremely inefficient at storing and retrieving message bodies.  As an alternative you can store them on the filesystem in an efficient format.  Regardless of your selection, header information and other metadata will still be stored in the database.  If you select file storage you must select a base path or the message parts will be in $INSTALL/server/default/data"/>
+      <field type="divider" align="center"/>
+      <field type="radio" variable="STORE_TYPE">
+         <description align="left" txt="Storage Type"
+                      id="input_STORE_TYPE"/>
+         <spec>
+           <choice txt="Database" id="input_STORE_TYPE1" value="DB" set="true"/>
+           <choice txt="File (EXPERIMENTAL)" id="input_STORE_TYPE2" value="file" set="false"/>
+         </spec>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="text" variable="FILESTORE_PATH">
+         <spec txt="Base directory for the file store (leave blank for default)" id="input_FILESTORE_PATH" size="60" set=""/>
+      </field>
+   </panel>
+   <panel order="12">
+      <field type="staticText" align="left" id="input_KEYSTORE_comment"
+             txt="If you've specified any SSL services, we will need the location of your keystore.  If you do not have a keystore, we can create the keystore for you.  If you do not let us generate it, you will need to copy it into the JBOSS_HOME/server/CONFIG/conf directory"/>
+      <field type="divider" align="center"/>
+      <field type="text" variable="KEYSTORE_PATH">
+         <spec txt="name of keystore in server/CONFIG/conf" id="input_KEYSTORE_PATH" size="32" set="meldware.store"/>
+      </field>
+      <field type="text" variable="KEYSTORE_PASS">
+         <spec txt="Keystore password (must be at least 6 letters)" id="input_KEYSTORE_PASS" size="32" set="mmrulez123"/>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="check" variable="GENERATE_STORE">
+         <spec txt="Generate Keystore" id="input_GENERATE_STORE" size="32" set="true" true="true" false="false"/>
+      </field>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_KEYSTORE_comment2"
+             txt="Answer the following only if we are generating a keystore for you."/>
+      <field type="text" variable="KEYSTORE_CN">
+         <spec txt="Hostname" id="input_KEYSTORE_CN" size="32" set="localhost.localdomain"/>
+      </field>
+      <field type="text" variable="KEYSTORE_OU">
+         <spec txt="Company/Organization Unit" id="input_KEYSTORE_OU" size="32" set="BigCo, Inc."/>
+      </field>
+      <field type="text" variable="KEYSTORE_O">
+         <spec txt="Division/Organization" id="input_KEYSTORE_O" size="32" set="IT Group"/>
+      </field>
+      <field type="text" variable="KEYSTORE_L">
+         <spec txt="City/Locality" id="input_KEYSTORE_L" size="32" set="Durham"/>
+      </field>
+      <field type="text" variable="KEYSTORE_ST">
+         <spec txt="State/Province" id="input_KEYSTORE_ST" size="32" set="North Carolina"/>
+      </field>
+      <field type="text" variable="KEYSTORE_C">
+         <spec txt="Country (2 letter)" id="input_KEYSTORE_C" size="2" set="US"/>
+      </field>
+   </panel>
+   <panel order="13">
+      <field type="title" align="right"
+             txt=" Account" bold="true" size="2"
+             id="input_Account_title"
+             icon="/images/search.png"
+         />
+      <field type="staticText" align="left" id="input_Account_comment"
+             txt="YOU MUST NOT SKIP THIS STEP: Please specify an initial adminstration user and password.  After starting the server you may login to the admin console and configure additional users by going to HOSTNAME:8080/webadmin/webadminflex.swf"/>
+      <field type="divider" align="center"/>
+      <field type="text" variable="ADMIN_USER">
+         <spec txt="Admin username" id="input_ADMIN_USER" size="32"/>
+      </field>
+      <field type="text" variable="ADMIN_PASSWORD">
+         <spec txt="Admin password #1" id="input_ADMIN_PASSWORD" size="32"/>
+      </field>
+   </panel>
+   <panel order="14">
+      <field type="title" align="right"
+             txt="Calendar" bold="true" size="2"
+             id="input_CALENDAR_MAILER_title"/>
+      <field type="staticText" align="left" id="input_CALENDAR_MAILER_comment"
+             txt="The calendar server can send a notification to a user when an invite is created for the user. In order to enable this functionality the installer allows you to specify a calendar server notification account.  It is recommonded that you specify this account during installation."/>
+      <field type="check" variable="GENERATE_CALENDAR_MAILER">
+         <spec txt="Create calendar notficiaton account" id="input_GENERATE_CALENDAR_MAILER" size="32" set="true" true="true" false="false"/>
+      </field>
+      <field type="text" variable="CALENDAR_MAILER_ALIAS">
+         <spec txt="Calendar mailer alias" id="input_CALENDAR_MAILER_ALIAS" size="32" set="calendar"/>
+      </field>
+      <field type="text" variable="CALENDAR_MAILER_NAME">
+         <spec txt="Calendar mailer name" id="input_CALENDAR_MAILER_NAME" size="32" set="calendar"/>
+      </field>
+      <field type="text" variable="CALENDAR_MAILER_PASSWORD">
+         <spec txt="Calendar mailer password" id="input_CALENDAR_MAILER_PASSWORD" size="32" set="changemeplease"/>
+      </field>
+      <field type="text" variable="CALENDAR_MAILER_SERVERHOST">
+         <spec txt="Calendar mailer SMTP host" id="input_CALENDAR_MAILER_SERVERHOST" size="32" set="localhost"/>
+      </field>
+      <field type="text" variable="CALENDAR_MAILER_SERVERPORT">
+         <spec txt="Calendar mailer port" id="input_CALENDAR_MAILER_SERVERPORT" size="32" set="25"/>
+      </field>
+   </panel>
+   <panel order="15">
+      <field type="title" align="right"
+             txt="Addressbook" bold="true" size="2"
+             id="input_ADDRESSBOOK_title"/>
+      <field type="staticText" align="left" id="input_ADDRESSBOOK_comment"
+             txt="The addressbook server is an integrated ldap instance which allows users to lookup information in a global addressbook.  At present only one embedded global addressbook is provided.  Shortly we hope to have personal addressbooks and external ldap integration.  You must presently populate this addressbook with some other tool"/>
+      <field type="text" variable="LDAP_BIND_PORT">
+         <spec txt="LDAP port" id="input_LDAP_BIND_PORT" size="4" set="389"/>
+      </field>
+      <field type="text" variable="BASE_DN">
+         <spec txt="BASE DN (i.e. dc=com,dc=myco)" id="input_BASE_DN" size="32" set="dc=buni,dc=org"/>
+      </field>
+      <field type="text" variable="BASE_DC">
+         <spec txt="BASE DC (i.e. if DN=dc=com,dc=myco then BASE DC = myco)" id="input_BASE_DC" size="32" set="buni"/>
+      </field>
+   </panel>
+   <panel order="16">
+      <field type="title" align="right"
+             txt="Congrats!" bold="true" size="2"
+             id="input_Congrats_title"/>
+      <field type="staticText" align="left" id="input_Congrats_comment"
+             txt="Now cd to the installation directory.  On windows type 'cd bin'(ENTER) 'run-meldware.bat'.  On UNIX type 'sudo bin/run-meldware.sh'"/>
+      <field type="divider" align="center"/>
+      <field type="staticText" align="left" id="input_Congrats_comment2"
+             txt="see http://www.buni.org/mediawiki/index.php/Meldware_Installation_Guide_v_1.0M8 for more information."/>
+   </panel>
+</userInput>

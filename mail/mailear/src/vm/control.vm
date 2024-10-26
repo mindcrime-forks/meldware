@@ -1,0 +1,4 @@
+#parse("test-control.vm")
+$generator.parse("deploy/mail.ear/mailbeans.jar/META-INF/persistence.xml.vm", "deploy/mail.ear/mailbeans.jar/META-INF/persistence.xml")
+$generator.parse("deploy/mail.ear/mailjmx.sar/META-INF/jboss-service.xml.vm", "deploy/mail.ear/mailjmx.sar/META-INF/jboss-service.xml")
+$generator.parse("deploy/mail.ear/META-INF/application.xml.vm", "deploy/mail.ear/META-INF/application.xml")

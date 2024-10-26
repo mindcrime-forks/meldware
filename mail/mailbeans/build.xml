@@ -1,0 +1,75 @@
+<!DOCTYPE project [
+    <!ENTITY propload SYSTEM "../../ant/propload.xml">
+    <!ENTITY jarbuild SYSTEM "../../ant/jarbuild.xml">
+]>
+<project name="mailbeans" default="build">
+    <tstamp/>
+	&propload;
+    <property name="module" value="mailbeans"/>
+    <property name="manifest.classpath" 
+        value=""/>
+    <property name="hibernate.mapping.file" 
+        value="etc/layout/mapping.hbm.xml"/>
+    
+    <path id="jar.classpath">
+        <pathelement location="${basedir}/../../common/meldwarebeans/dist/meldwarebeans.jar"/>
+        <fileset dir="${folder.libs}">
+            <include name="${J2EE_JAR}"/>
+            <include name="${libs.odmg}"/>
+            <include name="${libs.commons.lang}"/>
+            <include name="${libs.commons.logging}"/>
+            <include name="${libs.commons.io}"/>
+            <include name="${libs.buni-mime4j}"/>
+            <include name="${libs.ristretto}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.ejb3}">
+            <include name="${libs.jboss.ejb3}"/>
+            <include name="${libs.jboss.ejb3x}"/>
+            <include name="${libs.jboss.annotations-ejb3}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.default.lib}">
+            <include name="${libs.jboss.ejb3-persistence}"/>
+            <include name="${libs.jboss.hibernate}"/>
+            <include name="${libs.jboss.hibernate.annotations}"/>
+            <include name="${libs.jboss.hibernate.entitymanager}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.client}">
+            <include name="${libs.mail}"/>
+            <include name="${libs.activation}"/>
+            <include name="${libs.jbossall.client}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.aop}">
+            <include name="${libs.jboss.aspects}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.lib}">
+            <include name="${libs.jboss.system}"/>
+        </fileset>
+        <fileset dir="${basedir}/..">
+            <include name="mailapi/dist/mailapi.jar"/>
+        </fileset>
+    </path>
+
+    &jarbuild;  
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->  
+  	
+    <target name="generate_source">
+        <echo>Code generation complete</echo>
+    </target>  
+    
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->  
+    <target name="postCompile">
+        <echo>Run postcompile</echo>
+    </target>  
+
+    <target name="processTemplates"/>
+
+</project>

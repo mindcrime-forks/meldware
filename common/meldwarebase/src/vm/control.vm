@@ -1,0 +1,13 @@
+#parse("test-control.vm")
+$generator.parse("deploy/meldwarebase.sar/META-INF/jboss-service.xml.vm", "deploy/meldwarebase.sar/META-INF/jboss-service.xml")
+#if($DATABASE_TYPE.equals("hsqldb"))
+    Do not generate DS
+#else
+    Generate DS
+    $generator.parse("deploy/meldware-ds.xml.vm", "deploy/meldware-ds.xml")
+    #if($P6SPY_ENABLED.equals("true"))
+        $generator.parse("conf/spy.properties.vm", "conf/spy.properties")
+    #end
+#end
+$generator.parse("deploy/runonce.bsh.vm", "deploy/runonce.bsh")
+$generator.parse("deploy/jms/jms-persistence-service.xml.vm", "deploy/jms/jms-persistence-service.xml")

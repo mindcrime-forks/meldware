@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="Shift_JIS" standalone="yes" ?>
+
+<!-- The Japanese langpack -->
+
+<!--
+
+ Caution for configuration manager!
+ 
+ This text file contains Japanese, many of which characters' value
+ could be in 8 bits. So if you are not using 8-bit through environment,
+ please handle this file as a binary file, otherwise, this file will
+ be broken.
+
+ - some e-mail transfer drops 8th bit
+ - standard CVS may not handle 8th bit (treat as binary file)
+
+-->
+
+<!--
+
+ The reason to choose Shift_JIS for this resource file
+
+ Ideally, Unicode encoding (like UTF-8) should be used.
+
+ As each platform uses different encodings,
+  Windows   : Shift_JIS (strictly speaking, may be Windows-31J)
+  most Unix : EUC_JIS
+  Macintosh : (I do not know)
+
+ However, some strings are given to native library and used for Windows
+ shortcut, so this should be in Windows encoding.
+
+-->
+
+<langpack>
+    <str id="installer.quit.message" txt="インストーラを終了します" />
+    <str id="installer.warning" txt="警告" />
+
+    <str id="uninstaller.warning" txt="この操作は、インストール済のアプリケーションを削除します。" />
+
+    <str id="TargetPanel.createdir" txt="ディレクトリが作成されます: " />
+    <str id="TargetPanel.warn" txt="指定されたディレクトリは既に存在します。 このまま続けるとファイルを上書きするかもしれませんがよろしいですか?" />
+    <str id="TargetPanel.empty_target"
+         txt="正しいインストール先を指定してください。" />
+
+    <str id="PacksPanel.freespace" txt="残量: " />
+
+    <str id="InstallPanel.info" txt="インストールを開始するには、'インストール'を押してください。" />
+    <str id="InstallPanel.install" txt="インストール" />
+
+    <str id="FinishPanel.fail" txt="インストールに失敗しました。" />
+    <str id="FinishPanel.auto" txt="自動インストールスクリプトを生成します。" />
+    <str id="FinishPanel.done" txt="完了" />
+
+    <str id="ShortcutPanel.regular.desktop" txt="デスクトップにショートカットを作成します。" />
+
+    <str id="InstallPanel.progress" txt="全体のインストール状況 :" />
+</langpack>

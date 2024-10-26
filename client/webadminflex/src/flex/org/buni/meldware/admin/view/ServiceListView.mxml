@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml">
+
+	<mx:Script>
+		<![CDATA[
+		    import org.buni.meldware.admin.controller.AdminController;
+			import org.buni.meldware.admin.model.ModelLocator;
+			import org.buni.meldware.admin.model.ServiceVO;
+			
+            import com.adobe.cairngorm.control.CairngormEventDispatcher;
+            import com.adobe.cairngorm.control.CairngormEvent;
+
+			[Bindable]
+			public var model:ModelLocator = ModelLocator.getInstance();
+			
+            private function getServices(event:Event):void {
+                   var e:CairngormEvent = new CairngormEvent(AdminController.GET_SERVICES);
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+            
+            private function deleteService(event:Event):void {
+                   model.selectedService = serviceList.selectedItem as ServiceVO;
+                   var e:CairngormEvent = new CairngormEvent(AdminController.DELETE_SERVICE);
+                   e.data = serviceList.selectedItem as ServiceVO;
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+            
+            private function editService(event:Event):void {
+                   model.selectedService = serviceList.selectedItem as ServiceVO;
+                   var e:CairngormEvent = new CairngormEvent(AdminController.SERVICE_DETAIL);
+                   e.data = serviceList.selectedItem as ServiceVO;
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+		]]>
+	</mx:Script>
+	
+	<mx:DataGrid id="serviceList" width="100%" height="100%" borderStyle="none" dataProvider="{model.services}">
+    <mx:columns>  
+      <mx:DataGridColumn dataField="name" width="200"/>
+      <mx:DataGridColumn dataField="port" width="35"/>
+      <mx:DataGridColumn dataField="address" width="50"/>
+      <mx:DataGridColumn headerText="SSL" dataField="usesSSL" width="35"/>
+      <mx:DataGridColumn dataField="protocol" width="200"/>        
+    </mx:columns>
+  </mx:DataGrid>
+
+  <!--mx:List id="serviceList" width="100%" height="100%" borderStyle="none" dataProvider="{model.services}"/-->
+
+  <mx:HBox>
+    <mx:Button label="Refresh" click="getServices(event)"/>
+    <mx:Button label="Edit" click="editService(event)"/>
+    <mx:Button label="Delete" click="deleteService(event)"/>
+  </mx:HBox>
+  <!--mx:Label text="Service List View"/-->
+</mx:VBox>

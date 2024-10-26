@@ -1,0 +1,45 @@
+<!DOCTYPE project [
+    <!ENTITY propload SYSTEM "../../ant/propload.xml">
+    <!ENTITY ejbbuild SYSTEM "../../ant/ejbbuild.xml">
+]>
+
+<project name="mailejb" default="build">
+    <tstamp/>
+	&propload;
+    <property name="module" value="mailejb"/>
+	<property name="manifest.classpath" 
+        value="mailapi.jar mailbeans.jar"/>
+    <property name="jboss.realm" value="java:/jaas/meldware"/>
+
+    <path id="ejb.classpath">
+        <pathelement location="${basedir}/../../common/meldwarebeans/dist/meldwarebeans.jar"/>
+        <pathelement location="${basedir}/../mailapi/dist/mailapi.jar"/>
+        <pathelement location="${basedir}/../mailbeans/dist/mailbeans.jar"/>
+        <fileset dir="${folder.libs}">
+            <include name="${libs.commons.logging}"/>
+            <include name="${libs.log4j}"/>
+            <include name="${libs.jboss.common.client}"/>
+        </fileset>
+        <fileset id="ejb.exportpath" dir="build/ejb">
+            <exclude name="**/*.class"/>
+        </fileset>
+        <fileset dir="${jboss.folder.lib}">
+      	    <include name="${libs.jboss.system}"/>
+        </fileset>
+        <fileset dir="${jboss.folder.client}">
+            <include name="${libs.jbossall.client}"/>
+        </fileset>
+    </path>
+    &ejbbuild;  
+    <!-- ========================================================== -->
+    <!-- TARGET:generate_source                                     -->
+    <!--                                                            -->
+    <!-- Run code generator                                         -->
+    <!-- ========================================================== -->  
+    <target name="generate_source">
+        <echo>Code generation complete</echo>
+    </target>  
+    
+	<target name="processTemplates"/>
+
+</project>

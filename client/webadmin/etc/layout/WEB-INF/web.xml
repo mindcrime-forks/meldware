@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE web-app PUBLIC
+  "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+  "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+  <description>Meldware WebAdmin</description>
+
+  <servlet>
+    <servlet-name>AdminRPC</servlet-name>
+    <servlet-class>org.buni.meldware.webadmin.AdminRPCServlet</servlet-class>
+    <init-param>
+         <param-name>mailListManager</param-name>
+         <param-value>meldware.mail:type=MailServices,name=MailListManager</param-value>
+    </init-param>
+    <init-param>
+         <param-name>adminServiceName</param-name>
+         <param-value>meldware.mail:type=MailServices,name=AdminTool</param-value>
+    </init-param>
+    <init-param>
+         <param-name>mailboxServiceName</param-name>
+         <param-value>meldware.mail:type=MailboxManager,name=MailboxManager</param-value>
+    </init-param>
+    <init-param>
+         <param-name>userProfileService</param-name>
+         <param-value>meldware.base:type=UserProfileService,name=UserProfileService</param-value>
+    </init-param>
+    <init-param>
+         <param-name>abMountService</param-name>
+         <param-value>meldware.mail:type=systemMounts,name=abMounts</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>AdminRPC</servlet-name>
+    <url-pattern>/adminRPC</url-pattern>
+  </servlet-mapping>
+
+  <security-constraint>
+    <display-name>Meldware Admin</display-name>
+    <web-resource-collection>
+      <web-resource-name>Meldware_Admin</web-resource-name>
+      <url-pattern>/adminRPC</url-pattern>
+      <http-method>GET</http-method>
+      <http-method>POST</http-method>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>adminuser</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <security-role>
+    <role-name>adminuser</role-name>
+  </security-role>  
+
+  <login-config>
+    <auth-method>FORM</auth-method>
+    <realm-name>meldware</realm-name>
+    <form-login-config>
+      <form-login-page>/fakeloginform.html</form-login-page>
+      <form-error-page>/fakeloginerror.html</form-error-page>
+    </form-login-config>
+  </login-config>
+</web-app>

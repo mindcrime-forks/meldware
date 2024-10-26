@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+         creationComplete="initApp()">
+  
+  
+  	<mx:Script>
+		<![CDATA[
+			import org.buni.meldware.admin.controller.AdminController;
+			import org.buni.meldware.admin.model.MailListVO;
+			import org.buni.meldware.admin.model.MailListMemberVO;
+			
+			import org.buni.meldware.admin.model.ModelLocator;
+            import com.adobe.cairngorm.control.CairngormEventDispatcher;
+            import com.adobe.cairngorm.control.CairngormEvent;
+            
+            import mx.collections.ArrayCollection;
+            
+            import mx.collections.IViewCursor;
+            
+			[Bindable]
+			public var model:ModelLocator = ModelLocator.getInstance();
+			
+			private function initApp():void {
+			       CairngormEventDispatcher.getInstance().addEventListener(AdminController.MAILLIST_MEMBER_DELETED,memberDeleted);
+			       CairngormEventDispatcher.getInstance().addEventListener(AdminController.MAILLIST_MEMBER_ADDED,memberAdded);
+			}
+			
+			public function memberDeleted(event:Event): void {
+			       
+			          model.selectedMailList.members.removeItemAt(mailListMembers.selectedIndex);
+			       
+			   //    model.users.remove(userList.selectedItem as UserVO);
+			}
+			
+			public function memberAdded(event:Event): void {
+			       var o:Object = new Object();
+			       o.address = memberAddress.text;
+			       var mlmv:MailListMemberVO  = new MailListMemberVO(o);
+			       if(model.selectedMailList.members == null) {
+			           model.selectedMailList.members = new ArrayCollection();
+			       }
+			       model.selectedMailList.members.addItem(mlmv);
+			}
+
+            private function getMailListMembers(event:Event=null):void {
+                   var e:CairngormEvent = new CairngormEvent(AdminController.GET_MAILLIST_MEMBERS);
+                   e.data = new Object();
+                   e.data.pattern = pattern.text;
+                   e.data.list = model.selectedMailList;
+                   CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+            
+            private function deleteMailListMember(event:Event):void {
+	          var e:CairngormEvent = new CairngormEvent(AdminController.DELETE_MAILLIST_MEMBER);
+	          e.data = new Object;
+	          e.data.member = mailListMembers.selectedItem.address;
+	          e.data.list = model.selectedMailList;
+	          CairngormEventDispatcher.getInstance().dispatchEvent(e);
+            }
+    
+      	    public function addMailListMember(event:Event):void {
+
+	          var e:CairngormEvent = new CairngormEvent(AdminController.ADD_MAILLIST_MEMBER);
+	          e.data = new Object;
+	          e.data.member = memberAddress.text;
+	          e.data.list = model.selectedMailList;
+	          CairngormEventDispatcher.getInstance().dispatchEvent(e);
+      	    }
+      	    
+            public function clear(event:Event):void {
+            }
+          
+		]]>
+	</mx:Script>
+	
+  <mx:DataGrid id="mailListMembers" width="100%" height="75%" borderStyle="none" dataProvider="{model.selectedMailList.members}">
+    <mx:columns>
+      <mx:DataGridColumn headerText="member address" dataField="address"/>
+    </mx:columns>
+  </mx:DataGrid>
+  
+  <mx:HBox>
+    <mx:TextInput id="pattern"/>
+    <mx:Button label="Search" click="getMailListMembers(event)"/>
+    <mx:TextInput id="memberAddress"/>
+    <mx:Button label="Add" click="addMailListMember(event)"/>
+    <mx:Button label="Delete" click="deleteMailListMember(event)"/>
+    <mx:Label text="{model.lastStatus}" color="#f10000" paddingTop="10"/>
+  </mx:HBox>  
+
+</mx:VBox>

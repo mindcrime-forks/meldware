@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE server
+    PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
+    "http://www.jboss.org/j2ee/dtd/jboss-service_4_0.dtd">
+
+<!-- This file should get replaced by installer  -->
+<server>
+
+<mbean code="org.buni.meldware.calendar.jmx.CalendarServer"
+  name="jboss:service=CalendarServer">
+  <attribute name="NotificationServerURL">http://calserver:8080/calendar</attribute>
+  <attribute name="CalendarNotificiationEnabled">true</attribute>
+  <attribute name="WebCalendarStartTime">5</attribute>
+  <attribute name="WebCalendarDuration">19</attribute>
+  <attribute name="SearchLimit">20</attribute>
+  <attribute name="RDBMSDialect">installer</attribute>
+</mbean>
+
+<!-- ==================================================================== -->
+<!-- Mail Connection Factory                                              -->
+<!-- ==================================================================== -->
+<mbean code="org.jboss.mail.MailService"
+       name="jboss:service=CalendarMail">
+  <attribute name="JNDIName">java:/CalendarMail</attribute>
+  <attribute name="User">calendar</attribute>
+  <attribute name="Password">calendar</attribute>
+  <attribute name="Configuration">
+     <!-- Test -->
+     <configuration>
+        <!-- Change to your mail server prototocol -->
+        <property name="mail.transport.protocol" value="smtp"/>
+
+        <!-- Change to the user who will receive mail  -->
+        <property name="mail.user" value="calendar"/>
+
+        <!-- Change to the SMTP gateway server -->
+        <property name="mail.smtp.host" value="localhost"/>
+        <property name="mail.smtp.socketFactory.fallback" value="false"/>
+        <property name="mail.smtp.socketFactory.port" value="8025"/>
+        <property name="mail.smtp.port" value="8025"/>
+
+        <!-- Change to the address mail will be from  -->
+        <property name="mail.from" value="calendar@theatlantis.net"/>
+
+        <!-- Enable debugging output from the javamail classes 
+        <property name="mail.debug" value="true"/>
+        -->
+        <!-- For using the User/Password attributes for SMTP AUTH -->
+        <property name="mail.smtp.auth" value="true"/>
+     </configuration>
+  </attribute>
+</mbean>
+
+<mbean code="org.jboss.mq.server.jmx.Topic"
+	 name="jboss.mq.destination:service=Topic,name=calendar">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+    <depends optional-attribute-name="SecurityManager">jboss.mq:service=SecurityManager</depends>
+</mbean>
+  
+<mbean code="org.jboss.mq.server.jmx.Topic"
+	 name="jboss.mq.destination:service=Topic,name=addressbook">
+    <depends optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
+    <depends optional-attribute-name="SecurityManager">jboss.mq:service=SecurityManager</depends>
+</mbean>
+</server>

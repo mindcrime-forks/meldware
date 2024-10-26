@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+         creationComplete="initApp()">
+  
+  
+  	<mx:Script>
+		<![CDATA[
+			import org.buni.meldware.admin.controller.AdminController;
+			import org.buni.meldware.admin.model.MailListVO;
+			
+			import org.buni.meldware.admin.model.ModelLocator;
+            import com.adobe.cairngorm.control.CairngormEventDispatcher;
+            import com.adobe.cairngorm.control.CairngormEvent;
+            
+            import mx.collections.IViewCursor;
+            
+			[Bindable]
+			public var model:ModelLocator = ModelLocator.getInstance();
+			
+			private function initApp():void {
+			       CairngormEventDispatcher.getInstance().addEventListener(AdminController.MAILLIST_ADDED,clear);
+			}
+			
+    
+      	    public function save(event:Event):void {
+	      	  var mailList:MailListVO = new MailListVO();
+	      	  mailList.listAddress = listAddress.text;
+	      	  mailList.attachmentsAllowed = attachments.selected;
+	      	  mailList.membersOnly = membersOnly.selected;
+	      	  mailList.prefixAutoBracketed = prefixAutoBracketed.selected;
+	      	  mailList.replyToList = replyToList.selected;
+	          var e:CairngormEvent = new CairngormEvent(AdminController.ADD_MAILLIST);
+	          e.data = mailList;
+	          CairngormEventDispatcher.getInstance().dispatchEvent(e);
+      	    }
+      	    
+            public function clear(event:Event):void {
+                listAddress.text = "";
+                attachments.selected = false;
+                membersOnly.selected = false;
+                prefixAutoBracketed.selected=false;
+                replyToList.selected = false;
+            }
+          
+		]]>
+	</mx:Script>
+  
+  
+  <mx:VBox width="100%" height="100%">
+    <mx:Form id="listEdit" width="100%" height="100%" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+	    <mx:FormItem label="List Address:" width="100%">
+			<mx:TextInput id="listAddress" width="100%"/>
+		</mx:FormItem>
+	    <mx:FormItem label="Attachments:" width="100%">
+			<mx:CheckBox id="attachments" width="100%"/>
+		</mx:FormItem>
+	    <mx:FormItem label="Members Only:" width="100%">
+			<mx:CheckBox id="membersOnly" width="100%"/>
+		</mx:FormItem>
+	    <mx:FormItem label="Subject Prefix:" width="100%">
+			<mx:CheckBox id="prefixAutoBracketed" width="100%"/>
+		</mx:FormItem>
+	    <mx:FormItem label="Reply to:" width="100%">
+			<mx:CheckBox id="replyToList" width="100%"/>
+		</mx:FormItem>
+		<mx:ControlBar horizontalAlign="center" width="100%" paddingBottom="0" paddingTop="0" paddingLeft="0" paddingRight="0">
+	    		<mx:Button label="Save" click="save(event)" />
+	    		<mx:Button label="Clear" click="clear(event)" />
+	    </mx:ControlBar>
+	    
+         <mx:Label text="{model.lastStatus}" color="#f10000" paddingTop="10"/>
+	</mx:Form>
+  </mx:VBox>
+
+</mx:VBox>

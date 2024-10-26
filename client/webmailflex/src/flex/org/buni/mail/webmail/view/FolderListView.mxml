@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:e="com.*"
+    width="100%"
+    height="100%"
+    title="Folders"
+    borderThicknessLeft="0"
+    borderThicknessRight="0"
+    borderThicknessTop="0"
+    borderThicknessBottom="0"
+    initialize="initComp()"
+    >
+
+    <mx:Script>
+    <![CDATA[
+    import mx.controls.Tree;
+    import mx.utils.ObjectUtil;
+    import mx.events.ItemClickEvent;
+    import mx.events.DragEvent;
+    import mx.managers.DragManager;
+    import mx.core.IUIComponent;
+    
+    import com.adobe.cairngorm.control.CairngormEvent;
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+            
+    import org.buni.mail.webmail.model.FolderVO;
+    import org.buni.mail.webmail.model.EmailVO;
+    import org.buni.mail.webmail.model.ModelLocator;
+    import org.buni.mail.webmail.controller.WebmailController;
+    import org.buni.mail.webmail.util.FolderTreeDataDescriptor;
+            
+    [Bindable]
+    public var model:ModelLocator = ModelLocator.getInstance();
+            
+    private function initComp():void
+    {
+
+        model.addEventListener("foldersChanged",refreshFolderList);
+        model.addEventListener("selectedFolderChanged",doSelectFolder);
+              
+        var gridMenu:ContextMenu = new ContextMenu();
+        gridMenu.hideBuiltInItems();
+
+        var checkCM:ContextMenuItem = new ContextMenuItem("Check Email");
+        checkCM.addEventListener("menuItemSelect", doCheckEmail);
+        gridMenu.customItems.push(checkCM);
+        
+        var emptyTrashCM:ContextMenuItem = new ContextMenuItem("Empty Trash");
+        emptyTrashCM.addEventListener("menuItemSelect", doEmptyTrash);
+        gridMenu.customItems.push(emptyTrashCM);
+        
+        folderTree.contextMenu = gridMenu;
+    }
+            
+    private function refreshFolderList(event:Event):void
+    {
+        var selectedFolderId:Number; 
+        if (folderTree.selectedIndex > 0)
+        {
+          selectedFolderId = (folderTree.selectedItem as FolderVO).id;
+        }
+        else
+        {
+          selectedFolderId = model.getFolderByPath("INBOX").id;
+        }
+        
+        folderTree.dataProvider = model.folders;
+        folderTree.validateNow();
+        
+        model.selectedFolder = model.getFolderById(selectedFolderId);
+        
+        /*
+        if (model.folders.length > 0)
+        {
+            folderTree.selectedIndex = 0;
+            folderTree.validateNow();
+            if (folderTree.selectedItem != null)
+            {
+              model.selectedFolder = model.getFolderByPath((folderTree.selectedItem as FolderVO).path);
+            }
+        }
+        */
+    }
+            
+    private function doSelectFolder(event:Event):void
+    {
+        folderTree.selectedItem = model.selectedFolder;
+        
+        if (model.selectedFolder != null)
+        {
+            var e:CairngormEvent = new CairngormEvent(WebmailController.GET_EMAIL_IN_FOLDER);
+            e.data = model.selectedFolder;
+            CairngormEventDispatcher.getInstance().dispatchEvent(e);
+        }
+    }
+            
+    private function handleButtonBarClick(event:ItemClickEvent):void
+    {
+        currentState = event.item.toString();
+    }
+            
+    private function selectFolder(event:Event):void
+    {
+        model.selectedFolder = model.getFolderByPath(((event.currentTarget as Tree).selectedItem as FolderVO).path);
+    }
+            
+    private function newFolderClick(event:ItemClickEvent):void
+    {
+        if (event.item == "Save")
+        {
+            var newFolder:FolderVO = new FolderVO();
+            newFolder.name = newFolderName.text;
+            newFolder.name = newFolder.name.replace("/.,\//","");
+                
+            // figure out the path
+            if (newAsSubfolder.selected)
+            {
+                newFolder.path = model.selectedFolder.path + "." + newFolder.name;
+            }
+            else
+            {
+                if (model.selectedFolder.path.indexOf(".") >= 0)
+                {
+                    newFolder.path = model.selectedFolder.path.substr(0,model.selectedFolder.path.lastIndexOf(".")) + "." + newFolder.name;
+                }
+                else
+                {
+                    newFolder.path = newFolder.name;
+                }
+            }
+                
+            var e:CairngormEvent = new CairngormEvent(WebmailController.NEW_FOLDER);
+            e.data = newFolder;
+            CairngormEventDispatcher.getInstance().dispatchEvent(e);
+        }
+            
+        newFolderName.text = "";
+        newAsSubfolder.selected = false;
+            
+        currentState = "";
+    }
+          
+    private function renameFolderClick(event:ItemClickEvent):void
+    {
+        if (event.item == "Save")
+        {
+            var newPath:String = new String();
+                
+            if (model.selectedFolder.path.indexOf(".") >= 0)
+            {
+                newPath = model.selectedFolder.path.substr(0,model.selectedFolder.path.lastIndexOf(".")) + "." + renameFolderName.text;
+            }
+            else
+            {
+                newPath = renameFolderName.text;
+            }
+                  
+            var e:CairngormEvent = new CairngormEvent(WebmailController.RENAME_FOLDER);
+            e.data = new Object();
+            e.data.oldPath = model.selectedFolder.path;
+            e.data.newPath = newPath;
+            CairngormEventDispatcher.getInstance().dispatchEvent(e);
+        }
+            
+        renameFolderName.text = "";
+            
+        currentState = "";
+    }
+          
+    private function doDragEnter(event:DragEvent):void
+    {
+        if (event.dragSource.hasFormat("items"))
+        {
+            DragManager.acceptDragDrop(event.target as IUIComponent);
+            //event.currentTarget.showDropFeedback(event);
+        }
+        else if (event.dragSource.hasFormat("treeItems"))
+        {
+            DragManager.acceptDragDrop(event.target as IUIComponent);
+        }
+    }
+      
+    private function doDragExit(event:DragEvent):void
+    {
+        event.currentTarget.hideDropFeedback(event);
+    }
+      
+    private function doDragOver(event:DragEvent):void
+    {
+        event.currentTarget.showDropFeedback(event);
+    }    
+        
+    private function doDragDrop(event:DragEvent):void
+    {
+        if (event.dragSource.hasFormat("items"))
+        {
+          var items:Array = (event.dragSource.dataForFormat("items") as Array);
+          var j:int = folderTree.calculateDropIndex(event);
+          var dropFolder:FolderVO = model.folders[j];
+          for (var i:int = 0; i < items.length; i++)
+          {
+              var e:CairngormEvent = new CairngormEvent(WebmailController.MOVE_EMAIL);
+              e.data = new Object();
+              e.data.email = (items[i] as EmailVO);
+              e.data.fromFolder = model.getFolderByPath(e.data.email.folder);
+              e.data.toFolder = dropFolder;
+              CairngormEventDispatcher.getInstance().dispatchEvent(e);
+          }
+          event.currentTarget.hideDropFeedback(event);
+        }
+        else if (event.dragSource.hasFormat("treeItems"))
+        {
+          var treeItems:Array = (event.dragSource.dataForFormat("treeItems") as Array);
+          var j:int = folderTree.calculateDropIndex(event);
+          var dropFolder:FolderVO = folderTree.indexToItemRenderer(j).data as FolderVO;
+          if (dropFolder.path.indexOf((treeItems[0] as FolderVO).name) > -1) {
+            return;
+          }
+          var e:CairngormEvent = new CairngormEvent(WebmailController.MOVE_FOLDER);
+          e.data = new Object();
+          e.data.oldPath = (treeItems[0] as FolderVO).path;
+          e.data.newPath = dropFolder.path + "." + (treeItems[0] as FolderVO).name;
+          CairngormEventDispatcher.getInstance().dispatchEvent(e);
+          event.currentTarget.hideDropFeedback(event);
+        }
+    }
+      
+    private function deleteClick(event:ItemClickEvent):void
+    {
+        if (event.item == "Yes")
+        {
+            var e:CairngormEvent = new CairngormEvent(WebmailController.DELETE_FOLDER);
+            e.data = model.selectedFolder;
+            CairngormEventDispatcher.getInstance().dispatchEvent(e);
+        }
+        currentState = "";
+    }
+      
+    private function doCheckEmail(event:Event):void
+    {    
+        var e1:CairngormEvent = new CairngormEvent(WebmailController.GET_EMAIL_IN_FOLDER);
+        e1.data = model.getFolderByPath("INBOX");
+        CairngormEventDispatcher.getInstance().dispatchEvent(e1);
+            
+        if (model.selectedFolder.path != "INBOX")
+        {
+            var e2:CairngormEvent = new CairngormEvent(WebmailController.GET_EMAIL_IN_FOLDER);
+            e2.data = model.selectedFolder;
+            CairngormEventDispatcher.getInstance().dispatchEvent(e2);
+        }
+    }
+            
+    private function doEmptyTrash(event:Event):void
+    {
+        var e:CairngormEvent = new CairngormEvent(WebmailController.EMPTY_TRASH);
+        CairngormEventDispatcher.getInstance().dispatchEvent(e);
+    }
+    ]]>
+    </mx:Script>
+
+    <e:SpringLoadedTree id="folderTree" width="100%" height="100%" allowMultipleSelection="false" inheritRestrictionsDrag="false" inheritRestrictionsDrop="false" autoCloseTimerMS="200" autoOpenTimerMS="1000" borderStyle="none" change="selectFolder(event)" labelField="name" defaultLeafIcon="@Embed(source='/assets/folder.png')" dragEnter="doDragEnter(event)" dragDrop="doDragDrop(event)" dragExit="doDragExit(event)" dragOver="doDragOver(event)" dragEnabled="true" dropEnabled="true" dataDescriptor="{new FolderTreeDataDescriptor()}"/>
+    
+    <mx:ControlBar id="myControlBar" horizontalAlign="center" paddingBottom="0" paddingTop="0" paddingRight="0" paddingLeft="0" direction="vertical" verticalGap="3">
+        <mx:HBox id="getInputBox" width="100%" height="0" horizontalAlign="center" horizontalGap="0" resizeEffect="Resize"/>
+        <mx:ButtonBar itemClick="handleButtonBarClick(event)" buttonStyleName="smallButtonBarButton">
+            <mx:dataProvider>
+                <mx:Array>
+                    <mx:String>New</mx:String>
+                    <mx:String>Rename</mx:String>
+                    <mx:String>Delete</mx:String>
+                </mx:Array>
+            </mx:dataProvider>
+        </mx:ButtonBar>
+    </mx:ControlBar>
+    
+    <mx:states>
+        <mx:State name="New">
+            <mx:AddChild relativeTo="{getInputBox}">
+                <mx:VBox width="100%" verticalGap="0" horizontalAlign="center">
+                    <mx:HBox width="100%" horizontalGap="0" horizontalAlign="center">
+                        <mx:TextInput id="newFolderName" width="100"/>
+                        <mx:ButtonBar itemClick="newFolderClick(event)">
+                            <mx:dataProvider>
+                                <mx:Array>
+                                    <mx:String>Save</mx:String>
+                                    <mx:String>Cancel</mx:String>
+                                </mx:Array>
+                            </mx:dataProvider>
+                        </mx:ButtonBar>
+                    </mx:HBox>
+                    <mx:CheckBox id="newAsSubfolder" label="Create As Subfolder"/>
+                </mx:VBox>
+            </mx:AddChild>
+            <mx:SetProperty target="{getInputBox}" name="height" value="42"/>
+        </mx:State>
+        <mx:State name="Rename">
+            <mx:AddChild relativeTo="{getInputBox}">
+                <mx:TextInput id="renameFolderName" width="100"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{getInputBox}">
+                <mx:ButtonBar itemClick="renameFolderClick(event)">
+                    <mx:dataProvider>
+                        <mx:Array>
+                            <mx:String>Save</mx:String>
+                            <mx:String>Cancel</mx:String>
+                        </mx:Array>
+                    </mx:dataProvider>
+                </mx:ButtonBar>
+            </mx:AddChild>
+            <mx:SetProperty target="{getInputBox}" name="height" value="25"/>
+        </mx:State>
+        <mx:State name="Delete">
+            <mx:AddChild relativeTo="{getInputBox}">
+                <mx:Label text="Are you sure?"/>
+            </mx:AddChild>
+            <mx:AddChild relativeTo="{getInputBox}">
+                <mx:ButtonBar itemClick="deleteClick(event)">
+                    <mx:dataProvider>
+                        <mx:Array>
+                            <mx:String>Yes</mx:String>
+                            <mx:String>No</mx:String>
+                        </mx:Array>
+                    </mx:dataProvider>
+                </mx:ButtonBar>
+            </mx:AddChild>
+            <mx:SetProperty target="{getInputBox}" name="height" value="25"/>
+        </mx:State>
+    </mx:states>
+
+</mx:Panel>

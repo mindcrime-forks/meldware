@@ -1,0 +1,14 @@
+dn: ${BASE_DN}
+objectClass: domain
+objectClass: top
+dc: ${BASE_DC}
+
+dn: ou=People,${BASE_DN}
+objectClass: organizationalunit
+objectClass: top
+ou: People
+
+dn: ou=Roles,${BASE_DN}
+objectClass: organizationalunit
+objectClass: top
+ou: Roles

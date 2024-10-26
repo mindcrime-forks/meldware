@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" backgroundColor="#ffffff" borderStyle="solid" borderSides="left right bottom" dropShadowEnabled="true">
+
+  <mx:Metadata>
+  [Event(name="close")]
+  </mx:Metadata>
+
+  <mx:Script>
+    <![CDATA[       
+    import mx.managers.PopUpManager;
+    import mx.events.ItemClickEvent;
+    import mx.events.ValidationResultEvent;
+    import mx.core.Application;
+
+    import com.adobe.cairngorm.control.CairngormEvent;
+    import com.adobe.cairngorm.control.CairngormEventDispatcher;
+
+    import org.buni.mail.webmail.controller.WebmailController;
+    import org.buni.mail.webmail.model.ModelLocator;
+    import org.buni.mail.webmail.model.Const;
+    import org.buni.mail.webmail.model.UserPreferencesVO;
+    import org.buni.mail.webmail.model.ContactVO;
+    import org.buni.mail.webmail.model.TimeZone;
+
+    [Bindable]
+    public var model:ModelLocator = ModelLocator.getInstance();
+
+    private function handleClick(event:ItemClickEvent):void
+    {
+      if (event.item == "Save")
+      {
+        if ((nameValidator.validate() as ValidationResultEvent).type == ValidationResultEvent.VALID)
+        {
+          //var contact:ContactVO = new ContactVO(model.user.contact);
+        //  contact.contactName = 
+        //  contact.email = primaryEmailAddress.selectedItem.toString();
+          
+          var preference:UserPreferencesVO = new UserPreferencesVO(model.user.preferences); 
+          preference.timeZone = timeZone.selectedItem as TimeZone;
+
+          var e1:CairngormEvent = new CairngormEvent(WebmailController.SAVE_PREFERENCES);
+          e1.data = preference;
+          CairngormEventDispatcher.getInstance().dispatchEvent(e1);
+
+      	  //var e2:CairngormEvent = new CairngormEvent(WebmailController.SAVE_CONTACT);
+		  //    e2.data = contact;
+		  //    CairngormEventDispatcher.getInstance().dispatchEvent(e2);
+          
+          //wipeUp.play();
+          dispatchEvent(new Event("close"));
+        }
+      }
+      else
+      {
+        //wipeUp.play();
+        dispatchEvent(new Event("close"));
+      }
+    }
+    ]]>
+  </mx:Script>
+
+  <mx:WipeUp id="wipeUp" target="{this}" showTarget="false">
+    <mx:effectEnd>
+    dispatchEvent(new Event("close"));
+    </mx:effectEnd>
+  </mx:WipeUp>
+
+  <mx:Validator id="nameValidator" source="{fullName}" property="text"/>
+
+  <mx:Label text="Preferences" fontWeight="bold" horizontalCenter="0"/>
+
+  <mx:HRule width="100%"/>
+
+  <mx:Form width="100%">
+    <mx:FormItem label="Full Name" required="true">
+      <mx:TextInput id="fullName" width="100%" text="{model.user.username}"/>
+    </mx:FormItem>
+    <mx:FormItem label="Primary Email Address">
+      <mx:ComboBox id="primaryEmailAddress" width="100%" dataProvider="{model.user.aliases}" selectedItem="{model.user.defaultAlias}"/>
+    </mx:FormItem>
+    <mx:FormItem label="Current Time Zone">
+      <mx:ComboBox id="timeZone" width="100%" dataProvider="{Const.timeZones}" selectedItem="{model.user.preferences.timeZone}"/>
+    </mx:FormItem>
+    <mx:HBox width="100%" horizontalScrollPolicy="off" horizontalAlign="center">
+      <mx:ButtonBar itemClick="handleClick(event)">
+        <mx:dataProvider>
+          <mx:Array>
+            <mx:String>Save</mx:String>
+            <mx:String>Cancel</mx:String>
+          </mx:Array>
+        </mx:dataProvider>
+      </mx:ButtonBar>
+    </mx:HBox>
+  </mx:Form>
+
+</mx:VBox>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+#if($P6SPY_ENABLED.equals("true"))
+  #set($DB_DRIVER="com.p6spy.engine.spy.P6SpyDriver")
+#elseif($DATABASE_TYPE.equals("oracle"))
+  #set($DB_DRIVER="oracle.jdbc.driver.OracleDriver")
+#elseif($DATABASE_TYPE.equals("mysql"))
+  #set($DB_DRIVER="com.mysql.jdbc.Driver")
+#elseif($DATABASE_TYPE.equals("postgresql"))
+  #set($DB_DRIVER="org.postgresql.Driver")
+#end
+
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  JBoss Server Configuration                                           -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<!-- $Id: meldware-ds.xml.vm,v 1.7 2007/02/14 21:02:41 mbarker Exp $ -->
+<!-- #if($DATABASE_TYPE.equals("oracle")) -->
+<datasources>
+    <local-tx-datasource>
+		<!-- ==================================================================== -->
+		<!--  Datasource config for Oracle originally from Steven Coy             -->
+		<!-- ==================================================================== -->
+		<jndi-name>$DATASOURCE_NAME</jndi-name>
+		<connection-url>
+			jdbc:oracle:thin:@$DB_HOST:1521:$DB_NAME
+		</connection-url>
+		<driver-class>$DB_DRIVER</driver-class>
+		<user-name>$DB_USER</user-name>
+		<password>$DB_PASS</password>
+		<!-- Uses the pingDatabase method to check a connection is still valid before handing it out from the pool -->
+		<valid-connection-checker-class-name>
+			org.jboss.resource.adapter.jdbc.vendor.OracleValidConnectionChecker
+		</valid-connection-checker-class-name>
+		<!-- Checks the Oracle error codes and messages for fatal errors -->
+		<exception-sorter-class-name>
+			org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter
+		</exception-sorter-class-name>
+		<!-- corresponding type-mapping in the standardjbosscmp-jdbc.xml (optional) -->
+		<metadata>
+			<type-mapping>Oracle9i</type-mapping>
+		</metadata>
+    </local-tx-datasource>
+</datasources>		
+<!-- #end -->
+<!-- #if($DATABASE_TYPE.equals("mysql")) -->
+<datasources>
+    <local-tx-datasource>
+		<jndi-name>$DATASOURCE_NAME</jndi-name>
+		<connection-url>
+			jdbc:mysql://$DB_HOST:3306/$DB_NAME
+		</connection-url>
+		<driver-class>$DB_DRIVER</driver-class>
+		<user-name>$DB_USER</user-name>
+		<password>$DB_PASS</password>
+		<exception-sorter-class-name>
+			org.jboss.resource.adapter.jdbc.vendor.MySQLExceptionSorter
+		</exception-sorter-class-name>
+		<valid-connection-checker-class-name>
+			org.jboss.resource.adapter.jdbc.vendor.MySQLValidConnectionChecker
+		</valid-connection-checker-class-name>
+		<metadata>
+			<type-mapping>mySQL</type-mapping>
+		</metadata>
+    </local-tx-datasource>
+</datasources>
+<!-- #end -->
+<!-- #if($DATABASE_TYPE.equals("postgresql")) -->
+<datasources>
+  <local-tx-datasource>
+    <jndi-name>$DATASOURCE_NAME</jndi-name>
+    <connection-url>jdbc:postgresql://$DB_HOST:5432/$DB_NAME</connection-url>
+    <driver-class>$DB_DRIVER</driver-class>
+    <user-name>$DB_USER</user-name>
+    <password>$DB_PASS</password>
+        <!-- sql to call when connection is created.  Can be anything, select 1 is valid for PostgreSQL
+        <new-connection-sql>select 1</new-connection-sql>
+        -->
+
+        <!-- sql to call on an existing pooled connection when it is obtained from pool.  Can be anything, select 1 is valid for PostgreSQL
+        <check-valid-connection-sql>select 1</check-valid-connection-sql>
+        -->
+
+      <!-- corresponding type-mapping in the standardjbosscmp-jdbc.xml (optional) -->
+      <metadata>
+         <type-mapping>PostgreSQL 7.2</type-mapping>
+      </metadata>
+  </local-tx-datasource>
+
+</datasources>
+<!-- #end -->

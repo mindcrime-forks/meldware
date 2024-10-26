@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE aop PUBLIC
+   "-//JBoss//DTD JBOSS AOP 1.0//EN"
+   "http://www.jboss.org/aop/dtd/jboss-aop_1_0.dtd">
+
+<aop>
+   <!-- TRANSACTIONS -->
+   <interceptor class="org.jboss.aspects.tx.TxPropagationInterceptor" scope="PER_VM"/>
+   <interceptor factory="org.jboss.aspects.tx.TxInterceptorFactory" scope="PER_CLASS_JOINPOINT"/>
+
+
+   <bind pointcut="execution(* *->@org.jboss.aspects.tx.Tx(..))">
+      <interceptor-ref name="org.jboss.aspects.tx.TxInterceptorFactory"/>
+   </bind>
+
+</aop>

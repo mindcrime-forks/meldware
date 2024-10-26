@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+         xmlns:view="com.adobe.cairngorm.samples.User.view.*"
+         xmlns:c="org.buni.mail.webmail.view.controls.*" 
+         xmlns:r="org.buni.mail.webmail.view.renderer.*"
+         label="{getTabLabel(subject.text)}"
+         horizontalAlign="center"
+         verticalGap="4"
+         backgroundColor="#d6cdb2"
+         implements="org.buni.mail.webmail.view.ITabView"
+         creationComplete="initComp()"
+         >
+         
+    <mx:Script>
+    	<![CDATA[
+    		import org.buni.mail.webmail.model.RecipientAddressVO;
+    		import mx.controls.listClasses.ListItemRenderer;
+    		import org.buni.mail.webmail.view.renderer.AutoCompleteEditor;
+    		import mx.utils.ObjectUtil;
+    		import mx.collections.ArrayCollection;
+    	  import org.buni.mail.webmail.model.EmailAddressVO;
+    	  import com.adobe.cairngorm.control.CairngormEvent;
+    	  import com.adobe.cairngorm.control.CairngormEventDispatcher;
+    	
+    	  import org.buni.mail.webmail.model.ModelLocator;
+    		import org.buni.mail.webmail.model.EmailVO;
+    		import org.buni.mail.webmail.controller.WebmailController;
+    		import org.buni.mail.webmail.model.Const;
+    		
+    		[Bindable]
+    		public var model:ModelLocator = ModelLocator.getInstance();
+    		
+            private var _data:EmailVO;
+            
+            public static var types: Array = [ {label:"To:", data:0}, 
+                {label:"Cc:", data:1}, {label:"Bcc:", data:2} ];
+ 
+           // public var typeCombo:ComboBox;
+
+			public function initComp():void {
+			/*	typeCombo = new ComboBox();
+				typeCombo.dataProvider = type;
+				typeCombo.labelField="label";*/
+			}
+			
+			public function changedType(event:Event) {
+			//	trace(ObjectUtil.toString(event));
+			    var selected:int = (event.currentTarget as ComboBox).selectedIndex;
+				var addy:RecipientAddressVO = this.toGrid.selectedItem as RecipientAddressVO;
+				trace("type was "+ addy.type +" setting type to "+selected);
+				addy.type = selected;
+			}
+
+            public override function set data(data:Object):void
+            {
+              trace('set data EmailVO');
+              _data = data as EmailVO;
+              addNewRow();
+              dispatchEvent(new Event("dataChanged"));
+            }
+
+            [Bindable(event="dataChanged")]
+            public override function get data():Object
+            {
+              return _data;
+            }
+    		
+    		private function getTabLabel(s:String):String
+    		{
+    			if ((s.length == 0) && (data.status == Const.NEW_EMAIL))
+    			{
+    				return "New Email";
+    			}
+    			else
+    			{
+    				return s;
+    			}
+    		}
+    		
+    		private function cancel():void
+    		{
+    		  model.removeTab(data);
+    		}
+    		
+    		private function send():void
+    		{
+    		  var recs = new ArrayCollection((toGrid.dataProvider as ArrayCollection).toArray());
+    		  removeBlank(recs);
+    		  var e:CairngormEvent = new CairngormEvent(WebmailController.SEND_EMAIL);
+    		  (data as EmailVO).sender = new EmailAddressVO(from.text);
+    		  (data as EmailVO).recipients = recs;
+    		  (data as EmailVO).subject = subject.text;
+    		  (data as EmailVO).body = body.text;
+				  e.data = data as EmailVO;
+				  CairngormEventDispatcher.getInstance().dispatchEvent(e);
+    		}
+    		
+    		private function removeBlank(arr:ArrayCollection):void {
+    			arr.removeItemAt(arr.length-1); //presently the last is always blank
+    		}
+    		
+    		private function saveAsDraft():void
+    		{ 
+    		  var recs = new ArrayCollection((toGrid.dataProvider as ArrayCollection).toArray());
+    		  removeBlank(recs);
+    		  var e:CairngormEvent = new CairngormEvent(WebmailController.SAVE_DRAFT);
+    		  (data as EmailVO).sender = new EmailAddressVO(from.text);
+    		  (data as EmailVO).recipients = recs;
+/*    		  (data as EmailVO).ccRecipients = cc.dataProvider;
+    		  (data as EmailVO).bccRecipients = bcc.dataProvider;*/
+    		  (data as EmailVO).subject = subject.text;
+    		  (data as EmailVO).body = body.text;
+				  e.data = data as EmailVO;
+				  CairngormEventDispatcher.getInstance().dispatchEvent(e);
+    		}
+
+    		public static function getSuggest(typed:String):void {    
+    			if (typed.length > 1) {			
+	    		  var e:CairngormEvent = new CairngormEvent(WebmailController.GET_SUGGESTIONS);
+	    		      e.data = typed;
+					  CairngormEventDispatcher.getInstance().dispatchEvent(e);
+    			}
+    		}    		
+
+    	/*	public static function getSuggest(event:Event):void {    
+    			if ((event as CairngormEvent).data.length > 1) {			
+	    		  var e:CairngormEvent = new CairngormEvent(WebmailController.GET_SUGGESTIONS);
+	    		      e.data = (event as CairngormEvent ).data as String;
+					  CairngormEventDispatcher.getInstance().dispatchEvent(e);
+    			}
+    		}*/
+    	/*	private function beginFilterFunction(element:*, text:String):Boolean
+			{
+				var label:String=newto.itemToLabel(element);
+				return(label.toLowerCase().indexOf(text.toLowerCase())==0);
+			}*/
+	
+    	    public function keyDownTo(event:KeyboardEvent):void {
+	    	    if (event.keyCode == Keyboard.ENTER) {
+	    	    	  trace("compose key enter");
+                      addNewRow();
+                      callLater(focusNewRow);
+	    	    	} 
+	    	}
+
+            private function addNewRow():void
+            {
+              trace('in addNewRow');
+
+              var newRow:Boolean = true;
+              for each (var r:EmailAddressVO in data.recipients)
+              {
+                if (r.fullAddress.length == 0)
+                {
+                  newRow = false;
+                }
+    	      }
+
+              if (newRow)
+              {
+                trace('adding new row');
+                data.recipients.addItem(new RecipientAddressVO(new EmailAddressVO(""),RecipientAddressVO.TO));
+              }
+
+            }
+
+            private function removeEmptyRows():void
+            {
+              var numEmptyRows:int = 0;
+
+              // determine how many empty rows there are
+              for each (var r:EmailAddressVO in data.recipients)
+              {
+                trace('r.fullAddress = ' + r.fullAddress);
+                if (r.fullAddress.length == 1)
+                {
+                  numEmptyRows++;
+                }
+              }
+
+              trace('numEmptyRows = ' + numEmptyRows);
+
+              // always leave 1 rows open for editing
+              if (numEmptyRows > 1)
+              {
+                var i:int = 1;
+                for each (var r:EmailAddressVO in data.recipients)
+                {
+                  if ((r.fullAddress.length == 0) && (i != numEmptyRows))
+                  {
+                    trace('removing item ' + i);
+                    data.recipients.removeItemAt(data.recipients.getItemIndex(r));
+                    i++;
+                  }
+                }
+              }
+            }
+
+            private function focusNewRow():void
+            {
+              toGrid.editedItemPosition =  {columnIndex:0, rowIndex:data.recipients.length - 1};
+            }
+	    	    
+    	    public function keyUpTo(event:KeyboardEvent):void {
+    	    	 if (event.keyCode == Keyboard.BACKSPACE && toGrid.selectedIndex != 0 ) {
+                    removeEmptyRows();
+    	    	} else if (!(event.target is DataGrid)) {
+    	    		getSuggest((event.target.text as String));
+    	    	}
+    	    }
+
+            public function autoCompFocusOut(event:FocusEvent):void
+            {
+              trace('autoCompFocusOut');
+              removeEmptyRows();
+              addNewRow();
+              model.suggestions = new ArrayCollection();
+            }
+    	]]>
+    	
+    
+    </mx:Script>
+
+  <mx:Form width="100%" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+    <mx:FormItem label="From:" width="100%">
+      <mx:ComboBox id="from" editable="false" dataProvider="{model.user.aliases}" selectedItem="{model.user.defaultAlias}"/>
+    </mx:FormItem>
+    <mx:FormItem label="To:" width="100%">
+    	<mx:DataGrid id="toGrid" dataProvider="{data.recipients}" width="100%" editable="true" keyUp="keyUpTo(event)" keyDown="keyDownTo(event)" headerHeight="0" click="trace(data.recipients.length)">
+			<mx:columns>
+				<mx:DataGridColumn width="80" editable="true" rendererIsEditor="true"  dataField="type" >
+				  <mx:itemRenderer>
+					<mx:Component>
+						<r:TypeEditor labelField="label" dataProvider="{EmailComposeView.types}" dataField="type" dataProviderDataField="data"/>
+					</mx:Component>
+				  </mx:itemRenderer>
+				</mx:DataGridColumn>
+				<mx:DataGridColumn editable="true" rendererIsEditor="true"  dataField="fullAddress">
+				  <mx:itemRenderer>
+					<mx:Component>
+						<r:AutoCompleteEditor labelField="fullAddress" suggestionDataProvider="{data.model.suggestions}" focusOut="outerDocument.autoCompFocusOut(event)"/>
+					</mx:Component>
+			      </mx:itemRenderer>
+				</mx:DataGridColumn>	
+			</mx:columns>
+    	</mx:DataGrid>
+    </mx:FormItem>
+		<!--mx:FormItem label="CC:" width="100%">
+			<c:EmailInputField id="cc" dataProvider="{data.ccRecipients}" width="100%"/>
+		</mx:FormItem>
+		<mx:FormItem label="BCC" width="100%">
+			<c:EmailInputField id="bcc" dataProvider="{data.bccRecipients}" width="100%"/>
+		</mx:FormItem-->
+    <mx:FormItem label="Subject" width="100%">
+			<mx:TextInput id="subject" styleName="EmailInputField" text="{data.subject}" width="100%"/>
+		</mx:FormItem>
+  </mx:Form>
+  
+  <c:TextEditor id="body" text="{data.body}" width="100%" height="100%" showToolTips="true" cancel="cancel()" send="send()" saveAsDraft="saveAsDraft()"/>
+
+</mx:VBox>

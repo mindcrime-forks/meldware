@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+         xmlns:view="org.buni.mail.webmail.view.*"
+         creationComplete="initApp()" showCloseButton="true" 
+         close="PopUpManager.removePopUp(this);">
+         
+  
+  
+  	<mx:Script>
+		<![CDATA[
+		    import org.buni.mail.webmail.view.renderer.ComboTreeEditor;
+			import org.buni.mail.webmail.controller.WebmailController;
+			import org.buni.mail.webmail.model.UserActionSetVO;
+			import org.buni.mail.webmail.model.ConditionVO;
+			import org.buni.mail.webmail.model.ActionVO;
+			
+			import org.buni.mail.webmail.model.ModelLocator;
+            import com.adobe.cairngorm.control.CairngormEventDispatcher;
+            import com.adobe.cairngorm.control.CairngormEvent;
+            import mx.collections.ArrayCollection;
+            
+            import mx.collections.IViewCursor;
+            import mx.utils.ObjectUtil;
+            
+            import mx.managers.PopUpManager;
+            
+            
+			[Bindable]
+			public var model:ModelLocator = ModelLocator.getInstance();
+    		
+			private function initApp():void {
+			}
+			
+			private function save(event:Event):void {
+		
+		        var e:CairngormEvent = new CairngormEvent(WebmailController.SAVE_USER_ACTION_SETS);    
+		        var data:Object = new Object();
+		        data.user = model.user.username;
+		        data.actionsets = model.userActionSets;
+		        trace(ObjectUtil.toString(model.userActionSets));
+		        e.data = data;           
+		        CairngormEventDispatcher.getInstance().dispatchEvent(e);			    
+			}
+			
+			private function clickAS(event:Event):void {
+				trace(event.toString());
+			}
+			
+			private function selectActionSet(event:Event):void {
+		        model.selectedActionSet = actionSets.selectedItem as UserActionSetVO;
+			}
+			
+			private function selectAction(event:Event):void {
+		        model.selectedActionSet.selectedAction = actions.selectedItem as ActionVO;
+			}
+			
+            private function addActionSet(event:Event):void {
+                if (actionName.text != null && actionName.text != "") {
+                    var actionset:UserActionSetVO = new UserActionSetVO(actionName.text);
+                    if (model.userActionSets == null) {
+                       model.userActionSets = new ArrayCollection();
+                    }
+                    model.userActionSets.addItem(actionset);
+                }
+            }
+            
+            private function removeActionSet(event:Event):void {
+                model.userActionSets.removeItemAt(actionSets.selectedIndex);
+            }
+            
+            private function addASCondition(event:Event):void {
+                if (actionSets.selectedItem != null) {
+                    var actionset:UserActionSetVO = actionSets.selectedItem as UserActionSetVO;
+                    var condition:ConditionVO = new ConditionVO();
+                    actionset.conditions.addItem(condition);
+                }
+            }
+            
+            private function addASAction(event:Event):void {
+                if (actionSets.selectedItem != null) {
+                    var actionset:UserActionSetVO = actionSets.selectedItem as UserActionSetVO;
+                    var action:ActionVO = new ActionVO();
+                    actionset.actions.addItem(action);
+                }
+            }
+            
+            private function removeASAction(event:Event):void {
+                actionSets.selectedItem.actions.removeItemAt(actions.selectedIndex);
+            }
+          
+            private function removeASCondition(event:Event):void {
+                actionSets.selectedItem.conditions.removeItemAt(conditions.selectedIndex);
+            }
+          
+		]]>
+	</mx:Script>
+	
+	<mx:Component id="conditionsEditor">
+           <mx:ComboBox width="100%">
+               <mx:dataProvider>
+                   <mx:String/>
+                   <mx:String>==</mx:String>
+                   <mx:String>contains</mx:String>
+                   <mx:String>!=</mx:String>
+                   <mx:String>doesn't contain</mx:String>
+               </mx:dataProvider>
+           </mx:ComboBox>
+    </mx:Component>
+    
+    <mx:Component id="fieldEditor">
+        <mx:ComboBox editable="true">
+            <mx:dataProvider>
+                 <mx:String/>
+                 <mx:String>From</mx:String>
+                 <mx:String>To</mx:String>
+                 <mx:String>Cc</mx:String>
+                 <mx:String>Bcc</mx:String>
+                 <mx:String>Subject</mx:String>
+                 <mx:String>Reply-To</mx:String>
+            </mx:dataProvider>
+        </mx:ComboBox>
+    </mx:Component>
+    
+    <mx:Component id="actionEditor">
+        <mx:ComboBox>
+            <mx:dataProvider>
+                 <mx:String/>
+                 <mx:String>Move To</mx:String>
+                 <mx:String>Copy To</mx:String>
+                 <mx:String>Delete</mx:String>
+            </mx:dataProvider>
+        </mx:ComboBox>
+    </mx:Component>    
+
+    <mx:Component id="folderEditor">
+		<view:SelectTree  
+				dataProvider="{parentDocument.model.folders}"
+				labelField="name"
+				horizontalScrollPolicy="off"
+				tabEnabled="true"  y="40" x="10"/>   
+        <!--mx:ComboBox dataProvider="{parentDocument.model.folders}"/-->
+    </mx:Component>  
+    
+<!--mx:VBox -->
+<mx:VDividedBox width="100%" height="100%">
+  <mx:VBox width="100%">
+      <mx:DataGrid id="actionSets" width="100%" height="100%" borderStyle="none" dataProvider="{model.userActionSets}" change="selectActionSet(event)" click="clickAS(event)">
+        <mx:columns>
+           <mx:DataGridColumn width="100" headerText="Filter" dataField="name"/>
+        </mx:columns>
+      </mx:DataGrid>
+      <mx:Form id="addAction" width="100%" backgroundColor="#cccccc" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+        <mx:HBox>
+	    <mx:Button label="New Filter" click="addActionSet(event)"/>
+	    <mx:FormItem label="Name:" width="100%">
+			<mx:TextInput id="actionName" text="" width="100%"/>
+		</mx:FormItem>
+	    <mx:Button label="Remove Filter" click="removeActionSet(event)"/>
+		</mx:HBox>
+	</mx:Form>
+  </mx:VBox>
+  
+  <mx:VBox width="100%">
+    <mx:DataGrid id="conditions" editable="true" width="100%" height="100%" borderStyle="none" dataProvider="{actionSets.selectedItem.conditions}" >
+    <mx:columns>
+      <mx:DataGridColumn width="100" rendererIsEditor="true" itemRenderer="{fieldEditor}" headerText="Field" dataField="headerName" editorDataField="selectedItem"/>
+      <mx:DataGridColumn width="100" rendererIsEditor="true" itemRenderer="{conditionsEditor}" headerText="Condition" dataField="conditionSymbol" editorDataField="selectedItem">
+      </mx:DataGridColumn>
+      <mx:DataGridColumn width="100" headerText="Value" dataField="value"/>
+    </mx:columns>
+    </mx:DataGrid>
+    <mx:Form id="addCondition" width="100%" backgroundColor="#cccccc" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+        <mx:HBox>
+	        <mx:Button label="New Condition" click="addASCondition(event)"/>
+	        <mx:Button label="Remove Condition" click="removeASCondition(event)"/>
+	    </mx:HBox>
+	</mx:Form>
+  </mx:VBox>
+  
+  <mx:DataGrid id="actions" editable="true" width="100%" height="25%" borderStyle="none" dataProvider="{actionSets.selectedItem.actions}" change="selectAction(event)">
+    <mx:columns>
+      <mx:DataGridColumn width="100" rendererIsEditor="true" itemRenderer="{actionEditor}" headerText="Action" dataField="actionName" editorDataField="selectedItem"/>
+      <mx:DataGridColumn width="100" rendererIsEditor="true" itemRenderer="org.buni.mail.webmail.view.renderer.ComboTreeEditor" headerText="Target" dataField="folderName" editorDataField="selectedFoler"/> 
+    </mx:columns>
+  </mx:DataGrid>
+  
+  <mx:VBox width="100%">
+    <mx:Form id="meetingEdit" width="100%" height="100%" backgroundColor="#cccccc" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+        <mx:HBox>
+	    		<mx:Button label="New Action" click="addASAction(event)" />
+	    		<mx:Button label="Remove Action" click="removeASAction(event)"/>
+	    </mx:HBox>
+	</mx:Form>
+	<mx:Form id="apply" width="100%" height="100%" backgroundColor="#cccccc" paddingTop="5" paddingBottom="5" verticalGap="4" verticalScrollPolicy="off">
+        <mx:HBox>
+	    		<mx:Button label="Apply" click="save(event)" />
+	    		<mx:Button label="Close" click="PopUpManager.removePopUp(this);" />
+	    </mx:HBox>
+	</mx:Form>
+  </mx:VBox>
+  </mx:VDividedBox>
+
+<!--/mx:VBox-->    
+</mx:TitleWindow>
